@@ -1,0 +1,75 @@
+{
+  "name": "dynamic-mui",
+  "version": "0.1.0",
+  "author": "Dinakaran S",
+  "user": "dinakarans",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DinakaranS/-dynamic-mui.git"
+  },
+  "homepage": "https://github.com/DinakaranS/-dynamic-mui",
+  "bugs": {
+    "url": "https://github.com/DinakaranS/-dynamic-mui/issues"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.1.5",
+    "@emotion/styled": "^11.1.5",
+    "@material-ui/core": "^5.0.0-alpha.28",
+    "@material-ui/data-grid": "^4.0.0-alpha.23",
+    "@material-ui/styles": "^5.0.0-alpha.28",
+    "@testing-library/jest-dom": "^5.11.10",
+    "@testing-library/react": "^11.2.5",
+    "@testing-library/user-event": "^13.0.16",
+    "lodash": "^4.17.21",
+    "numeral": "^2.0.6",
+    "prop-types": "^15.7.2",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-json-tree": "^0.15.0",
+    "react-number-format": "^4.5.2",
+    "react-scripts": "4.0.3",
+    "validator": "^13.5.2",
+    "web-vitals": "^1.1.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "styleguide": "styleguidist server",
+    "styleguide:build": "styleguidist build",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix ."
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "eslint": "7.23.0",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-config-prettier": "^8.1.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-prettier": "^3.3.1",
+    "eslint-plugin-react": "^7.23.1",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "prettier": "^2.2.1",
+    "react-styleguidist": "^11.1.6",
+    "tinycolor2": "^1.4.2"
+  }
+}
