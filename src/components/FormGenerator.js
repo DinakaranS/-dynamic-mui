@@ -23,7 +23,13 @@ export const FormGenerator = (props) => {
       {layout.wrows.map((row, i) => (
         <Grid key={generateKey('layout-grid', i)} container spacing={2}>
           {row.map((field, index) => {
-            const { type = '', style = {}, className = '', visible = false, rules = {} } = field;
+            const {
+              type = '',
+              style = { paddingTop: 10 },
+              className = '',
+              visible = false,
+              rules = {},
+            } = field;
             const cProps = field.props || {};
             const cLayout = field.layout || {};
             const configObj = config.map[type] || {};
