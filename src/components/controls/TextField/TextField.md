@@ -39,7 +39,7 @@ import * as MUI from '@material-ui/core';
 import {FormGenerator} from "../../FormGenerator";
 import {inputAdornment} from '../../../data/textfield';
 
-<FormGenerator library={MUI} data={inputAdornment} guid="textfield"/>
+<FormGenerator library={MUI} data={inputAdornment} patch={{firstname:'dinakaran'}} guid="textfield"/>
 ```
 ```
 import {sizesAndLayout} from '../../../data/textfield';

@@ -17,7 +17,7 @@ export const FormGenerator = (props) => {
   const { library, data = {}, patch = {}, guid } = props;
   const config = LIBMap.MUI;
   const dataObj = JSON.parse(JSON.stringify(data));
-  const layout = updatePatchData(generateLayout(JSON.parse(JSON.stringify(dataObj))), patch, guid);
+  const layout = generateLayout(updatePatchData(JSON.parse(JSON.stringify(dataObj)), patch, guid));
   return (
     <>
       {layout.wrows.map((row, i) => (

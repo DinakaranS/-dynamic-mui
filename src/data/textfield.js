@@ -102,10 +102,10 @@ export const validation = [
 
 export const inputAdornment = [
   {
-    id: 'textfieldoutlined',
+    id: 'firstname',
     type: 'textfield',
     props: {
-      id: 'textfieldoutlined',
+      id: 'firstname',
       MuiAttributes: {
         fullWidth: true,
         InputLabelProps: {
