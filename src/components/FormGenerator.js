@@ -20,41 +20,38 @@ export const FormGenerator = (props) => {
   const layout = generateLayout(updatePatchData(JSON.parse(JSON.stringify(dataObj)), patch, guid));
   return (
     <>
-      {layout.wrows.map((row, i) => (
-        <Grid key={generateKey('layout-grid', i)} container spacing={2}>
-          {row.map((field, index) => {
-            const {
-              type = '',
-              style = { paddingTop: 10 },
-              className = '',
-              visible = false,
-              rules = {},
-            } = field;
-            const cProps = field.props || {};
-            const cLayout = field.layout || {};
-            const configObj = config.map[type] || {};
-            return (
-              <Grid
-                key={generateKey('layout-comp', index)}
-                item
-                style={style}
-                {...cLayout}
-                className={`${className} ${visible === false ? 'hidden' : 'show'}`}
-              >
-                <DynamicComponent
-                  component={configObj.type}
-                  map={configObj.map}
-                  option={configObj.options ? configObj.options.type : ''}
-                  control={field}
-                  library={library}
-                  attributes={cProps}
-                  rules={rules}
-                />
-              </Grid>
-            );
-          })}
-        </Grid>
-      ))}
+      <Grid key={generateKey('layout-grid')} container spacing={2}>
+        {layout.wrows.map((row) => (
+          <>
+            {row.map((field, index) => {
+              const { type = '', style = {}, className = '', visible = false, rules = {} } = field;
+              const cProps = field.props || {};
+              const cLayout = field.layout || {};
+              const configObj = config.map[type] || {};
+              return (
+                <Grid
+                  key={generateKey('layout-comp', index)}
+                  item
+                  style={style}
+                  {...cLayout}
+                  className={`${className} ${visible === false ? 'hidden' : 'show'}`}
+                >
+                  <DynamicComponent
+                    component={configObj.type}
+                    map={configObj.map}
+                    option={configObj.options ? configObj.options.type : ''}
+                    control={field}
+                    library={library}
+                    attributes={cProps}
+                    rules={rules}
+                  />
+                </Grid>
+              );
+            })}
+          </>
+        ))}
+      </Grid>
+
       {layout.worows.map((field, index) => {
         const { type = '', style = {}, className = '', visible = false, rules = {} } = field;
         const configObj = config.map[type] || {};

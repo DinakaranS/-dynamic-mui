@@ -71,7 +71,6 @@ export default function TextField(props) {
   };
   return (
     <TEXTFIELD
-      margin="normal"
       fullWidth
       {...MuiAttributes}
       InputProps={getInputProps(library, InputProps)}
