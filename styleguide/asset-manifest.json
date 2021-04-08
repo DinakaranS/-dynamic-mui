@@ -1,0 +1,14 @@
+{
+  "files": {
+    "main.js": "/DinakaranS/-dynamic-mui/build/main.992274eb.js",
+    "runtime-main.js": "/DinakaranS/-dynamic-mui/build/bundle.483fa668.js",
+    "build/2.c9f4fc23.js": "/DinakaranS/-dynamic-mui/build/2.c9f4fc23.js",
+    "build/2.c9f4fc23.js.LICENSE.txt": "/DinakaranS/-dynamic-mui/build/2.c9f4fc23.js.LICENSE.txt",
+    "index.html": "/DinakaranS/-dynamic-mui/index.html"
+  },
+  "entrypoints": [
+    "build/bundle.483fa668.js",
+    "build/2.c9f4fc23.js",
+    "build/main.992274eb.js"
+  ]
+}
