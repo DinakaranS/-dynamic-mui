@@ -1,6 +1,8 @@
 import { remove, clone, map, uniq, sortBy, each } from 'lodash';
 import isEmpty from 'lodash/isEmpty';
 
+const response = {};
+
 export function generateLayout(data) {
   const layout = {
     wrows: [],
@@ -59,8 +61,22 @@ export const generateKey = (prefix = '', index = 0) => {
   return `${prefix}_${index}_${random}_${currentTime}`;
 };
 
+export const updatePatchData = (fields, patch, guid) => {
+  response[guid] = patch;
+  const formData = Object.assign([], fields);
+  // if (isEmpty(patch)) return fields;
+  return map(formData, (field) => {
+    const newField = { ...field };
+    if (newField.id && response[guid][field.id]) {
+      newField.props.value = response[guid][field.id] || '';
+    }
+    return newField;
+  });
+};
+
 export default {
   generateLayout,
   getInputProps,
   generateKey,
+  updatePatchData,
 };

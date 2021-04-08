@@ -4,7 +4,7 @@ import Grid from '@material-ui/core/Grid';
 
 import mui from '../config/mui';
 import DynamicComponent from './DynamicComponent';
-import { generateLayout, generateKey } from '../util/helper';
+import { generateLayout, generateKey, updatePatchData } from '../util/helper';
 
 const LIBMap = {
   MUI: {
@@ -14,10 +14,10 @@ const LIBMap = {
 
 /** FormGenerator */
 export const FormGenerator = (props) => {
-  const { library, data = {} } = props;
+  const { library, data = {}, patch = {}, guid } = props;
   const config = LIBMap.MUI;
   const dataObj = JSON.parse(JSON.stringify(data));
-  const layout = generateLayout(JSON.parse(JSON.stringify(dataObj)));
+  const layout = updatePatchData(generateLayout(JSON.parse(JSON.stringify(dataObj))), patch, guid);
   return (
     <>
       {layout.wrows.map((row, i) => (
@@ -82,6 +82,12 @@ FormGenerator.propTypes = {
   guid: PropTypes.string.isRequired,
   /** Component json data */
   data: PropTypes.arrayOf(PropTypes.object).isRequired,
+  /** Json data to assign value */
+  patch: PropTypes.objectOf(PropTypes.object),
+};
+
+FormGenerator.defaultProps = {
+  patch: {},
 };
 
 // eslint-disable-next-line import/no-anonymous-default-export

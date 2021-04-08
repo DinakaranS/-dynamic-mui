@@ -1,38 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import numeral from 'numeral';
-// import NumberFormat from 'react-number-format';
 import { getInputProps } from '../../../util/helper';
 import Validation from '../../../util/validation';
-
-// const NumberFormatCustom = React.forwardRef((props, ref) => {
-//   const { onChange, NumberAttributes, ...other } = props;
-//   return (
-//     <NumberFormat
-//       {...other}
-//       getInputRef={ref}
-//       onValueChange={(values) => {
-//         onChange({
-//           target: {
-//             name: props.name,
-//             value: values.value,
-//           },
-//         });
-//       }}
-//       {...NumberAttributes}
-//     />
-//   );
-// });
-//
-// NumberFormatCustom.propTypes = {
-//   name: PropTypes.string.isRequired,
-//   onChange: PropTypes.func.isRequired,
-//   NumberAttributes: PropTypes.objectOf(PropTypes.object),
-// };
-//
-// NumberFormatCustom.defaultProps = {
-//   NumberAttributes: {},
-// };
 
 export default function TextField(props) {
   const { library, component, attributes, rules = {} } = props;
@@ -101,6 +71,8 @@ export default function TextField(props) {
   };
   return (
     <TEXTFIELD
+      margin="normal"
+      fullWidth
       {...MuiAttributes}
       InputProps={getInputProps(library, InputProps)}
       onChange={handleOnChange}
