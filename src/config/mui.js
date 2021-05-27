@@ -11,6 +11,22 @@ const mui = {
     type: 'Table',
     map: 'Table',
   },
+  datetime: {
+    type: 'DateTime',
+    map: 'DateTime',
+  },
+  daterangepicker: {
+    type: 'DateRangePicker',
+    map: 'DateRangePicker',
+  },
+  datetimepicker: {
+    type: 'DateTimePicker',
+    map: 'DateTimePicker',
+  },
+  timepicker: {
+    type: 'TimePicker',
+    map: 'TimePicker',
+  },
 };
 
 export default mui;

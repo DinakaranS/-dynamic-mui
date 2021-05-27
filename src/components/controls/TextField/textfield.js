@@ -1,12 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import numeral from 'numeral';
+import MuiTextField from '@material-ui/core/TextField';
 import { getInputProps } from '../../../util/helper';
 import Validation from '../../../util/validation';
 
-export default function TextField(props) {
-  const { library, component, attributes, rules = {} } = props;
-  const TEXTFIELD = library[component];
+export default function TextField({ attributes, rules = {} }) {
   const { MuiAttributes = {}, InputProps = {}, format = '' } = attributes;
 
   const [textData, setTextData] = React.useState({
@@ -70,10 +69,10 @@ export default function TextField(props) {
     // });
   };
   return (
-    <TEXTFIELD
+    <MuiTextField
       fullWidth
       {...MuiAttributes}
-      InputProps={getInputProps(library, InputProps)}
+      InputProps={getInputProps(InputProps)}
       onChange={handleOnChange}
       onBlur={handleOnBlur}
       onFocus={handleOnFocus}
@@ -87,15 +86,10 @@ export default function TextField(props) {
 TextField.propTypes = {
   /** Attributes for TextField */
   attributes: PropTypes.objectOf(PropTypes.object),
-  /** Library to be used */
-  library: PropTypes.objectOf(PropTypes.object),
-  /** Component name */
-  component: PropTypes.string.isRequired,
   /** Rules to be used */
   rules: PropTypes.objectOf(PropTypes.array),
 };
 TextField.defaultProps = {
   attributes: {},
-  library: {},
   rules: {},
 };

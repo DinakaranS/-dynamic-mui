@@ -1,5 +1,20 @@
 import { remove, clone, map, uniq, sortBy, each } from 'lodash';
 import isEmpty from 'lodash/isEmpty';
+import { Icon, InputAdornment } from '@material-ui/core';
+import {
+  DatePicker,
+  MobileDatePicker,
+  DesktopDatePicker,
+  DateRangePicker,
+  MobileDateRangePicker,
+  DesktopDateRangePicker,
+  MobileDateTimePicker,
+  DesktopDateTimePicker,
+  DateTimePicker,
+  TimePicker,
+  DesktopTimePicker,
+  MobileTimePicker,
+} from '@material-ui/lab';
 
 const response = {};
 
@@ -36,18 +51,15 @@ export function generateLayout(data) {
   return layout;
 }
 
-export function getInputProps(library, InputProps) {
+export function getInputProps(InputProps) {
   if (!isEmpty(InputProps)) {
     const { MuiInputAdornment = {}, position = 'start', icon, text, textstyle = {} } = InputProps;
-    const { InputAdornment, Icon } = library;
-    const INPUTADORMENT = InputAdornment;
-    const ICON = Icon;
     return {
       [`${position}Adornment`]: (
-        <INPUTADORMENT {...MuiInputAdornment}>
-          {icon && <ICON>{icon}</ICON>}
+        <InputAdornment {...MuiInputAdornment}>
+          {icon && <Icon>{icon}</Icon>}
           {!isEmpty(textstyle) ? <div style={textstyle}>{text || ''}</div> : text || ''}
-        </INPUTADORMENT>
+        </InputAdornment>
       ),
     };
   }
@@ -74,9 +86,25 @@ export const updatePatchData = (fields, patch, guid) => {
   });
 };
 
+export const DateComponent = (name) => {
+  if (name === 'MobileDatePicker') return MobileDatePicker;
+  if (name === 'DesktopDatePicker') return DesktopDatePicker;
+  if (name === 'DateRangePicker') return DateRangePicker;
+  if (name === 'MobileDateRangePicker') return MobileDateRangePicker;
+  if (name === 'DesktopDateRangePicker') return DesktopDateRangePicker;
+  if (name === 'DateTimePicker') return DateTimePicker;
+  if (name === 'MobileDateTimePicker') return MobileDateTimePicker;
+  if (name === 'DesktopDateTimePicker') return DesktopDateTimePicker;
+  if (name === 'TimePicker') return TimePicker;
+  if (name === 'MobileTimePicker') return MobileTimePicker;
+  if (name === 'DesktopTimePicker') return DesktopTimePicker;
+  return DatePicker;
+};
+
 export default {
   generateLayout,
   getInputProps,
   generateKey,
   updatePatchData,
+  DateComponent,
 };

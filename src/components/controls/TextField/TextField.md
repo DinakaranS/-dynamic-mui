@@ -3,11 +3,10 @@ The TextField wrapper component is a complete form control including a label, in
 It supports standard, outlined and filled styling
 
 ```js
-import * as MUI from '@material-ui/core';
 import {FormGenerator} from "../../FormGenerator";
 import {mui} from '../../../data/textfield';
 
-<FormGenerator library={MUI} data={mui} guid="textfield"/>
+<FormGenerator data={mui} guid="textfield"/>
 ```
 ```js
 import {mui} from '../../../data/textfield';
@@ -19,11 +18,10 @@ import JSONTree from 'react-json-tree';
 Validation:
 
 ```js
-import * as MUI from '@material-ui/core';
 import {FormGenerator} from "../../FormGenerator";
 import {validation} from '../../../data/textfield';
 
-<FormGenerator library={MUI} data={validation} guid="textfield"/>
+<FormGenerator data={validation} guid="textfield"/>
 ```
 ```
 import {validation} from '../../../data/textfield';
@@ -35,11 +33,10 @@ import JSONTree from 'react-json-tree';
 InputAdornment:
 
 ```js
-import * as MUI from '@material-ui/core';
 import {FormGenerator} from "../../FormGenerator";
 import {inputAdornment} from '../../../data/textfield';
 
-<FormGenerator library={MUI} data={inputAdornment} patch={{firstname:'dinakaran'}} guid="textfield"/>
+<FormGenerator data={inputAdornment} patch={{firstname:'dinakaran'}} guid="textfield"/>
 ```
 ```
 import {sizesAndLayout} from '../../../data/textfield';
@@ -51,9 +48,8 @@ import JSONTree from 'react-json-tree';
 Sizes & Layout:
 
 ```js
-import * as MUI from '@material-ui/core';
 import {FormGenerator} from "../../FormGenerator";
 import {sizesAndLayout} from '../../../data/textfield';
 
-<FormGenerator library={MUI} data={sizesAndLayout} guid="textfield"/>
+<FormGenerator data={sizesAndLayout} guid="textfield"/>
 ```

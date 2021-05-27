@@ -14,73 +14,81 @@ const LIBMap = {
 
 /** FormGenerator */
 export const FormGenerator = (props) => {
-  const { library, data = {}, patch = {}, guid } = props;
-  const config = LIBMap.MUI;
-  const dataObj = JSON.parse(JSON.stringify(data));
-  const layout = generateLayout(updatePatchData(JSON.parse(JSON.stringify(dataObj)), patch, guid));
-  return (
-    <>
-      <Grid key={generateKey('layout-grid')} container spacing={2}>
-        {layout.wrows.map((row) => (
-          <>
-            {row.map((field, index) => {
-              const { type = '', style = {}, className = '', visible = false, rules = {} } = field;
-              const cProps = field.props || {};
-              const cLayout = field.layout || {};
-              const configObj = config.map[type] || {};
-              return (
-                <Grid
-                  key={generateKey('layout-comp', index)}
-                  item
-                  style={style}
-                  {...cLayout}
-                  className={`${className} ${visible === false ? 'hidden' : 'show'}`}
-                >
-                  <DynamicComponent
-                    component={configObj.type}
-                    map={configObj.map}
-                    option={configObj.options ? configObj.options.type : ''}
-                    control={field}
-                    library={library}
-                    attributes={cProps}
-                    rules={rules}
-                  />
-                </Grid>
-              );
-            })}
-          </>
-        ))}
-      </Grid>
+  try {
+    const { data = [], patch = {}, guid } = props;
+    const config = LIBMap.MUI;
+    const dataObj = JSON.parse(JSON.stringify(data));
+    const layout = generateLayout(
+      updatePatchData(JSON.parse(JSON.stringify(dataObj)), patch, guid)
+    );
+    return (
+      <>
+        <Grid key={generateKey('layout-grid')} container spacing={2}>
+          {layout.wrows.map((row) => (
+            <>
+              {row.map((field, index) => {
+                const {
+                  type = '',
+                  style = {},
+                  className = '',
+                  visible = false,
+                  rules = {},
+                } = field;
+                const cProps = field.props || {};
+                const cLayout = field.layout || {};
+                const configObj = config.map[type] || {};
+                const { options = {} } = configObj;
+                return (
+                  <Grid
+                    key={generateKey('layout-comp', index)}
+                    item
+                    style={style}
+                    {...cLayout}
+                    className={`${className} ${visible === false ? 'hidden' : 'show'}`}
+                  >
+                    <DynamicComponent
+                      map={configObj.map}
+                      option={options.type || ''}
+                      control={field}
+                      attributes={cProps}
+                      rules={rules}
+                    />
+                  </Grid>
+                );
+              })}
+            </>
+          ))}
+        </Grid>
 
-      {layout.worows.map((field, index) => {
-        const { type = '', style = {}, className = '', visible = false, rules = {} } = field;
-        const configObj = config.map[type] || {};
-        const cProps = field.props;
-        return (
-          <div
-            key={generateKey('layout-comp', index)}
-            style={style}
-            className={`${className} ${visible === false ? 'hidden' : 'show'}`}
-          >
-            <DynamicComponent
-              component={configObj.type}
-              map={configObj.map}
-              option={configObj.options ? configObj.options.type : ''}
-              control={field}
-              library={library}
-              attributes={cProps}
-              rules={rules}
-            />
-          </div>
-        );
-      })}
-    </>
-  );
+        {layout.worows.map((field, index) => {
+          const { type = '', style = {}, className = '', visible = false, rules = {} } = field;
+          const configObj = config.map[type] || {};
+          const cProps = field.props;
+          const { options = {} } = configObj;
+          return (
+            <div
+              key={generateKey('layout-comp', index)}
+              style={style}
+              className={`${className} ${visible === false ? 'hidden' : 'show'}`}
+            >
+              <DynamicComponent
+                map={configObj.map}
+                option={options.type || ''}
+                control={field}
+                attributes={cProps}
+                rules={rules}
+              />
+            </div>
+          );
+        })}
+      </>
+    );
+  } catch (e) {
+    return <div>Error</div>;
+  }
 };
 
 FormGenerator.propTypes = {
-  /** Library to be used */
-  library: PropTypes.objectOf(PropTypes.object).isRequired,
   /** Component name */
   guid: PropTypes.string.isRequired,
   /** Component json data */

@@ -1,10 +1,9 @@
 Basic component:
 
 ```js
-import * as MUI from '@material-ui/core';
 import {FormGenerator} from "../../FormGenerator";
 
-<FormGenerator library={MUI} data={[{
+<FormGenerator data={[{
     type: 'typography',
     props: {
         text: 'Hi'
@@ -18,10 +17,9 @@ import {FormGenerator} from "../../FormGenerator";
 Component styled:
 
 ```js
-import * as MUI from '@material-ui/core';
 import {FormGenerator} from "../../FormGenerator";
 
-<FormGenerator library={MUI} data={[{
+<FormGenerator data={[{
     type: 'typography',
     props: {
         text: 'Styled with color',
