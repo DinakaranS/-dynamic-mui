@@ -6,6 +6,8 @@ import DateRangePicker from './DateRangePicker/daterangepicker';
 import DateTimePicker from './DateTimePicker/datetimepicker';
 import TimePicker from './TimePicker/timepicker';
 import Select from './Select/select';
+import CheckBox from './CheckBox/checkbox';
+import Switch from './Switch/switch';
 
 const Controls = {
   Typography,
@@ -16,6 +18,8 @@ const Controls = {
   DateTimePicker,
   TimePicker,
   Select,
+  CheckBox,
+  Switch,
 };
 
 export default Controls;

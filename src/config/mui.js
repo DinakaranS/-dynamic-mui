@@ -31,6 +31,14 @@ const mui = {
     type: 'Select',
     map: 'Select',
   },
+  checkbox: {
+    type: 'CheckBox',
+    map: 'CheckBox',
+  },
+  switch: {
+    type: 'Switch',
+    map: 'Switch',
+  },
 };
 
 export default mui;
