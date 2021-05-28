@@ -101,10 +101,22 @@ export const DateComponent = (name) => {
   return DatePicker;
 };
 
+export const checkboxSX = (color) => {
+  if (color)
+    return {
+      color,
+      '&.Mui-checked': {
+        color,
+      },
+    };
+  return {};
+};
+
 export default {
   generateLayout,
   getInputProps,
   generateKey,
   updatePatchData,
   DateComponent,
+  checkboxSX,
 };

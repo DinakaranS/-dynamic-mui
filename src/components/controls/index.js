@@ -5,6 +5,7 @@ import DateTime from './DateTime/datetime';
 import DateRangePicker from './DateRangePicker/daterangepicker';
 import DateTimePicker from './DateTimePicker/datetimepicker';
 import TimePicker from './TimePicker/timepicker';
+import Select from './Select/select';
 
 const Controls = {
   Typography,
@@ -14,6 +15,7 @@ const Controls = {
   DateRangePicker,
   DateTimePicker,
   TimePicker,
+  Select,
 };
 
 export default Controls;

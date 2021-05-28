@@ -27,6 +27,10 @@ const mui = {
     type: 'TimePicker',
     map: 'TimePicker',
   },
+  select: {
+    type: 'Select',
+    map: 'Select',
+  },
 };
 
 export default mui;

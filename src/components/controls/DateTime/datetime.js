@@ -28,6 +28,7 @@ DateTime.propTypes = {
   /** Attributes for DateTime */
   attributes: PropTypes.objectOf(PropTypes.object),
 };
+
 DateTime.defaultProps = {
   attributes: {},
 };
