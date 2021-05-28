@@ -2,8 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import MuiTypography from '@material-ui/core/Typography';
 /** Typography Component */
-export default function Typography(props) {
-  const { attributes } = props;
+export default function Typography({ attributes }) {
   const { MuiAttributes = {}, text = '' } = attributes;
   return <MuiTypography {...MuiAttributes}>{text}</MuiTypography>;
 }
@@ -11,8 +10,6 @@ export default function Typography(props) {
 Typography.propTypes = {
   /** Attributes for Typography */
   attributes: PropTypes.objectOf(PropTypes.object),
-  /** Component name */
-  component: PropTypes.string.isRequired,
 };
 Typography.defaultProps = {
   attributes: {},
