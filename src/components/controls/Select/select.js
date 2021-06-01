@@ -10,8 +10,8 @@ import { checkboxSX } from '../../../util/helper';
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
-export default function Select({ attributes }) {
-  const { MuiAttributes = {}, options = [], MuiBoxAttributes = {} } = attributes;
+export default function Select({ attributes, onChange }) {
+  const { MuiAttributes = {}, options = [], MuiBoxAttributes = {}, id = '' } = attributes;
   const [value, setValue] = React.useState();
   const [inputValue, setInputValue] = React.useState('');
 
@@ -32,6 +32,10 @@ export default function Select({ attributes }) {
     }
     return MuiAttributes;
   };
+
+  React.useEffect(() => {
+    onChange({ id, value, inputValue });
+  }, [value, inputValue]);
 
   return (
     <Autocomplete
@@ -63,8 +67,11 @@ export default function Select({ attributes }) {
 Select.propTypes = {
   /** Attributes for Select */
   attributes: PropTypes.objectOf(PropTypes.object),
+  /** Function */
+  onChange: PropTypes.func,
 };
 
 Select.defaultProps = {
   attributes: {},
+  onChange: null,
 };

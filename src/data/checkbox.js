@@ -2,6 +2,7 @@ export const checkBox = [
   {
     type: 'checkbox',
     props: {
+      id: 'defaultChecked',
       MuiAttributes: {
         defaultChecked: true,
       },
@@ -18,6 +19,7 @@ export const checkBox = [
   {
     type: 'checkbox',
     props: {
+      id: 'simple',
       MuiAttributes: {},
       MuiFCLAttributes: {
         label: '',
@@ -32,6 +34,7 @@ export const checkBox = [
   {
     type: 'checkbox',
     props: {
+      id: 'disabled',
       MuiAttributes: {
         disabled: true,
       },
@@ -48,6 +51,7 @@ export const checkBox = [
   {
     type: 'checkbox',
     props: {
+      id: 'disabledchecked',
       MuiAttributes: {
         disabled: true,
         checked: true,
@@ -67,6 +71,7 @@ export const checkBoxCustom = [
   {
     type: 'checkbox',
     props: {
+      id: 'label',
       MuiAttributes: {
         defaultChecked: true,
       },
@@ -83,6 +88,7 @@ export const checkBoxCustom = [
   {
     type: 'checkbox',
     props: {
+      id: 'labelsmall',
       MuiAttributes: {
         size: 'small',
         defaultChecked: true,
@@ -101,6 +107,7 @@ export const checkBoxCustom = [
   {
     type: 'checkbox',
     props: {
+      id: 'labelcolordefault',
       MuiAttributes: {
         defaultChecked: true,
         color: 'default',
@@ -118,6 +125,7 @@ export const checkBoxCustom = [
   {
     type: 'checkbox',
     props: {
+      id: 'labelcolorgreen',
       MuiAttributes: {
         defaultChecked: true,
         sx: {

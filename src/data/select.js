@@ -14,6 +14,7 @@ export const select = [
   {
     type: 'select',
     props: {
+      id: 'simpleselect',
       MuiAttributes: {},
       options,
       MuiBoxAttributes: {
@@ -31,6 +32,7 @@ export const multiSelect = [
   {
     type: 'select',
     props: {
+      id: 'multiselect',
       MuiAttributes: {
         multiple: true,
         disableCloseOnSelect: true,

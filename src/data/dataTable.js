@@ -2,6 +2,7 @@ export const basicTable = [
   {
     type: 'datatable',
     props: {
+      id: 'datatable',
       container: { style: { height: 400, width: '100%' } },
       MuiAttributes: {
         rows: [

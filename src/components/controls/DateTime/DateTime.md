@@ -5,7 +5,7 @@ Basic usage
 import {FormGenerator} from "../../FormGenerator";
 import {mui} from '../../../data/dateTime';
 
-<FormGenerator data={mui} guid="textfield"/>
+<FormGenerator data={mui} guid="datetime"/>
 ```
 
 Responsiveness
@@ -14,5 +14,5 @@ Responsiveness
 import {FormGenerator} from "../../FormGenerator";
 import {responsiveness} from '../../../data/dateTime';
 
-<FormGenerator data={responsiveness} guid="datetime"/>
+<FormGenerator data={responsiveness} guid="datetimeResponsiveness"/>
 ```

@@ -5,7 +5,7 @@ Basic switches
 import {FormGenerator} from "../../FormGenerator";
 import {switchData} from '../../../data/switch';
 
-<FormGenerator data={switchData} guid="checkbox"/>
+<FormGenerator data={switchData} guid="switch"/>
 ```
 
 Label, Color & Size
@@ -13,5 +13,5 @@ Label, Color & Size
 import {FormGenerator} from "../../FormGenerator";
 import {switchCustom} from '../../../data/switch';
 
-<FormGenerator data={switchCustom} guid="checkbox"/>
+<FormGenerator data={switchCustom} guid="switchcolor"/>
 ```

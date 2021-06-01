@@ -17,12 +17,13 @@ const ColorSwitch = styled(({ color, ...other }) => <MuiSwitch {...other} />)(({
 }));
 
 /** CheckBox Component */
-export default function Switch({ attributes }) {
-  const { MuiAttributes = {}, MuiFCLAttributes = {}, color = '' } = attributes;
+export default function Switch({ attributes, onChange }) {
+  const { MuiAttributes = {}, MuiFCLAttributes = {}, color = '', id = '' } = attributes;
   const [checked, setChecked] = React.useState(MuiAttributes.defaultChecked || false);
 
   const handleChange = (event) => {
     setChecked(event.target.checked);
+    onChange({ id, value: event.target.checked });
   };
 
   const MSwitch = color ? ColorSwitch : MuiSwitch;
@@ -45,7 +46,10 @@ export default function Switch({ attributes }) {
 Switch.propTypes = {
   /** Attributes for Typography */
   attributes: PropTypes.objectOf(PropTypes.object),
+  /** Function */
+  onChange: PropTypes.func,
 };
 Switch.defaultProps = {
   attributes: {},
+  onChange: null,
 };

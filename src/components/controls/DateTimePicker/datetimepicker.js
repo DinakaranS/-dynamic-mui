@@ -5,8 +5,8 @@ import LocalizationProvider from '@material-ui/lab/LocalizationProvider';
 import PropTypes from 'prop-types';
 import { DateComponent } from '../../../util/helper';
 
-export default function DateTimePicker({ attributes }) {
-  const { MuiAttributes = {}, name = 'DateTimePicker' } = attributes;
+export default function DateTimePicker({ attributes, onChange }) {
+  const { MuiAttributes = {}, name = 'DateTimePicker', id = '' } = attributes;
   const [value, setValue] = React.useState(new Date());
 
   const MuiDateTimePicker = DateComponent(name);
@@ -16,6 +16,7 @@ export default function DateTimePicker({ attributes }) {
         value={value}
         onChange={(newValue) => {
           setValue(newValue);
+          onChange({ id, value: newValue });
         }}
         {...MuiAttributes}
         renderInput={(params) => <TextField {...params} />}
@@ -27,7 +28,10 @@ export default function DateTimePicker({ attributes }) {
 DateTimePicker.propTypes = {
   /** Attributes for DateTimePicker */
   attributes: PropTypes.objectOf(PropTypes.object),
+  /** Function */
+  onChange: PropTypes.func,
 };
 DateTimePicker.defaultProps = {
   attributes: {},
+  onChange: null,
 };

@@ -5,7 +5,7 @@ Basic usage
 import {FormGenerator} from "../../FormGenerator";
 import {select} from '../../../data/select';
 
-<FormGenerator data={select} guid="textfield"/>
+<FormGenerator data={select} guid="selectbasic"/>
 ```
 
 MultiSelect usage
@@ -13,5 +13,5 @@ MultiSelect usage
 import {FormGenerator} from "../../FormGenerator";
 import {multiSelect} from '../../../data/select';
 
-<FormGenerator data={multiSelect} guid="textfield"/>
+<FormGenerator data={multiSelect} guid="multiselect"/>
 ```

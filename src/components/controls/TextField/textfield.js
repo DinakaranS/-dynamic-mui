@@ -5,8 +5,8 @@ import MuiTextField from '@material-ui/core/TextField';
 import { getInputProps } from '../../../util/helper';
 import Validation from '../../../util/validation';
 
-export default function TextField({ attributes, rules = {} }) {
-  const { MuiAttributes = {}, InputProps = {}, format = '' } = attributes;
+export default function TextField({ attributes, rules = {}, onChange }) {
+  const { MuiAttributes = {}, InputProps = {}, format = '', id = '' } = attributes;
 
   const [textData, setTextData] = React.useState({
     value: attributes.value || '',
@@ -68,6 +68,11 @@ export default function TextField({ attributes, rules = {} }) {
     //   helperText: validator.message,
     // });
   };
+
+  React.useEffect(() => {
+    onChange({ id, value: textData.value });
+  }, [textData.value, textData.helperText]);
+
   return (
     <MuiTextField
       fullWidth
@@ -88,8 +93,11 @@ TextField.propTypes = {
   attributes: PropTypes.objectOf(PropTypes.object),
   /** Rules to be used */
   rules: PropTypes.objectOf(PropTypes.array),
+  /** Function */
+  onChange: PropTypes.func,
 };
 TextField.defaultProps = {
   attributes: {},
   rules: {},
+  onChange: null,
 };

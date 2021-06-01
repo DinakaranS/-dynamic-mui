@@ -2,6 +2,7 @@ export const switchData = [
   {
     type: 'switch',
     props: {
+      id: 'switchdefault',
       MuiAttributes: {
         defaultChecked: true,
       },
@@ -18,6 +19,7 @@ export const switchData = [
   {
     type: 'switch',
     props: {
+      id: 'switch',
       MuiAttributes: {},
       MuiFCLAttributes: {
         label: '',
@@ -32,6 +34,7 @@ export const switchData = [
   {
     type: 'switch',
     props: {
+      id: 'switchdisabled',
       MuiAttributes: {
         disabled: true,
       },
@@ -48,6 +51,7 @@ export const switchData = [
   {
     type: 'switch',
     props: {
+      id: 'switchdisabledchecked',
       MuiAttributes: {
         disabled: true,
         checked: true,
@@ -67,6 +71,7 @@ export const switchCustom = [
   {
     type: 'switch',
     props: {
+      id: 'switchlabel',
       MuiAttributes: {
         defaultChecked: true,
       },
@@ -83,6 +88,7 @@ export const switchCustom = [
   {
     type: 'switch',
     props: {
+      id: 'switchlabelsmall',
       MuiAttributes: {
         size: 'small',
         defaultChecked: true,
@@ -101,6 +107,7 @@ export const switchCustom = [
   {
     type: 'switch',
     props: {
+      id: 'switchlabelcolor',
       MuiAttributes: {
         defaultChecked: true,
         color: 'default',

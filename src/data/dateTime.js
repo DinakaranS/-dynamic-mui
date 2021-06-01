@@ -1,7 +1,10 @@
 export const mui = [
   {
     type: 'datetime',
-    props: { MuiAttributes: { placeholder: 'Standard', fullWidth: true, variant: 'standard' } },
+    props: {
+      id: 'datetime',
+      MuiAttributes: { placeholder: 'Standard', fullWidth: true, variant: 'standard' },
+    },
     layout: {
       row: 1,
       xs: 4,
@@ -13,6 +16,7 @@ export const responsiveness = [
   {
     type: 'datetime',
     props: {
+      id: 'datetimemobile',
       MuiAttributes: { label: 'For mobile', fullWidth: true, variant: 'standard' },
       name: 'MobileDatePicker',
     },
@@ -25,6 +29,7 @@ export const responsiveness = [
   {
     type: 'datetime',
     props: {
+      id: 'datetimestandard',
       MuiAttributes: { label: 'For desktop', fullWidth: true, variant: 'standard' },
       name: 'DesktopDatePicker',
     },
@@ -37,6 +42,7 @@ export const responsiveness = [
   {
     type: 'datetime',
     props: {
+      id: 'datetimeresponsive',
       MuiAttributes: {
         label: 'Responsive',
         fullWidth: true,
@@ -58,6 +64,7 @@ export const dateRange = [
   {
     type: 'daterangepicker',
     props: {
+      id: 'daterangepicker',
       MuiAttributes: {
         fullWidth: true,
         variant: 'standard',
@@ -77,6 +84,7 @@ export const dateTimePicker = [
   {
     type: 'datetimepicker',
     props: {
+      id: 'datetimepicker',
       MuiAttributes: {
         label: 'Standard',
         fullWidth: true,
@@ -95,6 +103,7 @@ export const timePicker = [
   {
     type: 'timepicker',
     props: {
+      id: 'timepicker',
       MuiAttributes: {
         label: 'Standard',
         fullWidth: true,

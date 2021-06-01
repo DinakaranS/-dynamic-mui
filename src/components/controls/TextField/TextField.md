@@ -36,7 +36,7 @@ InputAdornment:
 import {FormGenerator} from "../../FormGenerator";
 import {inputAdornment} from '../../../data/textfield';
 
-<FormGenerator data={inputAdornment} patch={{firstname:'dinakaran'}} guid="textfield"/>
+<FormGenerator data={inputAdornment} patch={{firstname:'dinakaran'}} guid="textfieldinput"/>
 ```
 ```
 import {sizesAndLayout} from '../../../data/textfield';
@@ -51,5 +51,5 @@ Sizes & Layout:
 import {FormGenerator} from "../../FormGenerator";
 import {sizesAndLayout} from '../../../data/textfield';
 
-<FormGenerator data={sizesAndLayout} guid="textfield"/>
+<FormGenerator data={sizesAndLayout} guid="textfieldsize"/>
 ```

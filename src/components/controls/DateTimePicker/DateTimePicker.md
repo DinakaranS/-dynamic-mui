@@ -5,5 +5,5 @@ Basic usage
 import {FormGenerator} from "../../FormGenerator";
 import {dateTimePicker} from '../../../data/dateTime';
 
-<FormGenerator data={dateTimePicker} guid="textfield"/>
+<FormGenerator data={dateTimePicker} guid="datetimePicker"/>
 ```

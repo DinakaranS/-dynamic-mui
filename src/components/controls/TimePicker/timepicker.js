@@ -5,8 +5,8 @@ import LocalizationProvider from '@material-ui/lab/LocalizationProvider';
 import PropTypes from 'prop-types';
 import { DateComponent } from '../../../util/helper';
 
-export default function TimePicker({ attributes }) {
-  const { MuiAttributes = {}, name = 'TimePicker' } = attributes;
+export default function TimePicker({ attributes, onChange }) {
+  const { MuiAttributes = {}, name = 'TimePicker', id = '' } = attributes;
   const [value, setValue] = React.useState(new Date());
 
   const MuiTimePicker = DateComponent(name);
@@ -16,6 +16,7 @@ export default function TimePicker({ attributes }) {
         value={value}
         onChange={(newValue) => {
           setValue(newValue);
+          onChange({ id, value: newValue });
         }}
         {...MuiAttributes}
         renderInput={(params) => <TextField {...params} />}
@@ -27,7 +28,10 @@ export default function TimePicker({ attributes }) {
 TimePicker.propTypes = {
   /** Attributes for TimePicker */
   attributes: PropTypes.objectOf(PropTypes.object),
+  /** Function */
+  onChange: PropTypes.func,
 };
 TimePicker.defaultProps = {
   attributes: {},
+  onChange: null,
 };

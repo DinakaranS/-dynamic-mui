@@ -6,8 +6,8 @@ import Box from '@material-ui/core/Box';
 import PropTypes from 'prop-types';
 import { DateComponent } from '../../../util/helper';
 
-export default function DateRangePicker({ attributes }) {
-  const { MuiAttributes = {}, name = 'DateRangePicker' } = attributes;
+export default function DateRangePicker({ attributes, onChange }) {
+  const { MuiAttributes = {}, name = 'DateRangePicker', id = '' } = attributes;
   const [value, setValue] = React.useState([null, null]);
   const MuiDateRangePicker = DateComponent(name);
 
@@ -18,6 +18,7 @@ export default function DateRangePicker({ attributes }) {
         value={value}
         onChange={(newValue) => {
           setValue(newValue);
+          onChange({ id, value: newValue });
         }}
         renderInput={(startProps, endProps) => (
           <>
@@ -34,7 +35,10 @@ export default function DateRangePicker({ attributes }) {
 DateRangePicker.propTypes = {
   /** Attributes for Date Range */
   attributes: PropTypes.objectOf(PropTypes.object),
+  /** Function */
+  onChange: PropTypes.func,
 };
 DateRangePicker.defaultProps = {
   attributes: {},
+  onChange: null,
 };
