@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import numeral from 'numeral';
-import MuiTextField from '@material-ui/core/TextField';
+import MuiTextField from '@mui/material/TextField';
 import { getInputProps } from '../../../util/helper';
 import Validation from '../../../util/validation';
 

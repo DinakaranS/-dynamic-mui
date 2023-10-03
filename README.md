@@ -2,7 +2,7 @@ Build dynamic forms using Material UI
 
 ## Installation
 
-`npm install @material-ui/core@next @emotion/react @emotion/styled`
+`npm install @mui/material @emotion/react @emotion/styled`
 `npm install dynamic-mui --save`
 
 ##Usage 

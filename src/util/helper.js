@@ -1,20 +1,20 @@
 import { remove, clone, map, uniq, sortBy, each } from 'lodash';
 import isEmpty from 'lodash/isEmpty';
-import { Icon, InputAdornment } from '@material-ui/core';
+import { Icon, InputAdornment } from '@mui/material';
 import {
   DatePicker,
   MobileDatePicker,
   DesktopDatePicker,
-  DateRangePicker,
-  MobileDateRangePicker,
-  DesktopDateRangePicker,
+  // DateRangePicker,
+  // MobileDateRangePicker,
+  // DesktopDateRangePicker,
   MobileDateTimePicker,
   DesktopDateTimePicker,
   DateTimePicker,
   TimePicker,
   DesktopTimePicker,
   MobileTimePicker,
-} from '@material-ui/lab';
+} from '@mui/x-date-pickers';
 
 const response = {};
 
@@ -89,9 +89,9 @@ export const updatePatchData = (fields, patch, guid) => {
 export const DateComponent = (name) => {
   if (name === 'MobileDatePicker') return MobileDatePicker;
   if (name === 'DesktopDatePicker') return DesktopDatePicker;
-  if (name === 'DateRangePicker') return DateRangePicker;
-  if (name === 'MobileDateRangePicker') return MobileDateRangePicker;
-  if (name === 'DesktopDateRangePicker') return DesktopDateRangePicker;
+  // if (name === 'DateRangePicker') return DateRangePicker;
+  // if (name === 'MobileDateRangePicker') return MobileDateRangePicker;
+  // if (name === 'DesktopDateRangePicker') return DesktopDateRangePicker;
   if (name === 'DateTimePicker') return DateTimePicker;
   if (name === 'MobileDateTimePicker') return MobileDateTimePicker;
   if (name === 'DesktopDateTimePicker') return DesktopDateTimePicker;

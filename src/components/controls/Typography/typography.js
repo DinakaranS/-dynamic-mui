@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import MuiTypography from '@material-ui/core/Typography';
+import MuiTypography from '@mui/material/Typography';
 /** Typography Component */
 export default function Typography({ attributes }) {
   const { MuiAttributes = {}, text = '' } = attributes;

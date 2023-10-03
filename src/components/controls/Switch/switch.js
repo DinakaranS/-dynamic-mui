@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import MuiSwitch from '@material-ui/core/Switch';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import { alpha, experimentalStyled as styled } from '@material-ui/core/styles';
+import MuiSwitch from '@mui/material/Switch';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import { alpha, experimentalStyled as styled } from '@mui/material/styles';
 
 const ColorSwitch = styled(({ color, ...other }) => <MuiSwitch {...other} />)(({ theme }) => ({
   '& .MuiSwitch-switchBase.Mui-checked': {
