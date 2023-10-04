@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import { checkboxSX } from '../../../util/helper';
+import useUpdateEffect from '../../../util/useUpdateEffect';
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
@@ -34,7 +35,7 @@ export default function Select({ attributes, onChange }) {
     return MuiAttributes;
   };
 
-  React.useEffect(() => {
+  useUpdateEffect(() => {
     const newValue = MuiAttributes.multiple
       ? (value || []).map((option) => option.title || option.label || option.value)
       : inputValue;
