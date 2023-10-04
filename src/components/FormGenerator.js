@@ -21,12 +21,12 @@ const handleSubmit = (callback, data) => {
   }
 };
 
-const FormData = (id) => {
+export const FormData = (id) => {
   if (id) return response[id];
   return response;
 };
 
-const ClearFormData = (id) => {
+export const ClearFormData = (id) => {
   if (id) delete response[id];
   else Object.keys(response).map((key) => delete response[key]);
 };
