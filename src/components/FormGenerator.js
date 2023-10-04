@@ -21,14 +21,24 @@ const handleSubmit = (callback, data) => {
   }
 };
 
+const FormData = (id) => {
+  if (id) return response[id];
+  return response;
+};
+
+const ClearFormData = (id) => {
+  if (id) delete response[id];
+  else Object.keys(response).map((key) => delete response[key]);
+};
+
 /** FormGenerator */
-export const FormGenerator = (props) => {
+export function FormGenerator(props) {
   try {
     const { data = [], patch = {}, guid, formRef, onSubmit, onChange } = props;
     const config = LIBMap.MUI;
     const dataObj = JSON.parse(JSON.stringify(data));
     const layout = generateLayout(
-      updatePatchData(JSON.parse(JSON.stringify(dataObj)), patch, guid)
+      updatePatchData(JSON.parse(JSON.stringify(dataObj)), patch, guid),
     );
     const onUpdate = ({ id, value }) => {
       try {
@@ -123,7 +133,7 @@ export const FormGenerator = (props) => {
   } catch (e) {
     return <div>Error</div>;
   }
-};
+}
 
 FormGenerator.propTypes = {
   /** Component name */
@@ -147,4 +157,6 @@ FormGenerator.defaultProps = {
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
   FormGenerator,
+  FormData,
+  ClearFormData,
 };

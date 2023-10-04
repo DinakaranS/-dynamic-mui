@@ -29,7 +29,7 @@ export default function CheckBox({ attributes, onChange }) {
 }
 
 CheckBox.propTypes = {
-  /** Attributes for Typography */
+  /** Attributes for Checkbox */
   attributes: PropTypes.objectOf(PropTypes.object),
   /** Function */
   onChange: PropTypes.func,

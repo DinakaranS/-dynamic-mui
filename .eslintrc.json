@@ -3,7 +3,7 @@
     "browser": true,
     "es6": true
   },
-  "parser": "babel-eslint",
+  "parser": "@babel/eslint-parser",
   "extends": [
     "plugin:react/recommended",
     "airbnb",
@@ -29,6 +29,7 @@
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
     "react/state-in-constructor": "off",
     "react/jsx-props-no-spreading": "off",
-    "react/react-in-jsx-scope": "off"
+    "react/react-in-jsx-scope": "off",
+    "react/forbid-prop-types": "off"
   }
 }

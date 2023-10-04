@@ -7,6 +7,7 @@ import TimePicker from './TimePicker/timepicker';
 import Select from './Select/select';
 import CheckBox from './CheckBox/checkbox';
 import Switch from './Switch/switch';
+import Radio from './Radio/radio';
 
 const Controls = {
   Typography,
@@ -18,6 +19,7 @@ const Controls = {
   Select,
   CheckBox,
   Switch,
+  Radio,
 };
 
 export default Controls;

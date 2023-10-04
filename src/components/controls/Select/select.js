@@ -1,3 +1,4 @@
+/* eslint-disable default-param-last */
 import React from 'react';
 import Checkbox from '@mui/material/Checkbox';
 import TextField from '@mui/material/TextField';

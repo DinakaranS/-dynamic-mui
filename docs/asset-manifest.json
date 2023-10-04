@@ -1,14 +1,14 @@
 {
   "files": {
-    "main.js": "/DinakaranS/-dynamic-mui/build/main.a283eb9d.js",
-    "runtime-main.js": "/DinakaranS/-dynamic-mui/build/bundle.483fa668.js",
-    "build/2.bf4d9efa.js": "/DinakaranS/-dynamic-mui/build/2.bf4d9efa.js",
-    "build/2.bf4d9efa.js.LICENSE.txt": "/DinakaranS/-dynamic-mui/build/2.bf4d9efa.js.LICENSE.txt",
+    "main.js": "/DinakaranS/-dynamic-mui/build/main.728d1f56.js",
+    "runtime-main.js": "/DinakaranS/-dynamic-mui/build/bundle.039d7aef.js",
+    "build/2.ae947fc9.js": "/DinakaranS/-dynamic-mui/build/2.ae947fc9.js",
+    "build/2.ae947fc9.js.LICENSE.txt": "/DinakaranS/-dynamic-mui/build/2.ae947fc9.js.LICENSE.txt",
     "index.html": "/DinakaranS/-dynamic-mui/index.html"
   },
   "entrypoints": [
-    "build/bundle.483fa668.js",
-    "build/2.bf4d9efa.js",
-    "build/main.a283eb9d.js"
+    "build/bundle.039d7aef.js",
+    "build/2.ae947fc9.js",
+    "build/main.728d1f56.js"
   ]
 }

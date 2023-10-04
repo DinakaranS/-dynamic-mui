@@ -39,6 +39,10 @@ const mui = {
     type: 'Switch',
     map: 'Switch',
   },
+  radio: {
+    type: 'Radio',
+    map: 'Radio',
+  },
 };
 
 export default mui;

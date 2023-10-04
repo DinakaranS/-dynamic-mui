@@ -16,7 +16,7 @@ const ColorSwitch = styled(({ color, ...other }) => <MuiSwitch {...other} />)(({
   },
 }));
 
-/** CheckBox Component */
+/** Switch Component */
 export default function Switch({ attributes, onChange }) {
   const { MuiAttributes = {}, MuiFCLAttributes = {}, color = '', id = '' } = attributes;
   const [checked, setChecked] = React.useState(MuiAttributes.defaultChecked || false);
@@ -44,7 +44,7 @@ export default function Switch({ attributes, onChange }) {
 }
 
 Switch.propTypes = {
-  /** Attributes for Typography */
+  /** Attributes for Switch */
   attributes: PropTypes.objectOf(PropTypes.object),
   /** Function */
   onChange: PropTypes.func,
