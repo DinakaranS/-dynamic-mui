@@ -40,12 +40,12 @@ export function FormGenerator(props) {
     const layout = generateLayout(
       updatePatchData(JSON.parse(JSON.stringify(dataObj)), patch, guid),
     );
-    const onUpdate = ({ id, value }) => {
+    const onUpdate = ({ id, value, option }) => {
       try {
         if (isEmpty(response[guid])) response[guid] = patch;
         response[guid][id] = value;
         if (typeof onChange === 'function') {
-          onChange({ id, value });
+          onChange({ id, value, option });
         }
       } catch (e) {
         // eslint-disable-next-line no-console

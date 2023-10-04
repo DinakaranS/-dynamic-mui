@@ -35,7 +35,10 @@ export default function Select({ attributes, onChange }) {
   };
 
   React.useEffect(() => {
-    onChange({ id, value, inputValue });
+    const newValue = MuiAttributes.multiple
+      ? (value || []).map((option) => option.title || option.label || option.value)
+      : inputValue;
+    onChange({ id, value: newValue, option: value });
   }, [value, inputValue]);
 
   return (
