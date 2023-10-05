@@ -34,7 +34,17 @@ export const ClearFormData = (id) => {
 /** FormGenerator */
 export function FormGenerator(props) {
   try {
-    const { data = [], patch = {}, guid, formRef, onSubmit, onChange } = props;
+    const {
+      data = [],
+      patch = {},
+      guid,
+      formRef,
+      onSubmit,
+      onChange,
+      MuiGridAttributes = {
+        spacing: 2,
+      },
+    } = props;
     const config = LIBMap.MUI;
     const dataObj = JSON.parse(JSON.stringify(data));
     const layout = generateLayout(
@@ -55,7 +65,7 @@ export function FormGenerator(props) {
 
     return (
       <>
-        <Grid key={generateKey('layout-grid')} container spacing={2}>
+        <Grid key={generateKey('layout-grid')} container {...MuiGridAttributes}>
           {layout.wrows.map((row) => (
             <>
               {row.map((field, index) => {
@@ -148,6 +158,8 @@ FormGenerator.propTypes = {
   onSubmit: PropTypes.func,
   /** Component On Change Function */
   onChange: PropTypes.func,
+  /** Grid Container Attributes */
+  MuiGridAttributes: PropTypes.objectOf(PropTypes.object),
 };
 
 FormGenerator.defaultProps = {
