@@ -5,7 +5,7 @@ Basic usage
 import {FormGenerator} from "../../FormGenerator";
 import {select} from '../../../data/select';
 
-<FormGenerator data={select} guid="selectbasic"/>
+<FormGenerator data={select} guid="selectbasic" patch={{simpleselect:'ocean'}}/>
 ```
 
 MultiSelect usage

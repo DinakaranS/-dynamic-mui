@@ -12,9 +12,14 @@ import useUpdateEffect from '../../../util/useUpdateEffect';
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
+const getValue = (options = [], defaultValue = '') =>
+  options.find(({ value }) => defaultValue === value);
+
 export default function Select({ attributes, onChange }) {
   const { MuiAttributes = {}, options = [], MuiBoxAttributes = {}, id = '' } = attributes;
-  const [value, setValue] = React.useState();
+  const [value, setValue] = React.useState(
+    attributes?.value && getValue(options, attributes?.value),
+  );
   const [inputValue, setInputValue] = React.useState('');
 
   const getMuiAttributes = () => {

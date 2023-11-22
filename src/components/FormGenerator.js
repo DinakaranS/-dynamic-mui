@@ -48,7 +48,7 @@ export function FormGenerator(props) {
     const config = LIBMap.MUI;
     const dataObj = JSON.parse(JSON.stringify(data));
     const layout = generateLayout(
-      updatePatchData(JSON.parse(JSON.stringify(dataObj)), patch, guid),
+      updatePatchData(JSON.parse(JSON.stringify(dataObj)), patch, guid, response),
     );
     const onUpdate = ({ id, value, option }) => {
       try {

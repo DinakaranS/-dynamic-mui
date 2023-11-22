@@ -15,8 +15,7 @@ import {
   DesktopTimePicker,
   MobileTimePicker,
 } from '@mui/x-date-pickers';
-
-const response = {};
+import React from 'react';
 
 export function generateLayout(data) {
   const layout = {
@@ -73,14 +72,15 @@ export const generateKey = (prefix = '', index = 0) => {
   return `${prefix}_${index}_${random}_${currentTime}`;
 };
 
-export const updatePatchData = (fields, patch, guid) => {
+export const updatePatchData = (fields, patch, guid, response) => {
   response[guid] = patch;
   const formData = Object.assign([], fields);
   // if (isEmpty(patch)) return fields;
   return map(formData, (field) => {
     const newField = { ...field };
-    if (newField.id && response[guid][field.id]) {
-      newField.props.value = response[guid][field.id] || '';
+    const id = newField?.id || newField?.props?.id;
+    if (id && response[guid][id]) {
+      newField.props.value = response[guid][id] || '';
     }
     return newField;
   });
