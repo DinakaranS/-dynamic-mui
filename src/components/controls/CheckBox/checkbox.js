@@ -6,7 +6,9 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 /** CheckBox Component */
 export default function CheckBox({ attributes, onChange }) {
   const { MuiAttributes = {}, MuiFCLAttributes = {}, id = '' } = attributes;
-  const [checked, setChecked] = React.useState(MuiAttributes.defaultChecked || false);
+  const [checked, setChecked] = React.useState(
+    MuiAttributes.defaultChecked || attributes?.value || false,
+  );
 
   const handleChange = (event) => {
     setChecked(event.target.checked);

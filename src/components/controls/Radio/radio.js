@@ -5,6 +5,7 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
+import useUpdateEffect from '../../../util/useUpdateEffect';
 
 /** Radio Component */
 export default function Radio({ attributes, onChange }) {
@@ -17,7 +18,11 @@ export default function Radio({ attributes, onChange }) {
     MuiFCLabels = [],
     MuiFLabel = '',
   } = attributes;
-  const [value, setValue] = React.useState(MuiAttributes.defaultValue || '');
+  const [value, setValue] = React.useState(MuiAttributes.defaultValue || attributes.value || '');
+
+  useUpdateEffect(() => {
+    if (attributes?.value) setValue(attributes?.value);
+  }, [attributes?.value]);
 
   const handleChange = (event) => {
     setValue(event.target.value);

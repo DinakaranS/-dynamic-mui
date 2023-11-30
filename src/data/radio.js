@@ -1,22 +1,31 @@
 export const radioData = [
   {
+    id: 'staggerpenaltytype',
     type: 'radio',
     props: {
-      id: 'radio',
-      MuiAttributes: {
-        defaultValue: 'Female',
-      },
+      id: 'staggerpenaltytype',
+      MuiAttributes: {},
       MuiFCLAttributes: {
         label: '',
       },
-      MuiFCLabels: ['Male', 'Female'],
+      MuiFCLabels: ['Apply penalty now', 'Apply penalty after due date'],
       MuiRGAttributes: { row: true },
     },
     layout: {
-      row: 1,
-      xs: 3,
-      sm: 3,
+      row: 4,
+      xs: 9,
+      sm: 9,
     },
+    onChangeUpdate: [
+      {
+        formula: '({outstandingbalance} + ({outstandingbalance} * 0.10))',
+        patchId: 'newoutstanding',
+      },
+      {
+        formula: '({outstandingbalance} + ({outstandingbalance} * 0.10)) - {outstandingbalance}',
+        patchId: 'penalty',
+      },
+    ],
   },
 ];
 

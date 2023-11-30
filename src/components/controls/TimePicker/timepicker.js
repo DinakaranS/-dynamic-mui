@@ -4,10 +4,18 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import PropTypes from 'prop-types';
 import { DateComponent } from '../../../util/helper';
+import useUpdateEffect from '../../../util/useUpdateEffect';
 
 export default function TimePicker({ attributes, onChange }) {
-  const { MuiAttributes = {}, name = 'TimePicker', id = '' } = attributes;
-  const [value, setValue] = React.useState(new Date());
+  const { MuiAttributes = {}, name = 'TimePicker', id = '', MuiTextAttributes } = attributes;
+
+  const [value, setValue] = React.useState(
+    attributes?.value ? new Date(attributes?.value) : new Date(),
+  );
+
+  useUpdateEffect(() => {
+    if (attributes?.value) setValue(new Date(attributes?.value));
+  }, [attributes?.value]);
 
   const MuiTimePicker = DateComponent(name);
   return (
@@ -19,7 +27,7 @@ export default function TimePicker({ attributes, onChange }) {
           onChange({ id, value: newValue });
         }}
         {...MuiAttributes}
-        renderInput={(params) => <TextField {...params} />}
+        renderInput={(params) => <TextField {...params} {...MuiTextAttributes} />}
       />
     </LocalizationProvider>
   );

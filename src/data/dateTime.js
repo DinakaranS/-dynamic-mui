@@ -3,7 +3,13 @@ export const mui = [
     type: 'datetime',
     props: {
       id: 'datetime',
-      MuiAttributes: { placeholder: 'Standard', fullWidth: true, variant: 'standard' },
+      MuiAttributes: {
+        placeholder: 'Standard',
+        variant: 'standard',
+        fullWidth: true,
+        sx: { width: '100%' },
+      },
+      value: '12/09/2023',
     },
     layout: {
       row: 1,

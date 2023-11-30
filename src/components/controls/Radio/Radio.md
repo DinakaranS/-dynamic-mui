@@ -5,6 +5,6 @@ Basic Radio
 import {FormGenerator} from "../../FormGenerator";
 import {radioData} from '../../../data/radio';
 
-<FormGenerator data={radioData} guid="radio"/>
+<FormGenerator data={radioData} guid="radio" patch={{staggerpenaltytype:'Apply penalty now'}}/>
 ```
 

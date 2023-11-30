@@ -4,7 +4,6 @@ import numeral from 'numeral';
 import MuiTextField from '@mui/material/TextField';
 import { getInputProps } from '../../../util/helper';
 import Validation from '../../../util/validation';
-// import useUpdateEffect from '../../../util/useUpdateEffect';
 
 export default function TextField({ attributes, rules = {}, onChange }) {
   const { MuiAttributes = {}, InputProps = {}, format = '', id = '' } = attributes;
@@ -72,10 +71,6 @@ export default function TextField({ attributes, rules = {}, onChange }) {
     //   helperText: validator.message,
     // });
   };
-
-  // useUpdateEffect(() => {
-  //   onChange({ id, value: textData.value });
-  // }, [textData.value, textData.helperText]);
 
   return (
     <MuiTextField

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
 import isEmpty from 'lodash/isEmpty';
@@ -7,142 +7,104 @@ import mui from '../config/mui';
 import DynamicComponent from './DynamicComponent';
 import { generateLayout, generateKey, updatePatchData } from '../util/helper';
 
-const LIBMap = {
-  MUI: {
-    map: mui,
-  },
-};
-
+const LIBMap = { MUI: { map: mui } };
 const response = {};
 
-const handleSubmit = (callback, data) => {
-  if (typeof callback === 'function') {
-    callback(response, null, data);
-  }
-};
-
-export const FormData = (id) => {
-  if (id) return response[id];
-  return response;
-};
+export const FormData = (id) => (id ? response[id] : response);
 
 export const ClearFormData = (id) => {
-  if (id) delete response[id];
-  else Object.keys(response).map((key) => delete response[key]);
+  const responseKeys = Object.keys(response);
+  if (id) {
+    delete response[id];
+  } else {
+    responseKeys.forEach((key) => delete response[key]);
+  }
 };
 
-/** FormGenerator */
-export function FormGenerator(props) {
-  try {
-    const {
-      data = [],
-      patch = {},
-      guid,
-      formRef,
-      onSubmit,
-      onChange,
-      MuiGridAttributes = {
-        spacing: 2,
-      },
-    } = props;
-    const config = LIBMap.MUI;
-    const dataObj = JSON.parse(JSON.stringify(data));
-    const layout = generateLayout(
-      updatePatchData(JSON.parse(JSON.stringify(dataObj)), patch, guid, response),
-    );
-    const onUpdate = ({ id, value, option }) => {
-      try {
-        if (isEmpty(response[guid])) response[guid] = patch;
-        response[guid][id] = value;
-        if (typeof onChange === 'function') {
-          onChange({ id, value, option });
-        }
-      } catch (e) {
-        // eslint-disable-next-line no-console
-        console.log(e);
+export function FormGenerator({
+  data = [],
+  patch = {},
+  guid,
+  formRef,
+  onSubmit,
+  onChange,
+  MuiGridAttributes = { spacing: 2 },
+}) {
+  const config = LIBMap.MUI;
+  const layout = generateLayout(updatePatchData(data, patch, guid, response));
+
+  const onUpdate = useCallback(
+    ({ id, value, option }) => {
+      if (isEmpty(response[guid])) response[guid] = patch;
+      response[guid][id] = value;
+      if (typeof onChange === 'function') {
+        onChange({ id, value, option });
       }
-    };
+    },
+    [onChange, patch, guid],
+  );
+
+  const handleSubmit = useCallback((submitCallback, formData, formGuid) => {
+    if (typeof submitCallback === 'function') {
+      submitCallback(response, null, formData, formGuid);
+    }
+  }, []);
+
+  const renderDynamicComponent = (field, index) => {
+    const { type = '', style = {}, className = '', visible = false, rules = {} } = field;
+    const cProps = field.props || {};
+    const cLayout = field.layout || {};
+    const configObj = config.map[type] || {};
+    const { options = {} } = configObj;
 
     return (
-      <>
-        <Grid key={generateKey('layout-grid')} container {...MuiGridAttributes}>
-          {layout.wrows.map((row) => (
-            <>
-              {row.map((field, index) => {
-                const {
-                  type = '',
-                  style = {},
-                  className = '',
-                  visible = false,
-                  rules = {},
-                } = field;
-                const cProps = field.props || {};
-                const cLayout = field.layout || {};
-                const configObj = config.map[type] || {};
-                const { options = {} } = configObj;
-                return (
-                  <Grid
-                    key={generateKey('layout-comp', index)}
-                    item
-                    style={style}
-                    {...cLayout}
-                    className={`${className} ${visible === false ? 'hidden' : 'show'}`}
-                  >
-                    <DynamicComponent
-                      key={generateKey('dynamic-comp', index)}
-                      map={configObj.map}
-                      option={options.type || ''}
-                      control={field}
-                      attributes={cProps}
-                      rules={rules}
-                      onChange={onUpdate}
-                    />
-                  </Grid>
-                );
-              })}
-            </>
-          ))}
-        </Grid>
-        {layout.worows.map((field, index) => {
-          const { type = '', style = {}, className = '', visible = false, rules = {} } = field;
-          const configObj = config.map[type] || {};
-          const cProps = field.props;
-          const { options = {} } = configObj;
-          return (
-            <div
-              key={generateKey('layout-comp', index)}
-              style={style}
-              className={`${className} ${visible === false ? 'hidden' : 'show'}`}
-            >
-              <DynamicComponent
-                key={generateKey('dynamic-comp', index)}
-                map={configObj.map}
-                option={options.type || ''}
-                control={field}
-                attributes={cProps}
-                rules={rules}
-                onChange={onUpdate}
-              />
-            </div>
-          );
-        })}
-        <button
-          type="button"
-          ref={formRef}
-          onClick={() => {
-            handleSubmit(onSubmit, data, guid);
-          }}
-          style={{
-            display: 'none',
-          }}
-        >
-          {}
-        </button>
-      </>
+      <Grid
+        key={generateKey('layout-comp', index)}
+        item
+        style={style}
+        {...cLayout}
+        className={`${className} ${visible ? 'show' : 'hidden'}`}
+      >
+        <DynamicComponent
+          key={generateKey('dynamic-comp', index)}
+          map={configObj.map}
+          option={options.type || ''}
+          control={field}
+          attributes={cProps}
+          rules={rules}
+          onChange={onUpdate}
+        />
+      </Grid>
     );
-  } catch (e) {
-    return <div>Error</div>;
-  }
+  };
+
+  return (
+    <>
+      <Grid key={generateKey('layout-grid')} container {...MuiGridAttributes}>
+        {layout.wrows.map((row, rowIndex) => (
+          <React.Fragment key={generateKey('row', rowIndex)}>
+            {row.map(renderDynamicComponent)}
+          </React.Fragment>
+        ))}
+      </Grid>
+      {layout.worows.map((field, index) => (
+        <div
+          key={generateKey('layout-comp', index)}
+          style={field.style || {}}
+          className={`${field.className || ''} ${field.visible ? 'show' : 'hidden'}`}
+        >
+          {renderDynamicComponent(field, index)}
+        </div>
+      ))}
+      <button
+        aria-label="button"
+        type="button"
+        ref={formRef}
+        onClick={() => handleSubmit(onSubmit, data, guid)}
+        style={{ display: 'none' }}
+      />
+    </>
+  );
 }
 
 FormGenerator.propTypes = {
@@ -164,11 +126,12 @@ FormGenerator.propTypes = {
 
 FormGenerator.defaultProps = {
   patch: {},
+  formRef: {},
+  onSubmit: null,
+  onChange: null,
+  MuiGridAttributes: {
+    spacing: 2,
+  },
 };
 
-// eslint-disable-next-line import/no-anonymous-default-export
-export default {
-  FormGenerator,
-  FormData,
-  ClearFormData,
-};
+export default { FormGenerator, FormData, ClearFormData };
