@@ -4,6 +4,7 @@ export const radioData = [
     type: 'radio',
     props: {
       id: 'staggerpenaltytype',
+      value: 'Apply penalty now',
       MuiAttributes: {},
       MuiFCLAttributes: {
         label: '',

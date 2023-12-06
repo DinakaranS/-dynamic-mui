@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import MuiRadio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
@@ -18,11 +18,16 @@ export default function Radio({ attributes, onChange }) {
     MuiFCLabels = [],
     MuiFLabel = '',
   } = attributes;
-  const [value, setValue] = React.useState(MuiAttributes.defaultValue || attributes.value || '');
+  const [value, setValue] = React.useState('');
+
+  useEffect(() => {
+    if (attributes.value || MuiAttributes.defaultValue)
+      setValue(attributes.value || MuiAttributes.defaultValue);
+  }, []);
 
   useUpdateEffect(() => {
-    if (attributes?.value) setValue(attributes?.value);
-  }, [attributes?.value]);
+    setValue(attributes.value);
+  }, [attributes.value]);
 
   const handleChange = (event) => {
     setValue(event.target.value);

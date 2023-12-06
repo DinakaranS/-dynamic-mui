@@ -1,11 +1,11 @@
 {
   "name": "dynamic-mui",
-  "version": "1.0.20",
+  "version": "1.0.30",
   "author": "Dinakaran S",
   "user": "dinakarans",
   "repository": {
     "type": "git",
-    "url": "https://github.com/DinakaranS/-dynamic-mui.git"
+    "url": "git+https://github.com/DinakaranS/-dynamic-mui.git"
   },
   "homepage": "https://github.com/DinakaranS/-dynamic-mui",
   "bugs": {

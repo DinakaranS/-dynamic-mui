@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
 import isEmpty from 'lodash/isEmpty';
@@ -6,6 +6,7 @@ import isEmpty from 'lodash/isEmpty';
 import mui from '../config/mui';
 import DynamicComponent from './DynamicComponent';
 import { generateLayout, generateKey, updatePatchData } from '../util/helper';
+import useUpdateEffect from '../util/useUpdateEffect';
 
 const LIBMap = { MUI: { map: mui } };
 const response = {};
@@ -30,19 +31,27 @@ export function FormGenerator({
   onChange,
   MuiGridAttributes = { spacing: 2 },
 }) {
+  const [newPatch, setNewPatch] = useState(patch);
   const config = LIBMap.MUI;
-  const layout = generateLayout(updatePatchData(data, patch, guid, response));
-
-  const onUpdate = useCallback(
-    ({ id, value, option }) => {
-      if (isEmpty(response[guid])) response[guid] = patch;
-      response[guid][id] = value;
-      if (typeof onChange === 'function') {
-        onChange({ id, value, option });
-      }
-    },
-    [onChange, patch, guid],
+  const layout = useMemo(
+    () => generateLayout(updatePatchData(data, newPatch, guid, response)),
+    [newPatch, data, guid],
   );
+
+  useEffect(() => {
+    if (isEmpty(response[guid])) response[guid] = patch;
+  }, []);
+
+  useUpdateEffect(() => {
+    setNewPatch({ ...patch });
+  }, [patch]);
+
+  const onUpdate = useCallback(({ id, value, option }) => {
+    response[guid][id] = value;
+    if (typeof onChange === 'function') {
+      onChange({ id, value, option });
+    }
+  }, []);
 
   const handleSubmit = useCallback((submitCallback, formData, formGuid) => {
     if (typeof submitCallback === 'function') {
