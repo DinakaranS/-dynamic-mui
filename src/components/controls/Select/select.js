@@ -1,4 +1,4 @@
-/* eslint-disable default-param-last */
+/* eslint-disable default-param-last,react/jsx-no-duplicate-props */
 import React, { useCallback } from 'react';
 import Checkbox from '@mui/material/Checkbox';
 import TextField from '@mui/material/TextField';
@@ -6,7 +6,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import PropTypes from 'prop-types';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
-import { checkboxSX } from '../../../util/helper';
+import { checkboxSX, getInputProps } from '../../../util/helper';
 // import useUpdateEffect from '../../../util/useUpdateEffect';
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
@@ -16,7 +16,13 @@ const getValue = (options = [], defaultValue = '') =>
   options.find(({ value }) => defaultValue === value);
 
 export default function Select({ attributes, onChange }) {
-  const { MuiAttributes = {}, options = [], MuiBoxAttributes = {}, id = '' } = attributes;
+  const {
+    MuiAttributes = {},
+    options = [],
+    MuiBoxAttributes = {},
+    id = '',
+    InputProps = {},
+  } = attributes;
   const [value, setValue] = React.useState(
     attributes?.value && getValue(options, attributes?.value),
   );
@@ -75,6 +81,7 @@ export default function Select({ attributes, onChange }) {
             ...params.inputProps,
             autoComplete: 'new-password',
           }}
+          InputProps={{ ...params.InputProps, ...getInputProps(InputProps) }}
         />
       )}
     />

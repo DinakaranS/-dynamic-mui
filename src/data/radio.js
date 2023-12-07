@@ -6,9 +6,12 @@ export const radioData = [
       id: 'staggerpenaltytype',
       value: 'Apply penalty now',
       MuiAttributes: {},
-      MuiFCLAttributes: {
-        label: '',
+      MuiFLabelIcon: {
+        icon: 'person',
+        MuiFLabelIconAttributes: { sx: { mr: 1, color: 'rgba(0, 0, 0, 0.6)' } },
       },
+      MuiFLabel: 'Account',
+      MuiFCLAttributes: {},
       MuiFCLabels: ['Apply penalty now', 'Apply penalty after due date'],
       MuiRGAttributes: { row: true },
     },
@@ -17,16 +20,6 @@ export const radioData = [
       xs: 9,
       sm: 9,
     },
-    onChangeUpdate: [
-      {
-        formula: '({outstandingbalance} + ({outstandingbalance} * 0.10))',
-        patchId: 'newoutstanding',
-      },
-      {
-        formula: '({outstandingbalance} + ({outstandingbalance} * 0.10)) - {outstandingbalance}',
-        patchId: 'penalty',
-      },
-    ],
   },
 ];
 

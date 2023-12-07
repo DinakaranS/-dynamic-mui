@@ -1,10 +1,12 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import MuiRadio from '@mui/material/Radio';
+import Box from '@mui/material/Box';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
+import { Icon } from '@mui/material';
 import useUpdateEffect from '../../../util/useUpdateEffect';
 
 /** Radio Component */
@@ -17,6 +19,7 @@ export default function Radio({ attributes, onChange }) {
     MuiFLAttributes = {},
     MuiFCLabels = [],
     MuiFLabel = '',
+    MuiFLabelIcon = {},
   } = attributes;
   const [value, setValue] = React.useState('');
 
@@ -34,13 +37,31 @@ export default function Radio({ attributes, onChange }) {
     onChange({ id, value: event.target.value });
   };
 
+  const FLabel = useMemo(() => {
+    if (MuiFLabelIcon && MuiFLabelIcon.icon) {
+      return (
+        <Box sx={{ display: 'flex', width: '100%' }}>
+          {MuiFLabelIcon && MuiFLabelIcon.icon && (
+            <Icon key={MuiFLabelIcon.icon} {...MuiFLabelIcon.MuiFLabelIconAttributes}>
+              {MuiFLabelIcon.icon}
+            </Icon>
+          )}
+          <FormLabel {...MuiFLAttributes} id="radio-buttons-group-label">
+            {MuiFLabel}
+          </FormLabel>
+        </Box>
+      );
+    }
+    return (
+      <FormLabel {...MuiFLAttributes} id="radio-buttons-group-label">
+        {MuiFLabel}
+      </FormLabel>
+    );
+  }, []);
+
   return (
     <FormControl>
-      {MuiFLabel && (
-        <FormLabel {...MuiFLAttributes} id="radio-buttons-group-label">
-          {MuiFLabel}
-        </FormLabel>
-      )}
+      {MuiFLabel && FLabel}
       <RadioGroup
         aria-labelledby="radio-buttons-group-label"
         name="radio-buttons-group"

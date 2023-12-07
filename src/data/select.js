@@ -20,6 +20,11 @@ export const select = [
       MuiBoxAttributes: {
         label: 'Colors',
       },
+      InputProps: {
+        MuiInputAdornment: {},
+        position: 'start',
+        icon: 'account_circle',
+      },
     },
     layout: {
       row: 1,

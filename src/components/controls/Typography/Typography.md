@@ -26,8 +26,16 @@ import {FormGenerator} from "../../FormGenerator";
         MuiAttributes: {
             color: 'secondary',
             variant: 'h6',
-            component: "h2", gutterBottom: true
-        }
+            component: "h2", gutterBottom: true,
+            sx: { m: 1 }
+        },
+      MuiIcon:{
+          icon:'person',
+          MuiIconAttributes:{
+            color: 'secondary',
+            sx: { mt: 1.5 }
+          }
+      }
     },
     layout: {
         xs:12, sm:6, md:12
