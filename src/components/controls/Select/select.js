@@ -58,10 +58,12 @@ export default function Select({ attributes, onChange }) {
 
   const onChangeEvent = useCallback((event, newValue) => {
     setValue(newValue);
-    const data = MuiAttributes.multiple
-      ? (newValue || []).map((option) => option.title || option.label || option.value)
-      : newValue.title || newValue.label || newValue.value;
-    onChange({ id, value: data, option: newValue });
+    if (newValue) {
+      const data = MuiAttributes.multiple
+        ? (newValue || []).map((option) => option?.title || option?.label || option?.value)
+        : newValue?.title || newValue?.label || newValue?.value;
+      onChange({ id, value: data, option: newValue });
+    } else onChange({ id, value: '', options: newValue });
   }, []);
 
   return (

@@ -7,7 +7,7 @@ Basic checkboxes
 import {FormGenerator} from "../../FormGenerator";
 import {checkBox} from '../../../data/checkbox';
 
-<FormGenerator data={checkBox} guid="checkbox"/>
+<FormGenerator data={checkBox} guid="checkbox" />
 ```
 
 Label, Color & Size
@@ -15,5 +15,5 @@ Label, Color & Size
 import {FormGenerator} from "../../FormGenerator";
 import {checkBoxCustom} from '../../../data/checkbox';
 
-<FormGenerator data={checkBoxCustom} guid="checkbox"/>
+<FormGenerator data={checkBoxCustom} guid="checkbox" patch={{testing:false}}/>
 ```

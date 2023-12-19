@@ -71,10 +71,9 @@ export const checkBoxCustom = [
   {
     type: 'checkbox',
     props: {
-      id: 'label',
-      MuiAttributes: {
-        defaultChecked: true,
-      },
+      id: 'testing',
+      value: true,
+      MuiAttributes: {},
       MuiFCLAttributes: {
         label: 'Label',
       },

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import MuiSwitch from '@mui/material/Switch';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import { alpha, experimentalStyled as styled } from '@mui/material/styles';
+import useUpdateEffect from '../../../util/useUpdateEffect';
 
 const ColorSwitch = styled(({ color, ...other }) => <MuiSwitch {...other} />)(({ theme }) => ({
   '& .MuiSwitch-switchBase.Mui-checked': {
@@ -19,7 +20,12 @@ const ColorSwitch = styled(({ color, ...other }) => <MuiSwitch {...other} />)(({
 /** Switch Component */
 export default function Switch({ attributes, onChange }) {
   const { MuiAttributes = {}, MuiFCLAttributes = {}, color = '', id = '' } = attributes;
-  const [checked, setChecked] = React.useState(MuiAttributes.defaultChecked || false);
+  const [checked, setChecked] = React.useState(
+    MuiAttributes.defaultValue || attributes.value || false,
+  );
+  useUpdateEffect(() => {
+    setChecked(attributes.value);
+  }, [attributes.value]);
 
   const handleChange = (event) => {
     setChecked(event.target.checked);

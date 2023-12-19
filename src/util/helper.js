@@ -72,6 +72,18 @@ export const generateKey = (prefix = '', index = 0) => {
   return `${prefix}_${index}_${random}_${currentTime}`;
 };
 
+function isEmptyCustom(value) {
+  return (
+    // null or undefined
+    value == null ||
+    // has length and it's zero
+    // eslint-disable-next-line no-prototype-builtins
+    (value.hasOwnProperty('length') && value.length === 0) ||
+    // is an Object and has no keys
+    (value.constructor === Object && Object.keys(value).length === 0)
+  );
+}
+
 export const updatePatchData = (fields, patch, guid, response) => {
   response[guid] = patch;
   const formData = Object.assign([], fields);
@@ -79,8 +91,10 @@ export const updatePatchData = (fields, patch, guid, response) => {
   return map(formData, (field) => {
     const newField = { ...field };
     const id = newField?.id || newField?.props?.id;
-    if (id && response[guid][id]) {
-      newField.props.value = response[guid][id] || '';
+    if (id && !isEmptyCustom(response[guid][id])) {
+      const defaultValue =
+        newField?.type === 'switch' || newField?.type === 'checkbox' ? false : '';
+      newField.props.value = response[guid][id] || defaultValue;
     }
     return newField;
   });

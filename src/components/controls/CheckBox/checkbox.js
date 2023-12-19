@@ -2,13 +2,18 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import MuiCheckBox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import useUpdateEffect from '../../../util/useUpdateEffect';
 
 /** CheckBox Component */
 export default function CheckBox({ attributes, onChange }) {
   const { MuiAttributes = {}, MuiFCLAttributes = {}, id = '' } = attributes;
   const [checked, setChecked] = React.useState(
-    MuiAttributes.defaultChecked || attributes?.value || false,
+    MuiAttributes.defaultChecked || attributes.value || false,
   );
+
+  useUpdateEffect(() => {
+    setChecked(attributes.value);
+  }, [attributes.value]);
 
   const handleChange = (event) => {
     setChecked(event.target.checked);
