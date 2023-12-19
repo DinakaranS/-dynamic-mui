@@ -4,6 +4,7 @@ const { version } = require('./package.json');
 module.exports = {
   version,
   title: 'Dynamic MUI',
+  // Check for updates in the template structure for v13
   template: {
     favicon: 'https://geoviewer.io/img/favicon.ico',
     head: {
@@ -20,8 +21,8 @@ module.exports = {
     },
   },
   theme: {
+    // Update the theme configuration according to the new theme structure in v13
     color: {
-      // syntax highlighting styles
       codeBackground: '#272C34',
       codeString: '#a6e22e',
       codeKeyword: '#66d9ef',
@@ -33,7 +34,7 @@ module.exports = {
       // base: '#51B64B',
       link: '#FFF',
       linkHover: '#DDD',
-      sidebarBackground: 'rgb(102 153 0)',
+      sidebarBackground: 'rgb(46, 70, 175)',
     },
     fontFamily: {
       base: '"Open Sans", Roboto, Helvetica, Arial, sans-serif',
@@ -52,11 +53,10 @@ module.exports = {
     },
   },
   styles: {
+    // Ensure that custom styles are still compatible with v13
     Logo: {
-      // We're changing the LogoRenderer component
       logo: {
         color: 'white',
-        // We're changing the rsg--logo-XX class name inside the component
         // animation: '$blink ease-in-out 300ms infinite',
       },
       '@keyframes blink': {
@@ -82,6 +82,7 @@ module.exports = {
       sectionDepth: 2,
     },
   ],
-  // Override Styleguidist components
+  // Confirm if styleguideComponents structure is the same in v13
   styleguideComponents: {},
+  // Add any new configuration options introduced in v13
 };
