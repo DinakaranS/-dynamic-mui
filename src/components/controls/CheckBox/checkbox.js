@@ -4,7 +4,7 @@ import MuiCheckBox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import useUpdateEffect from '../../../util/useUpdateEffect';
 
-/** CheckBox Component */
+/** Playground Component */
 export default function CheckBox({ attributes, onChange }) {
   const { MuiAttributes = {}, MuiFCLAttributes = {}, id = '' } = attributes;
   const [checked, setChecked] = React.useState(

@@ -8,6 +8,8 @@ import Select from './Select/select';
 import CheckBox from './CheckBox/checkbox';
 import Switch from './Switch/switch';
 import Radio from './Radio/radio';
+// eslint-disable-next-line import/no-cycle
+import Stepper from './Stepper/stepper';
 
 const Controls = {
   Typography,
@@ -20,6 +22,7 @@ const Controls = {
   CheckBox,
   Switch,
   Radio,
+  Stepper,
 };
 
 export default Controls;

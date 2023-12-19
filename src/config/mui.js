@@ -43,6 +43,10 @@ const mui = {
     type: 'Radio',
     map: 'Radio',
   },
+  stepper: {
+    type: 'Stepper',
+    map: 'Stepper',
+  },
 };
 
 export default mui;

@@ -29,6 +29,7 @@ export function FormGenerator({
   formRef,
   onSubmit,
   onChange,
+  onStepChange,
   MuiGridAttributes = { spacing: 2 },
 }) {
   const [newPatch, setNewPatch] = useState(patch);
@@ -59,6 +60,12 @@ export function FormGenerator({
     }
   }, []);
 
+  const onStepUpdate = (activeStep, isScreenChange, isLastStep) => {
+    if (typeof onStepChange === 'function') {
+      onStepChange(activeStep, isScreenChange, isLastStep);
+    }
+  };
+
   const renderDynamicComponent = (field, index) => {
     const { type = '', style = {}, className = '', visible = false, rules = {} } = field;
     const cProps = field.props || {};
@@ -82,6 +89,7 @@ export function FormGenerator({
           attributes={cProps}
           rules={rules}
           onChange={onUpdate}
+          onStepUpdate={onStepUpdate}
         />
       </Grid>
     );
@@ -129,6 +137,8 @@ FormGenerator.propTypes = {
   onSubmit: PropTypes.func,
   /** Component On Change Function */
   onChange: PropTypes.func,
+  /** Component On Change Function */
+  onStepChange: PropTypes.func,
   /** Grid Container Attributes */
   MuiGridAttributes: PropTypes.objectOf(PropTypes.object),
 };
@@ -138,6 +148,7 @@ FormGenerator.defaultProps = {
   formRef: {},
   onSubmit: null,
   onChange: null,
+  onStepChange: null,
   MuiGridAttributes: {
     spacing: 2,
   },
