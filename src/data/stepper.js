@@ -150,8 +150,8 @@ export const mui = [
       MuiStepContentAttributes: {},
       MuiButtonAttributes: {
         back: {},
-        next: {},
-        final: {},
+        next: { sx: { bgcolor: 'primary.dark' } },
+        final: { sx: { bgcolor: 'success.light' } },
         backLabel: '',
         nextLabel: '',
         finalLabel: '',

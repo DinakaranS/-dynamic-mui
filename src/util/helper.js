@@ -84,20 +84,25 @@ function isEmptyCustom(value) {
   );
 }
 
-export const updatePatchData = (fields, patch, guid, response) => {
-  response[guid] = patch;
-  const formData = Object.assign([], fields);
-  // if (isEmpty(patch)) return fields;
-  return map(formData, (field) => {
-    const newField = { ...field };
-    const id = newField?.id || newField?.props?.id;
-    if (id && !isEmptyCustom(response[guid][id])) {
-      const defaultValue =
-        newField?.type === 'switch' || newField?.type === 'checkbox' ? false : '';
-      newField.props.value = response[guid][id] || defaultValue;
-    }
-    return newField;
-  });
+export const updatePatchData = (fields, patch, guid, response = {}) => {
+  try {
+    response[guid] = patch;
+    const formData = Object.assign([], fields);
+    return map(formData, (field) => {
+      const newField = { ...field };
+      const id = newField?.id || newField?.props?.id;
+      if (id && response[guid] && !isEmptyCustom(response[guid][id])) {
+        const defaultValue =
+          newField?.type === 'switch' || newField?.type === 'checkbox' ? false : '';
+        newField.props.value = response[guid][id] || defaultValue;
+      }
+      return newField;
+    });
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.log(e);
+    return fields;
+  }
 };
 
 export const DateComponent = (name) => {

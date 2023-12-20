@@ -44,7 +44,7 @@ export default function Stepper({ attributes, onChange, onStepUpdate }) {
     dispatch({ type: stepChange });
     onStepUpdate?.(activeStep + (stepChange === 'NEXT_STEP' ? 1 : -1), isScreenChange, isLastStep);
     if (isLastStep) {
-      onChange?.({ id: attributes.id, value: stepperResponse });
+      onChange?.({ id: attributes.id, value: stepperResponse[attributes.id] || {} });
     }
   };
 
@@ -64,7 +64,10 @@ export default function Stepper({ attributes, onChange, onStepUpdate }) {
           handleStepChange('NEXT_STEP', isScreenChange, index === attributes.MuiSteps.length - 1)
         }
         sx={{ mt: 1, mr: 1 }}
-        {...attributes.MuiButtonAttributes.back}
+        {...attributes.MuiButtonAttributes.next}
+        {...(index === attributes.MuiSteps.length - 1 && {
+          ...attributes.MuiButtonAttributes.final,
+        })}
       >
         {index === attributes.MuiSteps.length - 1
           ? attributes.MuiButtonAttributes.finalLabel || 'Finish'
@@ -108,9 +111,9 @@ export default function Stepper({ attributes, onChange, onStepUpdate }) {
                   onUpdate={handleUpdate}
                   components={updatePatchData(
                     step.components,
-                    stepperResponse[attributes.id],
+                    stepperResponse[attributes.id] || {},
                     attributes.id,
-                    stepperResponse,
+                    stepperResponse || {},
                   )}
                 />
               ) : (
