@@ -10,6 +10,10 @@ import Switch from './Switch/switch';
 import Radio from './Radio/radio';
 // eslint-disable-next-line import/no-cycle
 import Stepper from './Stepper/stepper';
+import Bar from '../charts/Bar/bar';
+import Line from '../charts/Line/line';
+import Pie from '../charts/Pie/pie';
+import MixChart from '../charts/Mixchart/mixChart';
 
 const Controls = {
   Typography,
@@ -23,6 +27,10 @@ const Controls = {
   Switch,
   Radio,
   Stepper,
+  Bar,
+  Line,
+  Pie,
+  MixChart,
 };
 
 export default Controls;

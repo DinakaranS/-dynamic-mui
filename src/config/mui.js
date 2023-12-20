@@ -47,6 +47,22 @@ const mui = {
     type: 'Stepper',
     map: 'Stepper',
   },
+  bar: {
+    type: 'Bar',
+    map: 'Bar',
+  },
+  line: {
+    type: 'Line',
+    map: 'Line',
+  },
+  pie: {
+    type: 'Pie',
+    map: 'Pie',
+  },
+  mixchart: {
+    type: 'MixChart',
+    map: 'MixChart',
+  },
 };
 
 export default mui;

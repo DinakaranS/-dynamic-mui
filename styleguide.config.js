@@ -1,10 +1,29 @@
-const path = require('path');
+// eslint-disable-next-line import/no-extraneous-dependencies
+const webpack = require('webpack');
 const { version } = require('./package.json');
 
 module.exports = {
   version,
   title: 'Dynamic MUI',
-  // Check for updates in the template structure for v13
+  dangerouslyUpdateWebpackConfig(config) {
+    config.module.rules.push({
+      test: /.\.md$/,
+      type: 'javascript/auto',
+    });
+    config.plugins.push(
+      new webpack.NormalModuleReplacementPlugin(
+        /react-styleguidist\/lib\/loaders\/utils\/client\/requireInRuntime$/,
+        'react-styleguidist/lib/loaders/utils/client/requireInRuntime',
+      ),
+    );
+    config.plugins.push(
+      new webpack.NormalModuleReplacementPlugin(
+        /react-styleguidist\/lib\/loaders\/utils\/client\/evalInContext$/,
+        'react-styleguidist/lib/loaders/utils/client/evalInContext',
+      ),
+    );
+    return config;
+  },
   template: {
     favicon: 'https://geoviewer.io/img/favicon.ico',
     head: {
@@ -21,7 +40,6 @@ module.exports = {
     },
   },
   theme: {
-    // Update the theme configuration according to the new theme structure in v13
     color: {
       codeBackground: '#272C34',
       codeString: '#a6e22e',
@@ -53,11 +71,9 @@ module.exports = {
     },
   },
   styles: {
-    // Ensure that custom styles are still compatible with v13
     Logo: {
       logo: {
         color: 'white',
-        // animation: '$blink ease-in-out 300ms infinite',
       },
       '@keyframes blink': {
         to: { opacity: 0 },
@@ -65,7 +81,6 @@ module.exports = {
     },
   },
   pagePerSection: true,
-  ignore: ['src/components/controls/index.js'],
   components: 'src/components/controls/**/*.js',
   sections: [
     {
@@ -81,8 +96,13 @@ module.exports = {
       usageMode: 'expand',
       sectionDepth: 2,
     },
+    {
+      name: 'Charts',
+      components: 'src/components/charts/**/*.js',
+      exampleMode: 'expand',
+      usageMode: 'expand',
+      sectionDepth: 2,
+    },
   ],
-  // Confirm if styleguideComponents structure is the same in v13
   styleguideComponents: {},
-  // Add any new configuration options introduced in v13
 };
