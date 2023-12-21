@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import PropTypes from 'prop-types';
+import PropTypes, { number } from 'prop-types';
 import Grid from '@mui/material/Grid';
 import isEmpty from 'lodash/isEmpty';
 
@@ -31,6 +31,7 @@ export function FormGenerator({
   onChange,
   onStepChange,
   MuiGridAttributes = { spacing: 2 },
+  activeStep = 0,
 }) {
   const [newPatch, setNewPatch] = useState(patch);
   const config = LIBMap.MUI;
@@ -60,9 +61,9 @@ export function FormGenerator({
     }
   }, []);
 
-  const onStepUpdate = (activeStep, isScreenChange, isLastStep) => {
+  const onStepUpdate = (currentStep, isScreenChange, isLastStep) => {
     if (typeof onStepChange === 'function') {
-      onStepChange(activeStep, isScreenChange, isLastStep);
+      onStepChange(currentStep, isScreenChange, isLastStep);
     }
   };
 
@@ -90,6 +91,8 @@ export function FormGenerator({
           rules={rules}
           onChange={onUpdate}
           onStepUpdate={onStepUpdate}
+          currentStep={activeStep}
+          patch={patch}
         />
       </Grid>
     );
@@ -141,6 +144,8 @@ FormGenerator.propTypes = {
   onStepChange: PropTypes.func,
   /** Grid Container Attributes */
   MuiGridAttributes: PropTypes.objectOf(PropTypes.object),
+  /** Stepper Active Step */
+  activeStep: number,
 };
 
 FormGenerator.defaultProps = {
@@ -152,6 +157,7 @@ FormGenerator.defaultProps = {
   MuiGridAttributes: {
     spacing: 2,
   },
+  activeStep: 0,
 };
 
 export default { FormGenerator, FormData, ClearFormData };

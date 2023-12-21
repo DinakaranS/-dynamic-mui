@@ -1,5 +1,5 @@
-import React, { useReducer, useCallback } from 'react';
-import PropTypes from 'prop-types';
+import React, { useReducer, useCallback, useEffect } from 'react';
+import PropTypes, { number } from 'prop-types';
 import Box from '@mui/material/Box';
 import MuiStepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
@@ -15,6 +15,8 @@ const initialState = { activeStep: 0, stepperResponse: {} };
 
 function reducer(state, action) {
   switch (action.type) {
+    case 'PATCH_STEP':
+      return { ...state, activeStep: action.currentStep };
     case 'NEXT_STEP':
       return { ...state, activeStep: state.activeStep + 1 };
     case 'PREVIOUS_STEP':
@@ -24,7 +26,7 @@ function reducer(state, action) {
         ...state,
         stepperResponse: {
           ...state.stepperResponse,
-          [action.guid]: { ...state.stepperResponse[action.guid], [action.id]: action.value },
+          [action.id]: action.value,
         },
       };
     }
@@ -33,24 +35,37 @@ function reducer(state, action) {
   }
 }
 
-export default function Stepper({ attributes, onChange, onStepUpdate }) {
+const response = {};
+export default function Stepper({ attributes, onChange, onStepUpdate, currentStep, patch }) {
   const [state, dispatch] = useReducer(reducer, {
     ...initialState,
-    stepperResponse: { [attributes.id]: attributes.value },
+    activeStep: currentStep,
+    stepperResponse: { ...patch },
   });
   const { activeStep, stepperResponse } = state;
+
+  useEffect(() => {
+    response[attributes.id] = { ...patch };
+    // eslint-disable-next-line no-return-assign
+    return () => (response[attributes.id] = {});
+  }, [patch]);
+
+  useEffect(() => {
+    dispatch({ type: 'PATCH_STEP', currentStep });
+  }, [currentStep]);
 
   const handleStepChange = (stepChange, isScreenChange, isLastStep) => {
     dispatch({ type: stepChange });
     onStepUpdate?.(activeStep + (stepChange === 'NEXT_STEP' ? 1 : -1), isScreenChange, isLastStep);
     if (isLastStep) {
-      onChange?.({ id: attributes.id, value: stepperResponse[attributes.id] || {} });
+      onChange?.({ id: attributes.id, value: response });
     }
   };
 
   const handleUpdate = useCallback(
     ({ id, value }) => {
-      dispatch({ type: 'UPDATE_RESPONSE', guid: attributes.id, id, value });
+      response[attributes.id][id] = value;
+      dispatch({ type: 'UPDATE_RESPONSE', id, value });
       onChange?.({ id, value });
     },
     [onChange],
@@ -111,9 +126,9 @@ export default function Stepper({ attributes, onChange, onStepUpdate }) {
                   onUpdate={handleUpdate}
                   components={updatePatchData(
                     step.components,
-                    stepperResponse[attributes.id] || {},
+                    stepperResponse,
                     attributes.id,
-                    stepperResponse || {},
+                    response,
                   )}
                 />
               ) : (
@@ -135,10 +150,16 @@ Stepper.propTypes = {
   onChange: PropTypes.func,
   /** Function */
   onStepUpdate: PropTypes.func,
+  /** Default Step */
+  currentStep: number,
+  /** Default Patch */
+  patch: PropTypes.objectOf(PropTypes.object),
 };
 
 Stepper.defaultProps = {
   attributes: {},
   onChange: null,
   onStepUpdate: null,
+  currentStep: 0,
+  patch: {},
 };

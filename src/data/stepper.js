@@ -10,6 +10,7 @@ export const mui = [
       MuiSteps: [
         {
           label: 'Select Service Request',
+          mandatoryIds: ['servicetype'],
           components: [
             {
               type: 'select',
@@ -33,6 +34,7 @@ export const mui = [
         {
           label: 'Assign Priority',
           isScreenChange: true,
+          mandatoryIds: ['priority'],
           components: [
             {
               type: 'select',
@@ -52,6 +54,7 @@ export const mui = [
         },
         {
           label: 'Choose Schedule In Calendar',
+          mandatoryIds: ['start', 'end'],
           components: [
             {
               id: 'start',
@@ -83,6 +86,7 @@ export const mui = [
         },
         {
           label: 'Assign User',
+          mandatoryIds: ['assigntouser'],
           components: [
             {
               type: 'select',
