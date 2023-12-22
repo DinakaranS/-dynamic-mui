@@ -7,7 +7,6 @@ import { FormGenerator } from "../../FormGenerator";
   type: "bar",
   props: {
     MuiChartAttributes:{
-      width: 500,
       height: 300,
       series:[{ data: [2400, 1398, 9800, 3908, 4800, 3800, 4300], label: "dk", id: "pvId" }],
       xAxis:[{ data: [

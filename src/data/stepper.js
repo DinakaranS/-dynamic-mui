@@ -13,6 +13,20 @@ export const mui = [
           mandatoryIds: ['servicetype'],
           components: [
             {
+              id: 'servicetypeselect',
+              type: 'radio',
+              props: {
+                id: 'servicetypeselect',
+                value: 'Existing',
+                MuiAttributes: {},
+                MuiFLabelIcon: {},
+                MuiFLabel: '',
+                MuiFCLAttributes: {},
+                MuiFCLabels: ['Existing', 'New'],
+                MuiRGAttributes: { row: true },
+              },
+            },
+            {
               type: 'select',
               props: {
                 id: 'servicetype',

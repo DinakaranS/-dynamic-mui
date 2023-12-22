@@ -45,17 +45,6 @@ export default function Select({ attributes, onChange }) {
     return MuiAttributes;
   };
 
-  // useUpdateEffect(() => {
-  //   const newValue = MuiAttributes.multiple
-  //     ? (value || []).map((option) => option.title || option.label || option.value)
-  //     : inputValue;
-  //   onChange({ id, value: newValue, option: value });
-  // }, [value, inputValue]);
-
-  // const onInputChange = useCallback((event, newInputValue) => {
-  //   setInputValue(newInputValue);
-  // }, []);
-
   const onChangeEvent = useCallback((event, newValue) => {
     setValue(newValue);
     if (newValue) {
@@ -73,8 +62,6 @@ export default function Select({ attributes, onChange }) {
       options={options}
       value={value}
       onChange={onChangeEvent}
-      // inputValue={inputValue}
-      // onInputChange={onInputChange}
       renderInput={(params) => (
         <TextField
           {...params}
