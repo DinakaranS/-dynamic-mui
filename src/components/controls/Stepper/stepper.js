@@ -48,7 +48,7 @@ export default function Stepper({ attributes, onChange, onStepUpdate, currentSte
     return () => {
       response[attributes.id] = {}; // Cleanup response on component unmount
       // eslint-disable-next-line no-console
-      console.log('Component unmounted');
+      // console.log('Component unmounted');
     };
   }, [patch, attributes.id]);
 
