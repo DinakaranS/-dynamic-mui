@@ -16,6 +16,7 @@ import {
   MobileTimePicker,
 } from '@mui/x-date-pickers';
 import React from 'react';
+import { deepClone } from '@mui/x-data-grid/utils/utils';
 
 export function generateLayout(data) {
   const layout = {
@@ -89,12 +90,17 @@ export const updatePatchData = (fields, patch, guid, response = {}) => {
     response[guid] = patch;
     const formData = Object.assign([], fields);
     return map(formData, (field) => {
-      const newField = { ...field };
+      const newField = deepClone({ ...field });
       const id = newField?.id || newField?.props?.id;
       if (id && response[guid] && !isEmptyCustom(response[guid][id])) {
         const defaultValue =
           newField?.type === 'switch' || newField?.type === 'checkbox' ? false : '';
-        newField.props.value = response[guid][id] || defaultValue;
+        const isUndefined = response[guid][id] === undefined;
+        newField.props = {
+          ...newField.props,
+          value: isUndefined ? defaultValue || '' : response[guid][id],
+        };
+        // newField.props.value = response[guid][id] || defaultValue;
       }
       return newField;
     });

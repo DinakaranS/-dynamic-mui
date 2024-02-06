@@ -9,7 +9,7 @@ export default function TextField({ attributes, rules = {}, onChange }) {
   const { MuiAttributes = {}, InputProps = {}, format = '', id = '' } = attributes;
 
   const [textData, setTextData] = React.useState({
-    value: attributes.value || '',
+    value: attributes.value !== undefined ? attributes.value : '',
     helperText: MuiAttributes.helperText || '',
     error: false,
   });
