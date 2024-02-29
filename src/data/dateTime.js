@@ -114,6 +114,16 @@ export const timePicker = [
         label: 'Standard',
         fullWidth: true,
         variant: 'standard',
+        disableUnderline: true,
+        // sx: {
+        //   width: '100%',
+        //   '& .MuiInputLabel-root.Mui-focused': { color: '#979797' }, // styles the label
+        //   '& .MuiOutlinedInput-root': {
+        //     '&:hover > fieldset': { borderColor: 'red' },
+        //     height: '48px',
+        //     borderRadius: '8px',
+        //   },
+        // },
       },
     },
     layout: {
