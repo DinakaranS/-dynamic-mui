@@ -7,6 +7,7 @@ import mui from '../config/mui';
 import DynamicComponent from './DynamicComponent';
 import { generateLayout, generateKey, updatePatchData } from '../util/helper';
 import useUpdateEffect from '../util/useUpdateEffect';
+import val from '../util/validation';
 
 const LIBMap = { MUI: { map: mui } };
 const response = {};
@@ -20,6 +21,25 @@ export const ClearFormData = (id) => {
   } else {
     responseKeys.forEach((key) => delete response[key]);
   }
+};
+
+const getAllMandatoryFields = (fields) =>
+  fields?.filter((field) =>
+    field?.rules?.validation?.some((validation) => validation.rule === 'mandatory'),
+  );
+
+const getErrors = (fields, guid) => {
+  const mandatoryFields = getAllMandatoryFields(fields);
+  return mandatoryFields?.reduce((acc, field) => {
+    field?.rules?.validation?.forEach((rule) => {
+      const fieldValue = response[guid][field.id]?.toString();
+      const isClean = fieldValue && val[rule.rule](fieldValue, rule.value);
+      if (!isClean) {
+        acc.push({ ...rule, id: field.id });
+      }
+    });
+    return acc;
+  }, []);
 };
 
 export function FormGenerator({
@@ -57,7 +77,8 @@ export function FormGenerator({
 
   const handleSubmit = useCallback((submitCallback, formData, formGuid) => {
     if (typeof submitCallback === 'function') {
-      submitCallback(response, null, formData, formGuid);
+      const errors = getErrors(formData, formGuid);
+      submitCallback(response, errors, formData, formGuid);
     }
   }, []);
 

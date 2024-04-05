@@ -38,6 +38,7 @@ export const multiSelect = [
     type: 'select',
     props: {
       id: 'multiselect',
+      value: 'ocean,purple',
       MuiAttributes: {
         multiple: true,
         disableCloseOnSelect: true,

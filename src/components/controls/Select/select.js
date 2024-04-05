@@ -12,8 +12,17 @@ import { checkboxSX, getInputProps } from '../../../util/helper';
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
-const getValue = (options = [], defaultValue = '') =>
-  options.find(({ value }) => defaultValue === value);
+const getValue = (options = [], defaultValue = '', isMultiple = false) => {
+  if (isMultiple) {
+    let separator = ',';
+    if (defaultValue.includes(',')) separator = ',';
+    else if (defaultValue.includes(';')) separator = ';';
+    const dValueSet = new Set(defaultValue.split(separator));
+    return options.filter(({ value }) => dValueSet.has(value));
+  }
+
+  return options.find(({ value }) => value === defaultValue);
+};
 
 export default function Select({ attributes, onChange }) {
   const {
@@ -24,9 +33,8 @@ export default function Select({ attributes, onChange }) {
     InputProps = {},
   } = attributes;
   const [value, setValue] = React.useState(
-    attributes?.value && getValue(options, attributes?.value),
+    attributes?.value && getValue(options, attributes?.value, MuiAttributes.multiple),
   );
-  // const [inputValue, setInputValue] = React.useState('');
   const getMuiAttributes = () => {
     if (MuiAttributes.multiple) {
       MuiAttributes.renderOption = (props, option = {}, { selected }) => (
@@ -45,14 +53,14 @@ export default function Select({ attributes, onChange }) {
     return MuiAttributes;
   };
 
+  const extractValue = (option) => option?.title || option?.label || option?.value;
+
   const onChangeEvent = useCallback((event, newValue) => {
     setValue(newValue);
     if (newValue) {
-      const data = MuiAttributes.multiple
-        ? (newValue || []).map((option) => option?.title || option?.label || option?.value)
-        : newValue?.title || newValue?.label || newValue?.value;
+      const data = MuiAttributes.multiple ? newValue.map(extractValue) : extractValue(newValue);
       onChange({ id, value: data, option: newValue });
-    } else onChange({ id, value: '', options: newValue });
+    } else onChange({ id, value: '', option: newValue });
   }, []);
 
   return (
