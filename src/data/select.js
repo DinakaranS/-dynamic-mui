@@ -54,4 +54,48 @@ export const multiSelect = [
       sm: 12,
     },
   },
+  {
+    type: 'select',
+    props: {
+      id: 'billingmode',
+      MuiAttributes: {
+        multiple: true,
+        disableCloseOnSelect: true,
+      },
+      options: [
+        {
+          value: 'SMS',
+          label: 'SMS',
+        },
+        {
+          value: 'E-mail',
+          label: 'E-mail',
+        },
+        {
+          value: 'Printed Statement of Account',
+          label: 'Printed Statement of Account',
+        },
+      ],
+      MuiBoxAttributes: {
+        label: 'Received Billing thru *',
+      },
+      InputProps: {
+        position: 'start',
+        icon: 'class',
+      },
+    },
+    layout: {
+      row: 90,
+      xs: 12,
+      sm: 6,
+    },
+    rules: {
+      validation: [
+        {
+          rule: 'mandatory',
+          message: 'Please select Billing Mode!',
+        },
+      ],
+    },
+  },
 ];

@@ -70,17 +70,38 @@ export default function Select({ attributes, onChange }) {
       options={options}
       value={value}
       onChange={onChangeEvent}
-      renderInput={(params) => (
-        <TextField
-          {...params}
-          {...MuiBoxAttributes}
-          inputProps={{
-            ...params.inputProps,
-            autoComplete: 'new-password',
-          }}
-          InputProps={{ ...params.InputProps, ...getInputProps(InputProps) }}
-        />
-      )}
+      renderInput={(params) => {
+        // Ensure custom adornments are incorporated without overriding other essential props
+        const customInputProps = getInputProps(InputProps);
+        const mergedInputProps = {
+          ...params.InputProps,
+          ...customInputProps,
+          startAdornment: (
+            <>
+              {customInputProps?.startAdornment}
+              {params.InputProps.startAdornment} {/* Render existing adornments such as tags */}
+            </>
+          ),
+          endAdornment: (
+            <>
+              {customInputProps?.endAdornment}
+              {params.InputProps.endAdornment}
+            </>
+          ),
+        };
+
+        return (
+          <TextField
+            {...params}
+            {...MuiBoxAttributes}
+            inputProps={{
+              ...params.inputProps,
+              autoComplete: 'new-password', // Disables browser autocomplete
+            }}
+            InputProps={mergedInputProps}
+          />
+        );
+      }}
     />
   );
 }

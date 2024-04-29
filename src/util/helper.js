@@ -56,7 +56,7 @@ export function getInputProps(InputProps) {
     const { MuiInputAdornment = {}, position = 'start', icon, text, textstyle = {} } = InputProps;
     return {
       [`${position}Adornment`]: (
-        <InputAdornment {...MuiInputAdornment}>
+        <InputAdornment {...MuiInputAdornment} key={`custom-icon-Adornment-${position}`}>
           {icon && <Icon>{icon}</Icon>}
           {!isEmpty(textstyle) ? <div style={textstyle}>{text || ''}</div> : text || ''}
         </InputAdornment>
