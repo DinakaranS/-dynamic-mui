@@ -32,7 +32,7 @@ const getErrors = (fields, guid) => {
   const mandatoryFields = getAllMandatoryFields(fields);
   return mandatoryFields?.reduce((acc, field) => {
     field?.rules?.validation?.forEach((rule) => {
-      const fieldValue = response[guid][field.id]?.toString();
+      const fieldValue = response[guid][field?.id || field?.props?.id]?.toString();
       const isClean = fieldValue && val[rule.rule](fieldValue, rule.value);
       if (!isClean) {
         acc.push({ ...rule, id: field.id });

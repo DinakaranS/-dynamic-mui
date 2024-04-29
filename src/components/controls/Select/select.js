@@ -15,10 +15,10 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
 const getValue = (options = [], defaultValue = '', isMultiple = false) => {
   if (isMultiple) {
     let separator = ',';
-    if (defaultValue.includes(',')) separator = ',';
-    else if (defaultValue.includes(';')) separator = ';';
-    const dValueSet = new Set(defaultValue.split(separator));
-    return options.filter(({ value }) => dValueSet.has(value));
+    if (defaultValue?.includes(',')) separator = ',';
+    else if (defaultValue?.includes(';')) separator = ';';
+    const dValueSet = new Set(defaultValue?.split(separator));
+    return options?.filter(({ value }) => dValueSet?.has(value));
   }
 
   return options.find(({ value }) => value === defaultValue);
@@ -59,7 +59,7 @@ export default function Select({ attributes, onChange }) {
     setValue(newValue);
     if (newValue) {
       const data = MuiAttributes.multiple ? newValue.map(extractValue) : extractValue(newValue);
-      onChange({ id, value: data, option: newValue });
+      onChange({ id, value: MuiAttributes.multiple ? data.toString() : data, option: newValue });
     } else onChange({ id, value: '', option: newValue });
   }, []);
 
