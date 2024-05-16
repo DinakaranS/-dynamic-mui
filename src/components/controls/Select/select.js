@@ -53,7 +53,7 @@ export default function Select({ attributes, onChange }) {
     return MuiAttributes;
   };
 
-  const extractValue = (option) => option?.title || option?.label || option?.value;
+  const extractValue = (option) => option?.value || option?.title || option?.label;
 
   const onChangeEvent = useCallback((event, newValue) => {
     setValue(newValue);

@@ -4,10 +4,10 @@ import MuiTypography from '@mui/material/Typography';
 import { Icon, Box } from '@mui/material';
 /** Typography Component */
 export default function Typography({ attributes }) {
-  const { MuiAttributes = {}, text = '', MuiIcon = {}, value = '' } = attributes;
+  const { MuiAttributes = {}, text = '', MuiIcon = {}, value = '', MuiBox = {} } = attributes;
   if (MuiIcon && MuiIcon.icon) {
     return (
-      <Box sx={{ display: 'flex', width: '100%' }}>
+      <Box sx={{ display: 'flex', width: '100%' }} {...MuiBox}>
         <Icon key={MuiIcon.icon} {...MuiIcon.MuiIconAttributes}>
           {MuiIcon.icon}
         </Icon>
