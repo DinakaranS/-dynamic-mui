@@ -117,11 +117,12 @@ export default function Stepper({ attributes, onChange, onStepUpdate, currentSte
     [onChange],
   );
 
-  const renderStepButtons = (index, isScreenChange) => (
+  const renderStepButtons = (index, isScreenChange, mandatoryIds = []) => (
     <Box sx={{ mb: 2 }}>
       <Button
         variant="contained"
         onClick={() => handleStepChange('NEXT_STEP', isScreenChange, index === MuiSteps.length - 1)}
+        disabled={mandatoryIds.some((id) => !patch[id])}
         sx={{ mt: 1, mr: 1 }}
         {...attributes.MuiButtonAttributes.next}
         {...(index === MuiSteps.length - 1 && { ...attributes.MuiButtonAttributes.final })}
@@ -172,7 +173,7 @@ export default function Stepper({ attributes, onChange, onStepUpdate, currentSte
               ) : (
                 <Typography>{step.description}</Typography>
               )}
-              {renderStepButtons(index, step.isScreenChange)}
+              {renderStepButtons(index, step.isScreenChange, step.mandatoryIds)}
             </StepContent>
           </Step>
         ))}

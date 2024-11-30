@@ -7,7 +7,6 @@ import PropTypes from 'prop-types';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import { checkboxSX, getInputProps } from '../../../util/helper';
-// import useUpdateEffect from '../../../util/useUpdateEffect';
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
@@ -94,11 +93,12 @@ export default function Select({ attributes, onChange }) {
           <TextField
             {...params}
             {...MuiBoxAttributes}
-            inputProps={{
-              ...params.inputProps,
-              autoComplete: 'new-password', // Disables browser autocomplete
+            slotProps={{
+              input: {
+                ...mergedInputProps,
+                autoComplete: 'new-password',
+              },
             }}
-            InputProps={mergedInputProps}
           />
         );
       }}
