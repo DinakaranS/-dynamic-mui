@@ -122,7 +122,7 @@ export default function Stepper({ attributes, onChange, onStepUpdate, currentSte
       <Button
         variant="contained"
         onClick={() => handleStepChange('NEXT_STEP', isScreenChange, index === MuiSteps.length - 1)}
-        disabled={mandatoryIds.some((id) => !patch[id])}
+        disabled={mandatoryIds.some((id) => !response[attributes.id][id])}
         sx={{ mt: 1, mr: 1 }}
         {...attributes.MuiButtonAttributes.next}
         {...(index === MuiSteps.length - 1 && { ...attributes.MuiButtonAttributes.final })}
