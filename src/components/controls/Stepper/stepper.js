@@ -13,54 +13,47 @@ import {
 import StepperComponents from '../../../util/stepperComponents';
 import { updatePatchData } from '../../../util/helper';
 
+// Initial State
 const initialState = { activeStep: 0, stepperResponse: {}, MuiSteps: [] };
-const response = {}; // Reintegrated response object
 
+// Reducer Logic
 const reducer = (state, action) => {
-  switch (action.type) {
+  const { type, payload } = action;
+  switch (type) {
     case 'SET_STEPS':
-      return { ...state, MuiSteps: action.MuiSteps };
+      return { ...state, MuiSteps: payload.MuiSteps };
     case 'SET_STEP':
-      return { ...state, activeStep: action.currentStep };
-    case 'NEXT_STEP':
-      return { ...state, activeStep: state.activeStep + 1 };
-    case 'PREVIOUS_STEP':
-      return { ...state, activeStep: state.activeStep - 1 };
+      return { ...state, activeStep: payload.currentStep };
     case 'UPDATE_RESPONSE':
-      return { ...state, stepperResponse: { ...state.stepperResponse, [action.id]: action.value } };
+      return {
+        ...state,
+        stepperResponse: { ...state.stepperResponse, [payload.id]: payload.value },
+      };
+    case 'CHANGE_STEP':
+      return { ...state, activeStep: state.activeStep + payload.stepChange };
     default:
       return state;
   }
 };
 
-export default function Stepper({ attributes, onChange, onStepUpdate, currentStep, patch }) {
-  const [state, dispatch] = useReducer(reducer, initialState, (init) => ({
-    ...init,
+function Stepper({ attributes, onChange, onStepUpdate, currentStep, patch }) {
+  const [state, dispatch] = useReducer(reducer, initialState, () => ({
     activeStep: currentStep,
     stepperResponse: patch,
-    MuiSteps: [...attributes.MuiSteps],
+    MuiSteps: attributes.MuiSteps || [],
   }));
 
   const { activeStep, stepperResponse, MuiSteps } = state;
 
   useEffect(() => {
-    response[attributes.id] = patch; // Update response on patch change
-    return () => {
-      response[attributes.id] = {}; // Cleanup response on component unmount
-      // eslint-disable-next-line no-console
-      // console.log('Component unmounted');
-    };
-  }, [patch, attributes.id]);
-
-  useEffect(() => {
-    dispatch({ type: 'SET_STEP', currentStep });
+    dispatch({ type: 'SET_STEP', payload: { currentStep } });
   }, [currentStep]);
 
   const handleStepChange = useCallback(
     (stepChange, isScreenChange, isLastStep) => {
-      dispatch({ type: stepChange });
-      const newStep = activeStep + (stepChange === 'NEXT_STEP' ? 1 : -1);
-      onStepUpdate?.(newStep, isScreenChange && stepChange === 'NEXT_STEP', isLastStep);
+      dispatch({ type: 'CHANGE_STEP', payload: { stepChange } });
+      const newStep = activeStep + stepChange;
+      onStepUpdate?.(newStep, isScreenChange && stepChange > 0, isLastStep);
       if (isLastStep) {
         onChange?.({ id: attributes.id, value: stepperResponse });
       }
@@ -70,59 +63,26 @@ export default function Stepper({ attributes, onChange, onStepUpdate, currentSte
 
   const handleUpdate = useCallback(
     ({ id, value }) => {
-      response[attributes.id][id] = value;
-      dispatch({ type: 'UPDATE_RESPONSE', id, value });
+      dispatch({ type: 'UPDATE_RESPONSE', payload: { id, value } });
       onChange?.({ id, value });
-      // let updateUI = false;
-      // const newMuiSteps = MuiSteps.map((step) => {
-      //   let newComponents = step.components || [];
-      //   const fElement = newComponents?.find(
-      //     (component) => component?.id === id || component?.props?.id === id,
-      //   );
-      //   if (fElement && fElement.onChangeUpdate) {
-      //     fElement.onChangeUpdate.forEach(({ enableDisableConfig, patchId, replaceUiConfig }) => {
-      //       if (enableDisableConfig) {
-      //         let disableElement = newComponents.find(
-      //           (k) => k.id === patchId || k?.props?.id === patchId,
-      //         );
-      //         if (disableElement && disableElement?.props?.MuiAttributes) {
-      //           disableElement = {
-      //             ...disableElement,
-      //             props: {
-      //               ...disableElement?.props,
-      //               MuiAttributes: {
-      //                 ...disableElement?.props?.MuiAttributes,
-      //                 disabled: enableDisableConfig[value],
-      //               },
-      //             },
-      //           };
-      //           newComponents = newComponents.filter((k) => k?.props?.id !== patchId);
-      //           newComponents.push(disableElement);
-      //           updateUI = true;
-      //         }
-      //       }
-      //       if (replaceUiConfig) {
-      //         newComponents = newComponents.filter((k) => k?.props?.id !== patchId);
-      //         newComponents.push(replaceUiConfig);
-      //         updateUI = true;
-      //       }
-      //     });
-      //   }
-      //   return { ...step, components: newComponents };
-      // });
-      // if (updateUI) {
-      //   dispatch({ type: 'SET_STEPS', MuiSteps: newMuiSteps });
-      // }
     },
     [onChange],
   );
 
-  const renderStepButtons = (index, isScreenChange, mandatoryIds = []) => (
+  const isDisabled = (mandatoryIds = [], optionalMandatoryIds = []) =>
+    mandatoryIds.some((id) => !stepperResponse[id]) ||
+    optionalMandatoryIds.some(
+      (item) =>
+        stepperResponse[item.key] === item.value &&
+        item.mandatoryIds.some((id) => !stepperResponse[id]),
+    );
+
+  const renderButtons = (index, isScreenChange, mandatoryIds, optionalMandatoryIds) => (
     <Box sx={{ mb: 2 }}>
       <Button
         variant="contained"
-        onClick={() => handleStepChange('NEXT_STEP', isScreenChange, index === MuiSteps.length - 1)}
-        disabled={mandatoryIds.some((id) => !response[attributes.id][id])}
+        onClick={() => handleStepChange(1, isScreenChange, index === MuiSteps.length - 1)}
+        disabled={isDisabled(mandatoryIds, optionalMandatoryIds)}
         sx={{ mt: 1, mr: 1 }}
         {...attributes.MuiButtonAttributes.next}
         {...(index === MuiSteps.length - 1 && { ...attributes.MuiButtonAttributes.final })}
@@ -131,7 +91,7 @@ export default function Stepper({ attributes, onChange, onStepUpdate, currentSte
       </Button>
       <Button
         disabled={index === 0}
-        onClick={() => handleStepChange('PREVIOUS_STEP', isScreenChange, false)}
+        onClick={() => handleStepChange(-1, isScreenChange, false)}
         sx={{ mt: 1, mr: 1 }}
         {...attributes.MuiButtonAttributes.back}
       >
@@ -163,17 +123,17 @@ export default function Stepper({ attributes, onChange, onStepUpdate, currentSte
               {step.components ? (
                 <StepperComponents
                   onUpdate={handleUpdate}
-                  components={updatePatchData(
-                    step.components,
-                    stepperResponse,
-                    attributes.id,
-                    response,
-                  )}
+                  components={updatePatchData(step.components, stepperResponse)}
                 />
               ) : (
                 <Typography>{step.description}</Typography>
               )}
-              {renderStepButtons(index, step.isScreenChange, step.mandatoryIds)}
+              {renderButtons(
+                index,
+                step.isScreenChange,
+                step.mandatoryIds,
+                step.optionalMandatoryIds,
+              )}
             </StepContent>
           </Step>
         ))}
@@ -182,6 +142,7 @@ export default function Stepper({ attributes, onChange, onStepUpdate, currentSte
   );
 }
 
+// PropTypes Definition
 Stepper.propTypes = {
   attributes: PropTypes.shape({
     id: PropTypes.string.isRequired,
@@ -191,6 +152,8 @@ Stepper.propTypes = {
         description: PropTypes.string,
         isScreenChange: PropTypes.bool,
         components: PropTypes.array,
+        mandatoryIds: PropTypes.array,
+        optionalMandatoryIds: PropTypes.array,
       }),
     ).isRequired,
     MuiButtonAttributes: PropTypes.object,
@@ -206,10 +169,13 @@ Stepper.propTypes = {
   patch: PropTypes.object,
 };
 
+// Default Props
 Stepper.defaultProps = {
   attributes: {},
-  currentStep: 0,
-  patch: {},
   onChange: () => {},
   onStepUpdate: () => {},
+  currentStep: 0,
+  patch: {},
 };
+
+export default Stepper;

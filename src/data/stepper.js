@@ -118,6 +118,7 @@ export const mui = [
         },
         {
           label: 'Determine Cost',
+          optionalMandatoryIds: [{ key: 'determinecost', value: 'Assign', mandatoryIds: ['cost'] }],
           components: [
             {
               id: 'determinecost',
