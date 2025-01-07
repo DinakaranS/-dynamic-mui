@@ -1,4 +1,4 @@
-import { remove, clone, map, uniq, sortBy, each } from 'lodash';
+import { remove, clone, map, uniq, sortBy, each, cloneDeep } from 'lodash';
 import isEmpty from 'lodash/isEmpty';
 import { Icon, InputAdornment } from '@mui/material';
 import {
@@ -16,7 +16,6 @@ import {
   MobileTimePicker,
 } from '@mui/x-date-pickers';
 import React from 'react';
-import { deepClone } from '@mui/x-data-grid/utils/utils';
 
 export function generateLayout(data) {
   const layout = {
@@ -85,29 +84,67 @@ function isEmptyCustom(value) {
   );
 }
 
-export const updatePatchData = (fields, patch, guid, response = {}) => {
+export const updatePatchData = (fields, patch, guid, response = {}, enableDisableIds = []) => {
   try {
+    // Update response with the patch for the provided GUID
     response[guid] = patch;
-    const formData = Object.assign([], fields);
-    return map(formData, (field) => {
-      const newField = deepClone({ ...field });
+
+    // Map and update fields with response data
+    const updatedFields = map(fields, (field) => {
+      const newField = cloneDeep(field);
       const id = newField?.id || newField?.props?.id;
+
       if (id && response[guid] && !isEmptyCustom(response[guid][id])) {
-        const defaultValue =
-          newField?.type === 'switch' || newField?.type === 'checkbox' ? false : '';
-        const isUndefined = response[guid][id] === undefined;
+        const defaultValue = ['switch', 'checkbox'].includes(newField?.type) ? false : '';
         newField.props = {
           ...newField.props,
-          value: isUndefined ? defaultValue || '' : response[guid][id],
+          value: response[guid][id] === undefined ? defaultValue : response[guid][id],
         };
-        // newField.props.value = response[guid][id] || defaultValue;
       }
       return newField;
     });
-  } catch (e) {
+
+    // Handle enable/disable logic
+    if (enableDisableIds.length > 0) {
+      enableDisableIds.forEach(({ key, disableIds, compareValues = {} }) => {
+        const controllingField = updatedFields.find(
+          (field) => field?.id === key || field?.props?.id === key,
+        );
+
+        if (controllingField) {
+          const disabled = compareValues[controllingField?.props?.value];
+
+          disableIds.forEach((patchId) => {
+            const targetFieldIndex = updatedFields.findIndex(
+              (field) => field?.id === patchId || field?.props?.id === patchId,
+            );
+
+            if (targetFieldIndex !== -1) {
+              const tElement = updatedFields[targetFieldIndex];
+              const id = tElement?.id || tElement?.props?.id;
+              response[guid][id] = disabled ? '' : response[guid][id];
+              updatedFields[targetFieldIndex] = {
+                ...updatedFields[targetFieldIndex],
+                props: {
+                  ...updatedFields[targetFieldIndex].props,
+                  value: disabled ? '' : updatedFields[targetFieldIndex]?.props?.value,
+                  MuiAttributes: {
+                    ...updatedFields[targetFieldIndex].props?.MuiAttributes,
+                    disabled,
+                  },
+                },
+              };
+            }
+          });
+        }
+      });
+    }
+
+    return updatedFields;
+  } catch (error) {
     // eslint-disable-next-line no-console
-    console.log(e);
-    return fields;
+    console.error('Error updating patch data:', error);
+    return fields; // Return original fields on error
   }
 };
 

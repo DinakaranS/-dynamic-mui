@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import PropTypes, { number } from 'prop-types';
-import Grid from '@mui/material/Grid';
+import { Grid2 as Grid } from '@mui/material';
 import isEmpty from 'lodash/isEmpty';
 
 import mui from '../config/mui';

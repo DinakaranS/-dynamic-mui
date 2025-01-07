@@ -123,7 +123,13 @@ function Stepper({ attributes, onChange, onStepUpdate, currentStep, patch }) {
               {step.components ? (
                 <StepperComponents
                   onUpdate={handleUpdate}
-                  components={updatePatchData(step.components, stepperResponse)}
+                  components={updatePatchData(
+                    step.components,
+                    stepperResponse,
+                    '',
+                    {},
+                    step.enableDisableIds,
+                  )}
                 />
               ) : (
                 <Typography>{step.description}</Typography>

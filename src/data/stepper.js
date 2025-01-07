@@ -30,7 +30,7 @@ export const mui = [
               type: 'select',
               props: {
                 id: 'servicetype',
-                MuiAttributes: { required: true },
+                MuiAttributes: { required: true, fullWidth: true },
                 options: [
                   { value: 'New Installation', label: 'New Installation' },
                   { value: 'Change Classification', label: 'Change Classification' },
@@ -119,6 +119,13 @@ export const mui = [
         {
           label: 'Determine Cost',
           optionalMandatoryIds: [{ key: 'determinecost', value: 'Assign', mandatoryIds: ['cost'] }],
+          enableDisableIds: [
+            {
+              key: 'determinecost',
+              disableIds: ['cost'],
+              compareValues: { Skip: true, Assign: false },
+            },
+          ],
           components: [
             {
               id: 'determinecost',
@@ -139,7 +146,7 @@ export const mui = [
               type: 'textfield',
               props: {
                 id: 'cost',
-                MuiAttributes: {},
+                MuiAttributes: { fullWidth: true },
               },
             },
           ],
@@ -153,6 +160,7 @@ export const mui = [
               props: {
                 id: 'description',
                 MuiAttributes: {
+                  fullWidth: true,
                   multiline: true,
                   rows: 3,
                 },
