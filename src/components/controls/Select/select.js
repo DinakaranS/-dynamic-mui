@@ -64,11 +64,21 @@ export default function Select({ attributes, onChange }) {
 
   return (
     <Autocomplete
+      disablePortal={false}
       {...getMuiAttributes()}
-      disablePortal
       options={options}
       value={value}
       onChange={onChangeEvent}
+      PopperProps={{
+        modifiers: [
+          {
+            name: 'preventOverflow',
+            options: {
+              boundary: 'window',
+            },
+          },
+        ],
+      }}
       renderInput={(params) => {
         // Ensure custom adornments are incorporated without overriding other essential props
         const customInputProps = getInputProps(InputProps);
