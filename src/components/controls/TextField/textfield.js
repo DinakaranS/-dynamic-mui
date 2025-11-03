@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-duplicate-props */
 import React from 'react';
 import PropTypes from 'prop-types';
 import numeral from 'numeral';
@@ -24,58 +25,82 @@ export default function TextField({ attributes, rules = {}, onChange }) {
         const data = validation[i];
         isValid = Validation[data.rule](value, data.value);
         if (!isValid) {
-          return {
-            isValid: false,
-            message: data.message,
-          };
+          return { isValid: false, message: data.message };
         }
       }
     }
-    return {
-      isValid: true,
-      message: '',
-    };
+    return { isValid: true, message: '' };
   };
 
   const handleOnChange = (...args) => {
     const { value } = args[0].target;
-    // const formatValue = value ? getValue(value) : '';
     const validator = validate(value);
-    setTextData({
-      value,
-      helperText: validator.message,
-      error: !validator.isValid,
-    });
+    setTextData({ value, helperText: validator.message, error: !validator.isValid });
   };
 
   const handleOnBlur = (...args) => {
     const { value } = args[0].target;
     const formatValue = getValue(value);
     const validator = validate(formatValue);
-    setTextData({
-      value: formatValue,
-      helperText: validator.message,
-      error: !validator.isValid,
-    });
-    if (typeof onChange === 'function') {
-      onChange({ id, value: formatValue });
-    }
+    setTextData({ value: formatValue, helperText: validator.message, error: !validator.isValid });
+    if (typeof onChange === 'function') onChange({ id, value: formatValue });
   };
 
-  const handleOnFocus = () => {
-    // const { value } = args[0].target;
-    // const formatValue = getValue(value);
-    // const validator = validate(formatValue);
-    // setTextData({
-    //   value: formatValue,
-    //   helperText: validator.message,
-    // });
+  const handleOnFocus = () => {};
+
+  // Wheel-block for numeric inputs
+  const isNumberType =
+    MuiAttributes?.type === 'number' ||
+    attributes?.type === 'number' ||
+    MuiAttributes?.inputMode === 'numeric';
+
+  const onWheelBlock = (e) => {
+    const el = e.currentTarget;
+    el.blur();
+    setTimeout(() => el.focus(), 0);
   };
+
+  // Build merged input props we want to ensure exist
+  const ourInputProps = {
+    ...(isNumberType ? { onWheel: onWheelBlock } : {}),
+    inputMode:
+      (MuiAttributes?.inputProps && MuiAttributes.inputProps.inputMode) ||
+      (MuiAttributes?.slotProps?.input && MuiAttributes.slotProps.input.inputMode) ||
+      'numeric',
+  };
+
+  const isV6 = !!MuiAttributes?.slotProps;
+
+  const baseAttrs = { ...MuiAttributes };
+
+  let finalInputProps;
+  let finalSlotProps;
+
+  if (isV6) {
+    const existingSlotInput = (MuiAttributes.slotProps && MuiAttributes.slotProps.input) || {};
+    finalSlotProps = {
+      ...(MuiAttributes.slotProps || {}),
+      input: {
+        ...existingSlotInput,
+        ...ourInputProps,
+      },
+    };
+    delete baseAttrs.slotProps;
+  } else {
+    const existingInputProps = MuiAttributes.inputProps || {};
+    finalInputProps = {
+      ...existingInputProps,
+      ...ourInputProps,
+    };
+    delete baseAttrs.inputProps;
+  }
 
   return (
     <MuiTextField
       fullWidth
-      {...MuiAttributes}
+      {...baseAttrs}
+      inputProps={!isV6 ? finalInputProps : undefined}
+      slotProps={isV6 ? finalSlotProps : undefined}
       InputProps={getInputProps(InputProps)}
       onChange={handleOnChange}
       onBlur={handleOnBlur}
@@ -88,11 +113,8 @@ export default function TextField({ attributes, rules = {}, onChange }) {
 }
 
 TextField.propTypes = {
-  /** Attributes for TextField */
   attributes: PropTypes.objectOf(PropTypes.object),
-  /** Rules to be used */
   rules: PropTypes.objectOf(PropTypes.array),
-  /** Function */
   onChange: PropTypes.func,
 };
 TextField.defaultProps = {

@@ -1,7 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import { ResponsiveChartContainer } from '@mui/x-charts/ResponsiveChartContainer';
+import { ChartContainer } from '@mui/x-charts/ChartContainer';
 import { LinePlot } from '@mui/x-charts/LineChart';
 import { BarPlot } from '@mui/x-charts/BarChart';
 import { ChartsXAxis } from '@mui/x-charts/ChartsXAxis';
@@ -20,7 +20,7 @@ export default function MixChart({ attributes }) {
   } = attributes;
   return (
     <Box sx={{ width: '100%', maxWidth: 600 }} key={id} {...MuiBoxAttributes}>
-      <ResponsiveChartContainer
+      <ChartContainer
         sx={{
           [`.${axisClasses.left} .${axisClasses.label}`]: {
             transform: 'translate(-25px, 0)',
@@ -36,7 +36,7 @@ export default function MixChart({ attributes }) {
         <LinePlot />
         <ChartsXAxis {...MuiChartXAxisAttributes} />
         <ChartsYAxis {...MuiChartYAxisAttributes} />
-      </ResponsiveChartContainer>
+      </ChartContainer>
     </Box>
   );
 }

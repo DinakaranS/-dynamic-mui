@@ -18,30 +18,48 @@ import {
 import React from 'react';
 
 export function generateLayout(data) {
-  const layout = {
-    wrows: [],
-    worows: [],
-  };
-  // All Items
+  const layout = { wrows: [], worows: [] };
   const wrows = clone(data);
-  // Remove Without Rows
-  layout.worows = remove(wrows, (item) => {
+
+  // Items without a row -> worows
+  const removed = remove(wrows, (item) => {
     const isLayout = item.layout ? item.layout.row : item.layout;
     return isLayout === undefined;
-  }); // Concat all items without rows
+  });
 
-  // All row indices
+  // Create a new item with MUI v7-friendly layout.size (no param reassign)
+  const normalizeItem = (it) => {
+    const l = it.layout ?? {};
+    const computedSize = (() => {
+      if (l.size && typeof l.size === 'object') return l.size;
+      const s = {};
+      if (l.xs != null) s.xs = l.xs;
+      if (l.sm != null) s.sm = l.sm;
+      if (l.md != null) s.md = l.md;
+      if (l.lg != null) s.lg = l.lg;
+      if (l.xl != null) s.xl = l.xl;
+      return Object.keys(s).length ? s : { xs: 12 };
+    })();
+
+    // strip legacy breakpoint keys; keep everything else on layout
+    const { xs, sm, md, lg, xl, size, ...restLayout } = l;
+    const normalizedLayout = { ...restLayout, size: size ?? computedSize };
+
+    return { ...it, layout: normalizedLayout };
+  };
+
+  layout.worows = removed.map(normalizeItem);
+
+  // Group remaining items by row
   const rowIndex = map(wrows, 'layout.row');
   const uniqIndex = uniq(rowIndex);
   const sortedIndex = sortBy(uniqIndex);
 
   each(sortedIndex, (value) => {
     const rows = [];
-    each(wrows, (item) => {
-      if (item.layout) {
-        if (item.layout.row === value) {
-          rows.push(item);
-        }
+    each(wrows, (it) => {
+      if (it.layout && it.layout.row === value) {
+        rows.push(normalizeItem(it));
       }
     });
     layout.wrows.push(rows);
