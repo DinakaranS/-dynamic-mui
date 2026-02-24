@@ -23,6 +23,10 @@ export interface FormField {
     style?: CSSProperties;
     className?: string;
     rules?: any;
+    subforms?: {
+        conditionValue: any;
+        data: FormField[];
+    }[];
     [key: string]: any;
 }
 export interface LayoutResult {

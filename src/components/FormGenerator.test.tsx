@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { createRef } from 'react';
 import { FormGenerator } from './FormGenerator';
@@ -74,8 +74,10 @@ describe('FormGenerator Integration', () => {
         const nameInputAfterPatch = screen.getByLabelText(/Full Name/i) as HTMLInputElement;
         const agreeCheckboxAfterPatch = screen.getByLabelText(/I Agree/i) as HTMLInputElement;
 
-        expect(nameInputAfterPatch.value).toBe('Jane Smith');
-        expect(agreeCheckboxAfterPatch.checked).toBe(true);
+        await waitFor(() => {
+            expect(nameInputAfterPatch.value).toBe('Jane Smith');
+            expect(agreeCheckboxAfterPatch.checked).toBe(true);
+        });
 
         // 3. Test Interaction (onChange)
         // Use the new inputs

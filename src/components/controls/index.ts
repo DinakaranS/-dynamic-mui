@@ -25,6 +25,7 @@ import Accordion from './Accordion/accordion';
 import Tabs from './Tabs/tabs';
 import AutoComplete from './Autocomplete/autocomplete';
 import ImgList from './ImageList/imagelist';
+import Hyperlink from './Hyperlink/hyperlink';
 
 const Controls = {
     Typography,
@@ -52,7 +53,8 @@ const Controls = {
     Accordion,
     Tabs,
     AutoComplete,
-    ImgList
+    ImgList,
+    Hyperlink
 };
 
 export default Controls;

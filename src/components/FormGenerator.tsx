@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Grid, GridProps } from '@mui/material';
+import { Grid, GridProps, Box } from '@mui/material';
 import isEmpty from 'lodash/isEmpty';
 
 // eslint-disable-next-line import/no-cycle
@@ -91,6 +91,7 @@ export function FormGenerator({
     onFieldContextMenu,
 }: FormGeneratorProps) {
     const [newPatch, setNewPatch] = useState(patch);
+    const [renderTrigger, setRenderTrigger] = useState(0);
     const config = LIBMap.MUI;
     const layout = useMemo(
         () => generateLayout(updatePatchData(data, newPatch, guid, response)),
@@ -108,6 +109,10 @@ export function FormGenerator({
     const onUpdate = useCallback(({ id, value, option }: any) => {
         if (!response[guid]) response[guid] = {};
         response[guid][id] = value;
+
+        // Trigger re-render to evaluate dynamic subforms and UI rules
+        setRenderTrigger((prev) => prev + 1);
+
         if (typeof onChange === 'function') {
             onChange({ id, value, option });
         }
@@ -127,18 +132,30 @@ export function FormGenerator({
     };
 
     const renderDynamicComponent = (field: FormField, index: number) => {
-        const { type = '', style = {}, className = '', visible = false, rules = {} } = field;
+        const { type = '', style = {}, className = '', visible = false, rules = {}, subforms = [] } = field;
         const cProps = field.props || {};
         const cLayout = field.layout || {};
+        const fieldId = field?.id || cProps?.id;
         // @ts-ignore
         const configObj = config.map[type] || {};
         const { options = {} } = configObj;
+
+        // Find if any subform condition matches the current value
+        const currentValue = fieldId ? response[guid]?.[fieldId] : undefined;
+        const matchedSubform = subforms.find((sub) => {
+            // Handle arrays (e.g., from multiple Select)
+            if (Array.isArray(currentValue)) {
+                return currentValue.includes(sub.conditionValue);
+            }
+            // Strict equality for strings/booleans
+            return sub.conditionValue === currentValue;
+        });
 
         return (
             // @ts-ignore
             // @ts-ignore
             <Grid
-                key={generateKey('layout-comp', index)}
+                key={fieldId || `layout-comp-${index}`}
                 style={{
                     ...style,
                     cursor: onFieldClick ? 'pointer' : 'default',
@@ -187,7 +204,7 @@ export function FormGenerator({
                 }}
             >
                 <DynamicComponent
-                    key={generateKey('dynamic-comp', index)}
+                    key={`dynamic-comp-${fieldId || index}`}
                     map={configObj.map}
                     option={options.type || ''}
                     control={field}
@@ -198,28 +215,42 @@ export function FormGenerator({
                     currentStep={activeStep}
                     patch={patch}
                 />
+                {matchedSubform && matchedSubform.data && (
+                    <Box sx={{ mt: 2, pl: 2, borderLeft: '2px solid', borderColor: 'divider', width: '100%' }}>
+                        <FormGenerator
+                            guid={`${guid}-subform-${fieldId}`}
+                            data={matchedSubform.data}
+                            patch={patch} // Pass down the patch to hydrate subform values
+                            onChange={onUpdate} // Bubble up changes to the same parent form handler
+                            MuiGridAttributes={{ spacing: 1 }}
+                        />
+                    </Box>
+                )}
             </Grid >
         );
     };
 
     return (
         <>
-            <Grid key={generateKey('layout-grid')} container {...MuiGridAttributes}>
+            <Grid key={`layout-grid-${guid}`} container {...MuiGridAttributes}>
                 {layout.wrows.map((row, rowIndex) => (
-                    <React.Fragment key={generateKey('row', rowIndex)}>
+                    <React.Fragment key={`row-${rowIndex}`}>
                         {row.map(renderDynamicComponent)}
                     </React.Fragment>
                 ))}
             </Grid>
-            {layout.worows.map((field, index) => (
-                <div
-                    key={generateKey('layout-comp', index)}
-                    style={field.style || {}}
-                    className={`${field.className || ''} ${field.visible ? 'show' : 'hidden'}`}
-                >
-                    {renderDynamicComponent(field, index)}
-                </div>
-            ))}
+            {layout.worows.map((field, index) => {
+                const fId = field?.id || field?.props?.id;
+                return (
+                    <div
+                        key={fId || `layout-comp-${index}`}
+                        style={field.style || {}}
+                        className={`${field.className || ''} ${field.visible ? 'show' : 'hidden'}`}
+                    >
+                        {renderDynamicComponent(field, index)}
+                    </div>
+                );
+            })}
             <button
                 aria-label="button"
                 type="button"

@@ -24,6 +24,7 @@ import { default as Accordion } from './Accordion/accordion';
 import { default as Tabs } from './Tabs/tabs';
 import { default as AutoComplete } from './Autocomplete/autocomplete';
 import { default as ImgList } from './ImageList/imagelist';
+import { default as Hyperlink } from './Hyperlink/hyperlink';
 declare const Controls: {
     Typography: typeof Typography;
     TextField: typeof TextField;
@@ -51,5 +52,6 @@ declare const Controls: {
     Tabs: typeof Tabs;
     AutoComplete: typeof AutoComplete;
     ImgList: typeof ImgList;
+    Hyperlink: typeof Hyperlink;
 };
 export default Controls;

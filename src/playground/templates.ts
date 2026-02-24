@@ -314,6 +314,19 @@ export const TEMPLATES: Record<string, FormField[]> = {
             },
             layout: { xs: 12 }
         }
+    ],
+    'hyperlink': [
+        {
+            type: 'hyperlink',
+            props: {
+                id: 'hyperlink-1',
+                label: 'Hyperlink',
+                displayText: 'Click Here',
+                url: 'https://example.com',
+                MuiAttributes: {}
+            },
+            layout: { xs: 12 }
+        }
     ]
 };
 
@@ -343,4 +356,5 @@ export const TOOLBOX_ITEMS = [
     { type: 'tabs', label: 'Tabs', icon: 'tab' },
     { type: 'autocomplete', label: 'Auto Complete', icon: 'arrow_drop_down_circle' },
     { type: 'imagelist', label: 'Image List', icon: 'collections' },
+    { type: 'hyperlink', label: 'Hyperlink', icon: 'link' },
 ];

@@ -8,7 +8,7 @@ import React, { useState } from 'react';
 const CATEGORIES = {
     'Inputs': ['textfield', 'numberfield', 'select', 'checkbox', 'switch', 'radio', 'autocomplete', 'multitextbox', 'signature', 'datetime', 'timepicker'],
     'Layout': ['group', 'accordion', 'tabs', 'divider'],
-    'Display': ['typography', 'datatable', 'chip', 'list', 'imagelist'],
+    'Display': ['typography', 'datatable', 'chip', 'list', 'imagelist', 'hyperlink'],
     'Actions': ['button'],
     'Charts': ['chart-bar', 'chart-line', 'chart-pie']
 };

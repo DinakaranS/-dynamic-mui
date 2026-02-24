@@ -15,6 +15,12 @@ export default function TextField({ attributes = {}, rules = {}, onChange }: Con
         error: false,
     });
 
+    React.useEffect(() => {
+        if (attributes.value !== undefined && attributes.value !== textData.value) {
+            setTextData(prev => ({ ...prev, value: attributes.value }));
+        }
+    }, [attributes.value]);
+
     const getValue = (v: any) => (format ? numeral(v).format(format) : v);
 
     const validate = (value: any) => {

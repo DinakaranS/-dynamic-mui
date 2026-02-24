@@ -27,9 +27,36 @@ export const ALL_CONTROLS_TEST_DATA: FormField[] = [
         layout: { xs: 12, sm: 4 }
     },
     {
-        type: 'switch',
-        props: { id: 'switch1', MuiFCLAttributes: { label: 'Switch' } },
+        type: 'hyperlink',
+        props: {
+            id: 'link1',
+            label: 'External Link',
+            displayText: 'Open Google',
+            url: 'https://google.com'
+        },
         layout: { xs: 12, sm: 4 }
+    },
+    {
+        type: 'switch',
+        props: { id: 'switch1', MuiFCLAttributes: { label: 'Toggle Subform' } },
+        layout: { xs: 12, sm: 4 },
+        subforms: [
+            {
+                conditionValue: true,
+                data: [
+                    {
+                        type: 'typography',
+                        props: { text: 'Subform Active!', MuiAttributes: { color: 'success.main', variant: 'subtitle2' } },
+                        layout: { xs: 12 }
+                    },
+                    {
+                        type: 'textfield',
+                        props: { id: 'subform_text', MuiAttributes: { label: 'Hidden Field', fullWidth: true } },
+                        layout: { xs: 12 }
+                    }
+                ]
+            }
+        ]
     },
     {
         type: 'radio',

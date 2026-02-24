@@ -115,6 +115,10 @@ const mui: MuiConfigMap = {
         type: 'ImgList',
         map: 'ImgList',
     },
+    hyperlink: {
+        type: 'Hyperlink',
+        map: 'Hyperlink',
+    },
 };
 
 export default mui;

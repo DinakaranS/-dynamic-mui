@@ -43,6 +43,10 @@ export interface FormField {
     style?: CSSProperties;
     className?: string;
     rules?: any;
+    subforms?: {
+        conditionValue: any;
+        data: FormField[];
+    }[];
     [key: string]: any;
 }
 
@@ -161,7 +165,7 @@ export const updatePatchData = (
 ): FormField[] => {
     try {
         // Update response with the patch for the provided GUID
-         
+
         response[guid] = patch;
 
         // Map and update fields with response data
@@ -199,7 +203,7 @@ export const updatePatchData = (
                             const tElement = updatedFields[targetFieldIndex];
                             const id = tElement?.id || tElement?.props?.id;
                             if (id) {
-                                 
+
                                 response[guid][id] = disabled ? '' : response[guid][id];
                             }
 
@@ -222,7 +226,7 @@ export const updatePatchData = (
 
         return updatedFields;
     } catch (error) {
-         
+
         console.error('Error updating patch data:', error);
         return fields; // Return original fields on error
     }

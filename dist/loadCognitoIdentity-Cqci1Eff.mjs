@@ -1,0 +1,935 @@
+import { H as De, N as _, a as Oe, c as F, b as A, t as pe, S as z, U as Te, f as le, L as fe, d as he, p as Me, e as $e, g as Fe, h as N, i as Ne, v as ze, P as Ue, j as je, T as w, r as Ge, n as ge, k as Le, l as He, m as Je, o as me, E as qe, q as Be, s as Ve, u as We, w as Ke, A as Qe, x as Ze, y as Xe, z as Ye, D as et, B as tt, C as st, F as it, G as rt, I as ot, J as nt, K as at, M as ct, O as ut, Q as dt, R as pt, V as lt, W as ft, X as ht, Y as gt, Z as mt, _ as St, $ as yt, a0 as Et, a1 as wt, a2 as It, a3 as xt, a4 as bt, a5 as Pt, a6 as Ct, a7 as Rt, a8 as At, a9 as _t, aa as vt, ab as kt, ac as Dt, ad as Se, ae as ye } from "./index-DvtivzW0.mjs";
+class Ot extends De {
+  async serializeRequest(t, e, r) {
+    const i = this.serializer, n = {}, o = {}, a = await r.endpoint(), c = _.of(t?.input), p = c.getSchema();
+    let d;
+    const f = new Oe({
+      protocol: "",
+      hostname: "",
+      port: void 0,
+      path: "/",
+      fragment: void 0,
+      query: n,
+      headers: o,
+      body: void 0
+    });
+    a && (this.updateServiceEndpoint(f, a), this.setHostPrefix(f, t, e));
+    const l = {
+      ...e
+    };
+    if (e) {
+      const g = c.getEventStreamMember();
+      if (g) {
+        if (l[g]) {
+          const m = {};
+          for (const [v, ke] of c.structIterator())
+            v !== g && l[v] && (i.write(ke, l[v]), m[v] = i.flush());
+          d = await this.serializeEventStream({
+            eventStream: l[g],
+            requestSchema: c,
+            initialRequest: m
+          });
+        }
+      } else
+        i.write(p, l), d = i.flush();
+    }
+    return f.headers = o, f.query = n, f.body = d, f.method = "POST", f;
+  }
+  async deserializeResponse(t, e, r) {
+    const i = this.deserializer, n = _.of(t.output), o = {};
+    if (r.statusCode >= 300) {
+      const c = await F(r.body, e);
+      throw c.byteLength > 0 && Object.assign(o, await i.read(15, c)), await this.handleError(t, e, r, o, this.deserializeMetadata(r)), new Error("@smithy/core/protocols - RPC Protocol error handler failed to throw.");
+    }
+    for (const c in r.headers) {
+      const p = r.headers[c];
+      delete r.headers[c], r.headers[c.toLowerCase()] = p;
+    }
+    const a = n.getEventStreamMember();
+    if (a)
+      o[a] = await this.deserializeEventStream({
+        response: r,
+        responseSchema: n,
+        initialResponseContainer: o
+      });
+    else {
+      const c = await F(r.body, e);
+      c.byteLength > 0 && Object.assign(o, await i.read(n, c));
+    }
+    return o.$metadata = this.deserializeMetadata(r), o;
+  }
+}
+class Tt {
+  async sign(t, e, r) {
+    return t;
+  }
+}
+function Mt(s, t, e) {
+  if (e?.source) {
+    const r = e.source;
+    if (typeof t == "number" && (t > Number.MAX_SAFE_INTEGER || t < Number.MIN_SAFE_INTEGER || r !== String(t)))
+      return r.includes(".") ? new A(r, "bigDecimal") : BigInt(r);
+  }
+  return t;
+}
+const $t = (s, t) => F(s, t).then((e) => (t?.utf8Encoder ?? pe)(e)), Ft = (s, t) => $t(s, t).then((e) => {
+  if (e.length)
+    try {
+      return JSON.parse(e);
+    } catch (r) {
+      throw r?.name === "SyntaxError" && Object.defineProperty(r, "$responseBodyText", {
+        value: e
+      }), r;
+    }
+  return {};
+}), Nt = (s, t) => {
+  const e = (n, o) => Object.keys(n).find((a) => a.toLowerCase() === o.toLowerCase()), r = (n) => {
+    let o = n;
+    return typeof o == "number" && (o = o.toString()), o.indexOf(",") >= 0 && (o = o.split(",")[0]), o.indexOf(":") >= 0 && (o = o.split(":")[0]), o.indexOf("#") >= 0 && (o = o.split("#")[1]), o;
+  }, i = e(s.headers, "x-amzn-errortype");
+  if (i !== void 0)
+    return r(s.headers[i]);
+  if (t && typeof t == "object") {
+    const n = e(t, "code");
+    if (n && t[n] !== void 0)
+      return r(t[n]);
+    if (t.__type !== void 0)
+      return r(t.__type);
+  }
+};
+class zt extends z {
+  settings;
+  constructor(t) {
+    super(), this.settings = t;
+  }
+  async read(t, e) {
+    return this._read(t, typeof e == "string" ? JSON.parse(e, Mt) : await Ft(e, this.serdeContext));
+  }
+  readObject(t, e) {
+    return this._read(t, e);
+  }
+  _read(t, e) {
+    const r = e !== null && typeof e == "object", i = _.of(t);
+    if (r) {
+      if (i.isStructSchema()) {
+        const o = e, a = i.isUnionSchema(), c = {};
+        let p;
+        const { jsonName: d } = this.settings;
+        d && (p = {});
+        let f;
+        a && (f = new Te(o, c));
+        for (const [l, g] of i.structIterator()) {
+          let m = l;
+          d && (m = g.getMergedTraits().jsonName ?? m, p[m] = l), a && f.mark(m), o[m] != null && (c[l] = this._read(g, o[m]));
+        }
+        if (a)
+          f.writeUnknown();
+        else if (typeof o.__type == "string")
+          for (const [l, g] of Object.entries(o)) {
+            const m = d ? p[l] ?? l : l;
+            m in c || (c[m] = g);
+          }
+        return c;
+      }
+      if (Array.isArray(e) && i.isListSchema()) {
+        const o = i.getValueSchema(), a = [], c = !!i.getMergedTraits().sparse;
+        for (const p of e)
+          (c || p != null) && a.push(this._read(o, p));
+        return a;
+      }
+      if (i.isMapSchema()) {
+        const o = i.getValueSchema(), a = {}, c = !!i.getMergedTraits().sparse;
+        for (const [p, d] of Object.entries(e))
+          (c || d != null) && (a[p] = this._read(o, d));
+        return a;
+      }
+    }
+    if (i.isBlobSchema() && typeof e == "string")
+      return le(e);
+    const n = i.getMergedTraits().mediaType;
+    if (i.isStringSchema() && typeof e == "string" && n)
+      return n === "application/json" || n.endsWith("+json") ? fe.from(e) : e;
+    if (i.isTimestampSchema() && e != null)
+      switch (he(i, this.settings)) {
+        case 5:
+          return Fe(e);
+        case 6:
+          return $e(e);
+        case 7:
+          return Me(e);
+        default:
+          return console.warn("Missing timestamp format, parsing value with Date constructor:", e), new Date(e);
+      }
+    if (i.isBigIntegerSchema() && (typeof e == "number" || typeof e == "string"))
+      return BigInt(e);
+    if (i.isBigDecimalSchema() && e != null) {
+      if (e instanceof A)
+        return e;
+      const o = e;
+      return o.type === "bigDecimal" && "string" in o ? new A(o.string, o.type) : new A(String(e), "bigDecimal");
+    }
+    if (i.isNumericSchema() && typeof e == "string") {
+      switch (e) {
+        case "Infinity":
+          return 1 / 0;
+        case "-Infinity":
+          return -1 / 0;
+        case "NaN":
+          return NaN;
+      }
+      return e;
+    }
+    if (i.isDocumentSchema())
+      if (r) {
+        const o = Array.isArray(e) ? [] : {};
+        for (const [a, c] of Object.entries(e))
+          c instanceof A ? o[a] = c : o[a] = this._read(i, c);
+        return o;
+      } else
+        return structuredClone(e);
+    return e;
+  }
+}
+const Y = "Ν";
+class Ut {
+  values = /* @__PURE__ */ new Map();
+  counter = 0;
+  stage = 0;
+  createReplacer() {
+    if (this.stage === 1)
+      throw new Error("@aws-sdk/core/protocols - JsonReplacer already created.");
+    if (this.stage === 2)
+      throw new Error("@aws-sdk/core/protocols - JsonReplacer exhausted.");
+    return this.stage = 1, (t, e) => {
+      if (e instanceof A) {
+        const r = `${Y + "nv" + this.counter++}_` + e.string;
+        return this.values.set(`"${r}"`, e.string), r;
+      }
+      if (typeof e == "bigint") {
+        const r = e.toString(), i = `${Y + "b" + this.counter++}_` + r;
+        return this.values.set(`"${i}"`, r), i;
+      }
+      return e;
+    };
+  }
+  replaceInJson(t) {
+    if (this.stage === 0)
+      throw new Error("@aws-sdk/core/protocols - JsonReplacer not created yet.");
+    if (this.stage === 2)
+      throw new Error("@aws-sdk/core/protocols - JsonReplacer exhausted.");
+    if (this.stage = 2, this.counter === 0)
+      return t;
+    for (const [e, r] of this.values)
+      t = t.replace(e, r);
+    return t;
+  }
+}
+class jt extends z {
+  settings;
+  buffer;
+  useReplacer = !1;
+  rootSchema;
+  constructor(t) {
+    super(), this.settings = t;
+  }
+  write(t, e) {
+    this.rootSchema = _.of(t), this.buffer = this._write(this.rootSchema, e);
+  }
+  writeDiscriminatedDocument(t, e) {
+    this.write(t, e), typeof this.buffer == "object" && (this.buffer.__type = _.of(t).getName(!0));
+  }
+  flush() {
+    const { rootSchema: t, useReplacer: e } = this;
+    if (this.rootSchema = void 0, this.useReplacer = !1, t?.isStructSchema() || t?.isDocumentSchema()) {
+      if (!e)
+        return JSON.stringify(this.buffer);
+      const r = new Ut();
+      return r.replaceInJson(JSON.stringify(this.buffer, r.createReplacer(), 0));
+    }
+    return this.buffer;
+  }
+  _write(t, e, r) {
+    const i = e !== null && typeof e == "object", n = _.of(t);
+    if (i) {
+      if (n.isStructSchema()) {
+        const o = e, a = {}, { jsonName: c } = this.settings;
+        let p;
+        c && (p = {});
+        for (const [d, f] of n.structIterator()) {
+          const l = this._write(f, o[d], n);
+          if (l !== void 0) {
+            let g = d;
+            c && (g = f.getMergedTraits().jsonName ?? d, p[d] = g), a[g] = l;
+          }
+        }
+        if (n.isUnionSchema() && Object.keys(a).length === 0) {
+          const { $unknown: d } = o;
+          if (Array.isArray(d)) {
+            const [f, l] = d;
+            a[f] = this._write(15, l);
+          }
+        } else if (typeof o.__type == "string")
+          for (const [d, f] of Object.entries(o)) {
+            const l = c ? p[d] ?? d : d;
+            l in a || (a[l] = this._write(15, f));
+          }
+        return a;
+      }
+      if (Array.isArray(e) && n.isListSchema()) {
+        const o = n.getValueSchema(), a = [], c = !!n.getMergedTraits().sparse;
+        for (const p of e)
+          (c || p != null) && a.push(this._write(o, p));
+        return a;
+      }
+      if (n.isMapSchema()) {
+        const o = n.getValueSchema(), a = {}, c = !!n.getMergedTraits().sparse;
+        for (const [p, d] of Object.entries(e))
+          (c || d != null) && (a[p] = this._write(o, d));
+        return a;
+      }
+      if (e instanceof Uint8Array && (n.isBlobSchema() || n.isDocumentSchema()))
+        return n === this.rootSchema ? e : (this.serdeContext?.base64Encoder ?? N)(e);
+      if (e instanceof Date && (n.isTimestampSchema() || n.isDocumentSchema()))
+        switch (he(n, this.settings)) {
+          case 5:
+            return e.toISOString().replace(".000Z", "Z");
+          case 6:
+            return Ne(e);
+          case 7:
+            return e.getTime() / 1e3;
+          default:
+            return console.warn("Missing timestamp format, using epoch seconds", e), e.getTime() / 1e3;
+        }
+      e instanceof A && (this.useReplacer = !0);
+    }
+    if (!(e === null && r?.isStructSchema())) {
+      if (n.isStringSchema()) {
+        if (typeof e > "u" && n.isIdempotencyToken())
+          return ze();
+        const o = n.getMergedTraits().mediaType;
+        return e != null && o && (o === "application/json" || o.endsWith("+json")) ? fe.from(e) : e;
+      }
+      if (typeof e == "number" && n.isNumericSchema())
+        return Math.abs(e) === 1 / 0 || isNaN(e) ? String(e) : e;
+      if (typeof e == "string" && n.isBlobSchema())
+        return n === this.rootSchema ? e : (this.serdeContext?.base64Encoder ?? N)(e);
+      if (typeof e == "bigint" && (this.useReplacer = !0), n.isDocumentSchema())
+        if (i) {
+          const o = Array.isArray(e) ? [] : {};
+          for (const [a, c] of Object.entries(e))
+            c instanceof A ? (this.useReplacer = !0, o[a] = c) : o[a] = this._write(n, c);
+          return o;
+        } else
+          return structuredClone(e);
+      return e;
+    }
+  }
+}
+class Gt extends z {
+  settings;
+  constructor(t) {
+    super(), this.settings = t;
+  }
+  createSerializer() {
+    const t = new jt(this.settings);
+    return t.setSerdeContext(this.serdeContext), t;
+  }
+  createDeserializer() {
+    const t = new zt(this.settings);
+    return t.setSerdeContext(this.serdeContext), t;
+  }
+}
+class Lt extends Ot {
+  serializer;
+  deserializer;
+  serviceTarget;
+  codec;
+  mixin;
+  awsQueryCompatible;
+  constructor({ defaultNamespace: t, serviceTarget: e, awsQueryCompatible: r, jsonCodec: i }) {
+    super({
+      defaultNamespace: t
+    }), this.serviceTarget = e, this.codec = i ?? new Gt({
+      timestampFormat: {
+        useTrait: !0,
+        default: 7
+      },
+      jsonName: !1
+    }), this.serializer = this.codec.createSerializer(), this.deserializer = this.codec.createDeserializer(), this.awsQueryCompatible = !!r, this.mixin = new Ue(this.awsQueryCompatible);
+  }
+  async serializeRequest(t, e, r) {
+    const i = await super.serializeRequest(t, e, r);
+    return i.path.endsWith("/") || (i.path += "/"), Object.assign(i.headers, {
+      "content-type": `application/x-amz-json-${this.getJsonRpcVersion()}`,
+      "x-amz-target": `${this.serviceTarget}.${t.name}`
+    }), this.awsQueryCompatible && (i.headers["x-amzn-query-mode"] = "true"), (je(t.input) === "unit" || !i.body) && (i.body = "{}"), i;
+  }
+  getPayloadCodec() {
+    return this.codec;
+  }
+  async handleError(t, e, r, i, n) {
+    this.awsQueryCompatible && this.mixin.setQueryCompatError(i, r);
+    const o = Nt(r, i) ?? "Unknown", { errorSchema: a, errorMetadata: c } = await this.mixin.getErrorSchemaOrThrowBaseException(o, this.options.defaultNamespace, r, i, n, this.awsQueryCompatible ? this.mixin.findQueryCompatibleError : void 0), p = _.of(a), d = i.message ?? i.Message ?? "Unknown", f = w.for(a[1]).getErrorCtor(a) ?? Error, l = new f(d), g = {};
+    for (const [m, v] of p.structIterator())
+      i[m] != null && (g[m] = this.codec.createDeserializer().readObject(v, i[m]));
+    throw this.awsQueryCompatible && this.mixin.queryCompatOutput(i, g), this.mixin.decorateServiceException(Object.assign(l, c, {
+      $fault: p.getMergedTraits().error,
+      message: d
+    }, g), i);
+  }
+}
+class Ht extends Lt {
+  constructor({ defaultNamespace: t, serviceTarget: e, awsQueryCompatible: r, jsonCodec: i }) {
+    super({
+      defaultNamespace: t,
+      serviceTarget: e,
+      awsQueryCompatible: r,
+      jsonCodec: i
+    });
+  }
+  getShapeId() {
+    return "aws.protocols#awsJson1_1";
+  }
+  getJsonRpcVersion() {
+    return "1.1";
+  }
+  getDefaultContentType() {
+    return "application/x-amz-json-1.1";
+  }
+}
+const Jt = async (s, t, e) => ({
+  operation: Le(t).operation,
+  region: await ge(s.region)() || (() => {
+    throw new Error("expected `region` to be configured for `aws.auth#sigv4`");
+  })()
+});
+function qt(s) {
+  return {
+    schemeId: "aws.auth#sigv4",
+    signingProperties: {
+      name: "cognito-identity",
+      region: s.region
+    },
+    propertiesExtractor: (t, e) => ({
+      signingProperties: {
+        config: t,
+        context: e
+      }
+    })
+  };
+}
+function $(s) {
+  return {
+    schemeId: "smithy.api#noAuth"
+  };
+}
+const Bt = (s) => {
+  const t = [];
+  switch (s.operation) {
+    case "GetCredentialsForIdentity": {
+      t.push($());
+      break;
+    }
+    case "GetId": {
+      t.push($());
+      break;
+    }
+    case "GetOpenIdToken": {
+      t.push($());
+      break;
+    }
+    case "UnlinkIdentity": {
+      t.push($());
+      break;
+    }
+    default:
+      t.push(qt(s));
+  }
+  return t;
+}, Vt = (s) => {
+  const t = Ge(s);
+  return Object.assign(t, {
+    authSchemePreference: ge(s.authSchemePreference ?? [])
+  });
+}, Wt = (s) => Object.assign(s, {
+  useDualstackEndpoint: s.useDualstackEndpoint ?? !1,
+  useFipsEndpoint: s.useFipsEndpoint ?? !1,
+  defaultSigningName: "cognito-identity"
+}), Ee = {
+  UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
+  Endpoint: { type: "builtInParams", name: "endpoint" },
+  Region: { type: "builtInParams", name: "region" },
+  UseDualStack: { type: "builtInParams", name: "useDualstackEndpoint" }
+}, Kt = "3.980.0", Qt = {
+  version: Kt
+}, we = (s, t = !1) => {
+  if (t) {
+    for (const e of s.split("."))
+      if (!we(e))
+        return !1;
+    return !0;
+  }
+  return !(!He(s) || s.length < 3 || s.length > 63 || s !== s.toLowerCase() || Je(s));
+}, ee = ":", Zt = "/", Xt = (s) => {
+  const t = s.split(ee);
+  if (t.length < 6)
+    return null;
+  const [e, r, i, n, o, ...a] = t;
+  if (e !== "arn" || r === "" || i === "" || a.join(ee) === "")
+    return null;
+  const c = a.map((p) => p.split(Zt)).flat();
+  return {
+    partition: r,
+    service: i,
+    region: n,
+    accountId: o,
+    resourceId: c
+  };
+}, Yt = [{ id: "aws", outputs: { dnsSuffix: "amazonaws.com", dualStackDnsSuffix: "api.aws", implicitGlobalRegion: "us-east-1", name: "aws", supportsDualStack: !0, supportsFIPS: !0 }, regionRegex: "^(us|eu|ap|sa|ca|me|af|il|mx)\\-\\w+\\-\\d+$", regions: { "af-south-1": { description: "Africa (Cape Town)" }, "ap-east-1": { description: "Asia Pacific (Hong Kong)" }, "ap-east-2": { description: "Asia Pacific (Taipei)" }, "ap-northeast-1": { description: "Asia Pacific (Tokyo)" }, "ap-northeast-2": { description: "Asia Pacific (Seoul)" }, "ap-northeast-3": { description: "Asia Pacific (Osaka)" }, "ap-south-1": { description: "Asia Pacific (Mumbai)" }, "ap-south-2": { description: "Asia Pacific (Hyderabad)" }, "ap-southeast-1": { description: "Asia Pacific (Singapore)" }, "ap-southeast-2": { description: "Asia Pacific (Sydney)" }, "ap-southeast-3": { description: "Asia Pacific (Jakarta)" }, "ap-southeast-4": { description: "Asia Pacific (Melbourne)" }, "ap-southeast-5": { description: "Asia Pacific (Malaysia)" }, "ap-southeast-6": { description: "Asia Pacific (New Zealand)" }, "ap-southeast-7": { description: "Asia Pacific (Thailand)" }, "aws-global": { description: "aws global region" }, "ca-central-1": { description: "Canada (Central)" }, "ca-west-1": { description: "Canada West (Calgary)" }, "eu-central-1": { description: "Europe (Frankfurt)" }, "eu-central-2": { description: "Europe (Zurich)" }, "eu-north-1": { description: "Europe (Stockholm)" }, "eu-south-1": { description: "Europe (Milan)" }, "eu-south-2": { description: "Europe (Spain)" }, "eu-west-1": { description: "Europe (Ireland)" }, "eu-west-2": { description: "Europe (London)" }, "eu-west-3": { description: "Europe (Paris)" }, "il-central-1": { description: "Israel (Tel Aviv)" }, "me-central-1": { description: "Middle East (UAE)" }, "me-south-1": { description: "Middle East (Bahrain)" }, "mx-central-1": { description: "Mexico (Central)" }, "sa-east-1": { description: "South America (Sao Paulo)" }, "us-east-1": { description: "US East (N. Virginia)" }, "us-east-2": { description: "US East (Ohio)" }, "us-west-1": { description: "US West (N. California)" }, "us-west-2": { description: "US West (Oregon)" } } }, { id: "aws-cn", outputs: { dnsSuffix: "amazonaws.com.cn", dualStackDnsSuffix: "api.amazonwebservices.com.cn", implicitGlobalRegion: "cn-northwest-1", name: "aws-cn", supportsDualStack: !0, supportsFIPS: !0 }, regionRegex: "^cn\\-\\w+\\-\\d+$", regions: { "aws-cn-global": { description: "aws-cn global region" }, "cn-north-1": { description: "China (Beijing)" }, "cn-northwest-1": { description: "China (Ningxia)" } } }, { id: "aws-eusc", outputs: { dnsSuffix: "amazonaws.eu", dualStackDnsSuffix: "api.amazonwebservices.eu", implicitGlobalRegion: "eusc-de-east-1", name: "aws-eusc", supportsDualStack: !0, supportsFIPS: !0 }, regionRegex: "^eusc\\-(de)\\-\\w+\\-\\d+$", regions: { "eusc-de-east-1": { description: "AWS European Sovereign Cloud (Germany)" } } }, { id: "aws-iso", outputs: { dnsSuffix: "c2s.ic.gov", dualStackDnsSuffix: "api.aws.ic.gov", implicitGlobalRegion: "us-iso-east-1", name: "aws-iso", supportsDualStack: !0, supportsFIPS: !0 }, regionRegex: "^us\\-iso\\-\\w+\\-\\d+$", regions: { "aws-iso-global": { description: "aws-iso global region" }, "us-iso-east-1": { description: "US ISO East" }, "us-iso-west-1": { description: "US ISO WEST" } } }, { id: "aws-iso-b", outputs: { dnsSuffix: "sc2s.sgov.gov", dualStackDnsSuffix: "api.aws.scloud", implicitGlobalRegion: "us-isob-east-1", name: "aws-iso-b", supportsDualStack: !0, supportsFIPS: !0 }, regionRegex: "^us\\-isob\\-\\w+\\-\\d+$", regions: { "aws-iso-b-global": { description: "aws-iso-b global region" }, "us-isob-east-1": { description: "US ISOB East (Ohio)" }, "us-isob-west-1": { description: "US ISOB West" } } }, { id: "aws-iso-e", outputs: { dnsSuffix: "cloud.adc-e.uk", dualStackDnsSuffix: "api.cloud-aws.adc-e.uk", implicitGlobalRegion: "eu-isoe-west-1", name: "aws-iso-e", supportsDualStack: !0, supportsFIPS: !0 }, regionRegex: "^eu\\-isoe\\-\\w+\\-\\d+$", regions: { "aws-iso-e-global": { description: "aws-iso-e global region" }, "eu-isoe-west-1": { description: "EU ISOE West" } } }, { id: "aws-iso-f", outputs: { dnsSuffix: "csp.hci.ic.gov", dualStackDnsSuffix: "api.aws.hci.ic.gov", implicitGlobalRegion: "us-isof-south-1", name: "aws-iso-f", supportsDualStack: !0, supportsFIPS: !0 }, regionRegex: "^us\\-isof\\-\\w+\\-\\d+$", regions: { "aws-iso-f-global": { description: "aws-iso-f global region" }, "us-isof-east-1": { description: "US ISOF EAST" }, "us-isof-south-1": { description: "US ISOF SOUTH" } } }, { id: "aws-us-gov", outputs: { dnsSuffix: "amazonaws.com", dualStackDnsSuffix: "api.aws", implicitGlobalRegion: "us-gov-west-1", name: "aws-us-gov", supportsDualStack: !0, supportsFIPS: !0 }, regionRegex: "^us\\-gov\\-\\w+\\-\\d+$", regions: { "aws-us-gov-global": { description: "aws-us-gov global region" }, "us-gov-east-1": { description: "AWS GovCloud (US-East)" }, "us-gov-west-1": { description: "AWS GovCloud (US-West)" } } }], es = {
+  partitions: Yt
+};
+let ts = es;
+const ss = (s) => {
+  const { partitions: t } = ts;
+  for (const r of t) {
+    const { regions: i, outputs: n } = r;
+    for (const [o, a] of Object.entries(i))
+      if (o === s)
+        return {
+          ...n,
+          ...a
+        };
+  }
+  for (const r of t) {
+    const { regionRegex: i, outputs: n } = r;
+    if (new RegExp(i).test(s))
+      return {
+        ...n
+      };
+  }
+  const e = t.find((r) => r.id === "aws");
+  if (!e)
+    throw new Error("Provided region was not found in the partition array or regex, and default partition with id 'aws' doesn't exist.");
+  return {
+    ...e.outputs
+  };
+}, Ie = {
+  isVirtualHostableS3Bucket: we,
+  parseArn: Xt,
+  partition: ss
+};
+me.aws = Ie;
+const xe = "required", S = "fn", y = "argv", D = "ref", te = !0, se = "isSet", M = "booleanEquals", k = "error", b = "endpoint", R = "tree", U = "PartitionResult", j = "getAttr", O = "stringEquals", ie = { [xe]: !1, type: "string" }, re = { [xe]: !0, default: !1, type: "boolean" }, oe = { [D]: "Endpoint" }, be = { [S]: M, [y]: [{ [D]: "UseFIPS" }, !0] }, Pe = { [S]: M, [y]: [{ [D]: "UseDualStack" }, !0] }, h = {}, T = { [D]: "Region" }, ne = { [S]: j, [y]: [{ [D]: U }, "supportsFIPS"] }, Ce = { [D]: U }, ae = { [S]: M, [y]: [!0, { [S]: j, [y]: [Ce, "supportsDualStack"] }] }, ce = [be], ue = [Pe], de = [T], is = { parameters: { Region: ie, UseDualStack: re, UseFIPS: re, Endpoint: ie }, rules: [{ conditions: [{ [S]: se, [y]: [oe] }], rules: [{ conditions: ce, error: "Invalid Configuration: FIPS and custom endpoint are not supported", type: k }, { conditions: ue, error: "Invalid Configuration: Dualstack and custom endpoint are not supported", type: k }, { endpoint: { url: oe, properties: h, headers: h }, type: b }], type: R }, { conditions: [{ [S]: se, [y]: de }], rules: [{ conditions: [{ [S]: "aws.partition", [y]: de, assign: U }], rules: [{ conditions: [be, Pe], rules: [{ conditions: [{ [S]: M, [y]: [te, ne] }, ae], rules: [{ conditions: [{ [S]: O, [y]: [T, "us-east-1"] }], endpoint: { url: "https://cognito-identity-fips.us-east-1.amazonaws.com", properties: h, headers: h }, type: b }, { conditions: [{ [S]: O, [y]: [T, "us-east-2"] }], endpoint: { url: "https://cognito-identity-fips.us-east-2.amazonaws.com", properties: h, headers: h }, type: b }, { conditions: [{ [S]: O, [y]: [T, "us-west-1"] }], endpoint: { url: "https://cognito-identity-fips.us-west-1.amazonaws.com", properties: h, headers: h }, type: b }, { conditions: [{ [S]: O, [y]: [T, "us-west-2"] }], endpoint: { url: "https://cognito-identity-fips.us-west-2.amazonaws.com", properties: h, headers: h }, type: b }, { endpoint: { url: "https://cognito-identity-fips.{Region}.{PartitionResult#dualStackDnsSuffix}", properties: h, headers: h }, type: b }], type: R }, { error: "FIPS and DualStack are enabled, but this partition does not support one or both", type: k }], type: R }, { conditions: ce, rules: [{ conditions: [{ [S]: M, [y]: [ne, te] }], rules: [{ endpoint: { url: "https://cognito-identity-fips.{Region}.{PartitionResult#dnsSuffix}", properties: h, headers: h }, type: b }], type: R }, { error: "FIPS is enabled but this partition does not support FIPS", type: k }], type: R }, { conditions: ue, rules: [{ conditions: [ae], rules: [{ conditions: [{ [S]: O, [y]: ["aws", { [S]: j, [y]: [Ce, "name"] }] }], endpoint: { url: "https://cognito-identity.{Region}.amazonaws.com", properties: h, headers: h }, type: b }, { endpoint: { url: "https://cognito-identity.{Region}.{PartitionResult#dualStackDnsSuffix}", properties: h, headers: h }, type: b }], type: R }, { error: "DualStack is enabled but this partition does not support DualStack", type: k }], type: R }, { endpoint: { url: "https://cognito-identity.{Region}.{PartitionResult#dnsSuffix}", properties: h, headers: h }, type: b }], type: R }], type: R }, { error: "Invalid Configuration: Missing Region", type: k }] }, rs = is, os = new qe({
+  size: 50,
+  params: ["Endpoint", "Region", "UseDualStack", "UseFIPS"]
+}), ns = (s, t = {}) => os.get(s, () => Be(rs, {
+  endpointParams: s,
+  logger: t.logger
+}));
+me.aws = Ie;
+const as = (s) => ({
+  apiVersion: "2014-06-30",
+  base64Decoder: s?.base64Decoder ?? le,
+  base64Encoder: s?.base64Encoder ?? N,
+  disableHostPrefix: s?.disableHostPrefix ?? !1,
+  endpointProvider: s?.endpointProvider ?? ns,
+  extensions: s?.extensions ?? [],
+  httpAuthSchemeProvider: s?.httpAuthSchemeProvider ?? Bt,
+  httpAuthSchemes: s?.httpAuthSchemes ?? [
+    {
+      schemeId: "aws.auth#sigv4",
+      identityProvider: (t) => t.getIdentityProvider("aws.auth#sigv4"),
+      signer: new Qe()
+    },
+    {
+      schemeId: "smithy.api#noAuth",
+      identityProvider: (t) => t.getIdentityProvider("smithy.api#noAuth") || (async () => ({})),
+      signer: new Tt()
+    }
+  ],
+  logger: s?.logger ?? new Ke(),
+  protocol: s?.protocol ?? Ht,
+  protocolSettings: s?.protocolSettings ?? {
+    defaultNamespace: "com.amazonaws.cognitoidentity",
+    xmlNamespace: "http://cognito-identity.amazonaws.com/doc/2014-06-30/",
+    version: "2014-06-30",
+    serviceTarget: "AWSCognitoIdentityService"
+  },
+  serviceId: s?.serviceId ?? "Cognito Identity",
+  urlParser: s?.urlParser ?? We,
+  utf8Decoder: s?.utf8Decoder ?? Ve,
+  utf8Encoder: s?.utf8Encoder ?? pe
+}), cs = (s) => {
+  const t = Ze(s), e = () => t().then(ct), r = as(s);
+  return {
+    ...r,
+    ...s,
+    runtime: "browser",
+    defaultsMode: t,
+    bodyLengthChecker: s?.bodyLengthChecker ?? st,
+    credentialDefaultProvider: s?.credentialDefaultProvider ?? ((i) => () => Promise.reject(new Error("Credential is missing"))),
+    defaultUserAgentProvider: s?.defaultUserAgentProvider ?? at({ serviceId: r.serviceId, clientVersion: Qt.version }),
+    maxAttempts: s?.maxAttempts ?? tt,
+    region: s?.region ?? nt("Region is missing"),
+    requestHandler: ot.create(s?.requestHandler ?? e),
+    retryMode: s?.retryMode ?? (async () => (await e()).retryMode || et),
+    sha256: s?.sha256 ?? Ye,
+    streamCollector: s?.streamCollector ?? Xe,
+    useDualstackEndpoint: s?.useDualstackEndpoint ?? (() => Promise.resolve(rt)),
+    useFipsEndpoint: s?.useFipsEndpoint ?? (() => Promise.resolve(it))
+  };
+}, us = (s) => {
+  const t = s.httpAuthSchemes;
+  let e = s.httpAuthSchemeProvider, r = s.credentials;
+  return {
+    setHttpAuthScheme(i) {
+      const n = t.findIndex((o) => o.schemeId === i.schemeId);
+      n === -1 ? t.push(i) : t.splice(n, 1, i);
+    },
+    httpAuthSchemes() {
+      return t;
+    },
+    setHttpAuthSchemeProvider(i) {
+      e = i;
+    },
+    httpAuthSchemeProvider() {
+      return e;
+    },
+    setCredentials(i) {
+      r = i;
+    },
+    credentials() {
+      return r;
+    }
+  };
+}, ds = (s) => ({
+  httpAuthSchemes: s.httpAuthSchemes(),
+  httpAuthSchemeProvider: s.httpAuthSchemeProvider(),
+  credentials: s.credentials()
+}), ps = (s, t) => {
+  const e = Object.assign(ut(s), dt(s), pt(s), us(s));
+  return t.forEach((r) => r.configure(e)), Object.assign(s, lt(e), ft(e), ht(e), ds(e));
+};
+class ci extends gt {
+  config;
+  constructor(...[t]) {
+    const e = cs(t || {});
+    super(e), this.initConfig = e;
+    const r = Wt(e), i = mt(r), n = St(i), o = yt(n), a = kt(o), c = Et(a), p = Vt(c), d = ps(p, t?.extensions || []);
+    this.config = d, this.middlewareStack.use(wt(this.config)), this.middlewareStack.use(It(this.config)), this.middlewareStack.use(xt(this.config)), this.middlewareStack.use(bt(this.config)), this.middlewareStack.use(Pt(this.config)), this.middlewareStack.use(Ct(this.config)), this.middlewareStack.use(Rt(this.config)), this.middlewareStack.use(At(this.config, {
+      httpAuthSchemeParametersProvider: Jt,
+      identityProviderConfigProvider: async (f) => new _t({
+        "aws.auth#sigv4": f.credentials
+      })
+    })), this.middlewareStack.use(vt(this.config));
+  }
+  destroy() {
+    super.destroy();
+  }
+}
+class E extends Dt {
+  constructor(t) {
+    super(t), Object.setPrototypeOf(this, E.prototype);
+  }
+}
+class G extends E {
+  name = "InternalErrorException";
+  $fault = "server";
+  constructor(t) {
+    super({
+      name: "InternalErrorException",
+      $fault: "server",
+      ...t
+    }), Object.setPrototypeOf(this, G.prototype);
+  }
+}
+class L extends E {
+  name = "InvalidParameterException";
+  $fault = "client";
+  constructor(t) {
+    super({
+      name: "InvalidParameterException",
+      $fault: "client",
+      ...t
+    }), Object.setPrototypeOf(this, L.prototype);
+  }
+}
+class H extends E {
+  name = "LimitExceededException";
+  $fault = "client";
+  constructor(t) {
+    super({
+      name: "LimitExceededException",
+      $fault: "client",
+      ...t
+    }), Object.setPrototypeOf(this, H.prototype);
+  }
+}
+class J extends E {
+  name = "NotAuthorizedException";
+  $fault = "client";
+  constructor(t) {
+    super({
+      name: "NotAuthorizedException",
+      $fault: "client",
+      ...t
+    }), Object.setPrototypeOf(this, J.prototype);
+  }
+}
+class q extends E {
+  name = "ResourceConflictException";
+  $fault = "client";
+  constructor(t) {
+    super({
+      name: "ResourceConflictException",
+      $fault: "client",
+      ...t
+    }), Object.setPrototypeOf(this, q.prototype);
+  }
+}
+class B extends E {
+  name = "TooManyRequestsException";
+  $fault = "client";
+  constructor(t) {
+    super({
+      name: "TooManyRequestsException",
+      $fault: "client",
+      ...t
+    }), Object.setPrototypeOf(this, B.prototype);
+  }
+}
+class V extends E {
+  name = "ResourceNotFoundException";
+  $fault = "client";
+  constructor(t) {
+    super({
+      name: "ResourceNotFoundException",
+      $fault: "client",
+      ...t
+    }), Object.setPrototypeOf(this, V.prototype);
+  }
+}
+class W extends E {
+  name = "ExternalServiceException";
+  $fault = "client";
+  constructor(t) {
+    super({
+      name: "ExternalServiceException",
+      $fault: "client",
+      ...t
+    }), Object.setPrototypeOf(this, W.prototype);
+  }
+}
+class K extends E {
+  name = "InvalidIdentityPoolConfigurationException";
+  $fault = "client";
+  constructor(t) {
+    super({
+      name: "InvalidIdentityPoolConfigurationException",
+      $fault: "client",
+      ...t
+    }), Object.setPrototypeOf(this, K.prototype);
+  }
+}
+class Q extends E {
+  name = "DeveloperUserAlreadyRegisteredException";
+  $fault = "client";
+  constructor(t) {
+    super({
+      name: "DeveloperUserAlreadyRegisteredException",
+      $fault: "client",
+      ...t
+    }), Object.setPrototypeOf(this, Q.prototype);
+  }
+}
+class Z extends E {
+  name = "ConcurrentModificationException";
+  $fault = "client";
+  constructor(t) {
+    super({
+      name: "ConcurrentModificationException",
+      $fault: "client",
+      ...t
+    }), Object.setPrototypeOf(this, Z.prototype);
+  }
+}
+const ls = "AccountId", fs = "AccessKeyId", Re = "Credentials", hs = "ConcurrentModificationException", gs = "CustomRoleArn", ms = "DeveloperUserAlreadyRegisteredException", Ss = "Expiration", ys = "ExternalServiceException", Es = "GetCredentialsForIdentity", ws = "GetCredentialsForIdentityInput", Is = "GetCredentialsForIdentityResponse", xs = "GetId", bs = "GetIdInput", Ps = "GetIdResponse", Cs = "InternalErrorException", X = "IdentityId", Rs = "InvalidIdentityPoolConfigurationException", As = "InvalidParameterException", _s = "IdentityPoolId", vs = "IdentityProviderToken", Ae = "Logins", ks = "LimitExceededException", Ds = "LoginsMap", Os = "NotAuthorizedException", Ts = "ResourceConflictException", Ms = "ResourceNotFoundException", $s = "SecretKey", Fs = "SecretKeyString", Ns = "SessionToken", zs = "TooManyRequestsException", P = "client", I = "error", C = "httpError", x = "message", Us = "server", _e = "smithy.ts.sdk.synthetic.com.amazonaws.cognitoidentity", u = "com.amazonaws.cognitoidentity";
+var js = [0, u, vs, 8, 0], Gs = [0, u, Fs, 8, 0], Ls = [
+  -3,
+  u,
+  hs,
+  { [I]: P, [C]: 400 },
+  [x],
+  [0]
+];
+w.for(u).registerError(Ls, Z);
+var Hs = [
+  3,
+  u,
+  Re,
+  0,
+  [fs, $s, Ns, Ss],
+  [0, [() => Gs, 0], 0, 4]
+], Js = [
+  -3,
+  u,
+  ms,
+  { [I]: P, [C]: 400 },
+  [x],
+  [0]
+];
+w.for(u).registerError(Js, Q);
+var qs = [
+  -3,
+  u,
+  ys,
+  { [I]: P, [C]: 400 },
+  [x],
+  [0]
+];
+w.for(u).registerError(qs, W);
+var Bs = [
+  3,
+  u,
+  ws,
+  0,
+  [X, Ae, gs],
+  [0, [() => ve, 0], 0],
+  1
+], Vs = [
+  3,
+  u,
+  Is,
+  0,
+  [X, Re],
+  [0, [() => Hs, 0]]
+], Ws = [
+  3,
+  u,
+  bs,
+  0,
+  [_s, ls, Ae],
+  [0, 0, [() => ve, 0]],
+  1
+], Ks = [
+  3,
+  u,
+  Ps,
+  0,
+  [X],
+  [0]
+], Qs = [
+  -3,
+  u,
+  Cs,
+  { [I]: Us },
+  [x],
+  [0]
+];
+w.for(u).registerError(Qs, G);
+var Zs = [
+  -3,
+  u,
+  Rs,
+  { [I]: P, [C]: 400 },
+  [x],
+  [0]
+];
+w.for(u).registerError(Zs, K);
+var Xs = [
+  -3,
+  u,
+  As,
+  { [I]: P, [C]: 400 },
+  [x],
+  [0]
+];
+w.for(u).registerError(Xs, L);
+var Ys = [
+  -3,
+  u,
+  ks,
+  { [I]: P, [C]: 400 },
+  [x],
+  [0]
+];
+w.for(u).registerError(Ys, H);
+var ei = [
+  -3,
+  u,
+  Os,
+  { [I]: P, [C]: 403 },
+  [x],
+  [0]
+];
+w.for(u).registerError(ei, J);
+var ti = [
+  -3,
+  u,
+  Ts,
+  { [I]: P, [C]: 409 },
+  [x],
+  [0]
+];
+w.for(u).registerError(ti, q);
+var si = [
+  -3,
+  u,
+  Ms,
+  { [I]: P, [C]: 404 },
+  [x],
+  [0]
+];
+w.for(u).registerError(si, V);
+var ii = [
+  -3,
+  u,
+  zs,
+  { [I]: P, [C]: 429 },
+  [x],
+  [0]
+];
+w.for(u).registerError(ii, B);
+var ri = [-3, _e, "CognitoIdentityServiceException", 0, [], []];
+w.for(_e).registerError(ri, E);
+var ve = [
+  2,
+  u,
+  Ds,
+  0,
+  [
+    0,
+    0
+  ],
+  [
+    () => js,
+    0
+  ]
+], oi = [
+  9,
+  u,
+  Es,
+  0,
+  () => Bs,
+  () => Vs
+], ni = [
+  9,
+  u,
+  xs,
+  0,
+  () => Ws,
+  () => Ks
+];
+class ui extends Se.classBuilder().ep(Ee).m(function(t, e, r, i) {
+  return [ye(r, t.getEndpointParameterInstructions())];
+}).s("AWSCognitoIdentityService", "GetCredentialsForIdentity", {}).n("CognitoIdentityClient", "GetCredentialsForIdentityCommand").sc(oi).build() {
+}
+class di extends Se.classBuilder().ep(Ee).m(function(t, e, r, i) {
+  return [ye(r, t.getEndpointParameterInstructions())];
+}).s("AWSCognitoIdentityService", "GetId", {}).n("CognitoIdentityClient", "GetIdCommand").sc(ni).build() {
+}
+export {
+  ci as CognitoIdentityClient,
+  ui as GetCredentialsForIdentityCommand,
+  di as GetIdCommand
+};

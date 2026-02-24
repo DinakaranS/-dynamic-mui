@@ -2,9 +2,10 @@ import { useRef, useState } from 'react';
 import SignatureCanvas from 'react-signature-canvas';
 import { Box, Button, Typography, CircularProgress } from '@mui/material';
 import { ControlProps } from '../../../types';
+import { uploadToS3 } from '../../../util/s3Upload';
 
 export default function Signature({ attributes = {}, rules = {}, onChange }: ControlProps) {
-    const { id = '', MuiAttributes = {}, label = 'Signature' } = attributes;
+    const { id = '', MuiAttributes = {}, label = 'Signature', bucket = '', region = '', identityPoolId = '' } = attributes;
     const sigPad = useRef<SignatureCanvas>(null);
     const [loading, setLoading] = useState(false);
     const [savedUrl, setSavedUrl] = useState<string | null>(attributes.value || null);
@@ -24,21 +25,18 @@ export default function Signature({ attributes = {}, rules = {}, onChange }: Con
 
         setLoading(true);
         const dataUrl = sigPad.current.getTrimmedCanvas().toDataURL('image/png');
+        const fileName = `${id}-${Date.now()}.png`;
 
-        // MOCK S3 UPLOAD
-        // In production, you would fetch() to your backend presigned URL here.
-        // const response = await uploadToS3(dataUrl);
-
-        setTimeout(() => {
-            // Mocking a returned S3 URL (using the dataURL for preview purposes)
-            // const mockS3Url = `https://s3-bucket.amazonaws.com/signatures/${id}-${Date.now()}.png`;
-            // For now, we return the dataURL so it works locally without S3
-            const resultLocation = dataUrl;
-
-            setSavedUrl(resultLocation);
+        try {
+            const uploadedUrl = await uploadToS3(dataUrl, fileName, bucket, region, identityPoolId);
+            setSavedUrl(uploadedUrl);
+            if (onChange) onChange({ id, value: uploadedUrl });
+        } catch (error) {
+            console.error("Signature upload failed", error);
+            // Optionally, we could show an error toast here
+        } finally {
             setLoading(false);
-            if (onChange) onChange({ id, value: resultLocation });
-        }, 1500);
+        }
     };
 
     return (
