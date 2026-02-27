@@ -165,18 +165,18 @@ export function FormGenerator({
                 }}
                 {...cLayout}
                 className={`${className} ${visible ? 'show' : 'hidden'}`}
-                onMouseEnter={(e) => {
-                    if (onFieldClick || onFieldDoubleClick) {
-                        e.currentTarget.style.backgroundColor = 'rgba(99, 102, 241, 0.04)'; // faint highlight
-                        e.currentTarget.style.boxShadow = '0 0 0 1px #6366f1'; // focus border
-                    }
-                }}
-                onMouseLeave={(e) => {
-                    if (onFieldClick || onFieldDoubleClick) {
-                        e.currentTarget.style.backgroundColor = 'transparent';
-                        e.currentTarget.style.boxShadow = 'none';
-                    }
-                }}
+                // onMouseEnter={(e) => {
+                //     if (onFieldClick || onFieldDoubleClick) {
+                //         e.currentTarget.style.backgroundColor = 'rgba(99, 102, 241, 0.04)'; // faint highlight
+                //         e.currentTarget.style.boxShadow = '0 0 0 1px #6366f1'; // focus border
+                //     }
+                // }}
+                // onMouseLeave={(e) => {
+                //     if (onFieldClick || onFieldDoubleClick) {
+                //         e.currentTarget.style.backgroundColor = 'transparent';
+                //         e.currentTarget.style.boxShadow = 'none';
+                //     }
+                // }}
                 onClick={(e) => {
                     // Allow normal clicks for interaction
                     // Only stop propagation if we really need to capture a "selection" click, 

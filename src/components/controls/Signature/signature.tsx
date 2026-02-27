@@ -1,16 +1,23 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import SignatureCanvas from 'react-signature-canvas';
 import { Box, Button, Typography, CircularProgress } from '@mui/material';
 import { ControlProps } from '../../../types';
 import { uploadToS3 } from '../../../util/s3Upload';
 
 export default function Signature({ attributes = {}, rules = {}, onChange }: ControlProps) {
-    const { id = '', MuiAttributes = {}, label = 'Signature', bucket = '', region = '', identityPoolId = '' } = attributes;
+    const { id = '', MuiAttributes = {}, label = 'Signature', bucket = '', region = '', identityPoolId = '', path = '', disabled = false, CanvasProps = {} } = attributes;
     const sigPad = useRef<SignatureCanvas>(null);
     const [loading, setLoading] = useState(false);
     const [savedUrl, setSavedUrl] = useState<string | null>(attributes.value || null);
 
     const isMandatory = rules?.validation?.some((v: any) => v.rule === 'mandatory') || false;
+
+    useEffect(() => {
+        if (attributes.value && sigPad.current) {
+            // Load existing signature if provided in initial patch/attributes
+            sigPad.current.fromDataURL(attributes.value);
+        }
+    }, [attributes.value]);
 
     const clear = () => {
         if (sigPad.current) {
@@ -28,7 +35,7 @@ export default function Signature({ attributes = {}, rules = {}, onChange }: Con
         const fileName = `${id}-${Date.now()}.png`;
 
         try {
-            const uploadedUrl = await uploadToS3(dataUrl, fileName, bucket, region, identityPoolId);
+            const uploadedUrl = await uploadToS3(dataUrl, fileName, bucket, region, identityPoolId, path);
             setSavedUrl(uploadedUrl);
             if (onChange) onChange({ id, value: uploadedUrl });
         } catch (error) {
@@ -60,14 +67,14 @@ export default function Signature({ attributes = {}, rules = {}, onChange }: Con
                     penColor="black"
                     canvasProps={{
                         className: 'sigCanvas',
-                        style: { width: '100%', height: 200 },
+                        style: { width: '100%', height: 150, pointerEvents: disabled ? 'none' : 'auto', ...CanvasProps?.style },
                     }}
                     backgroundColor="transparent"
                 />
             </Box>
 
-            <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-                <Button variant="outlined" color="secondary" onClick={clear} size="small">
+            <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', mt: 1 }}>
+                <Button variant="outlined" color="secondary" onClick={clear} size="small" disabled={disabled || loading}>
                     Clear
                 </Button>
                 <Button
@@ -75,14 +82,14 @@ export default function Signature({ attributes = {}, rules = {}, onChange }: Con
                     color="primary"
                     onClick={save}
                     size="small"
-                    disabled={loading || savedUrl !== null}
+                    disabled={disabled || loading || savedUrl !== null}
                     startIcon={loading ? <CircularProgress size={16} color="inherit" /> : null}
                 >
-                    {savedUrl ? 'Saved' : 'Save & Upload'}
+                    {savedUrl ? 'Saved' : 'Save'}
                 </Button>
                 {savedUrl && (
                     <Typography variant="caption" color="success.main">
-                        Signature Uploaded!
+                        Signature Saved!
                     </Typography>
                 )}
             </Box>

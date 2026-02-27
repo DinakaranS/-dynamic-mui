@@ -2,16 +2,41 @@ import { useState, useEffect } from 'react';
 import { TextField, Button, Box, IconButton, Stack } from '@mui/material';
 import { Icon } from '@mui/material';
 import { ControlProps } from '../../../types';
-
+import useUpdateEffect from '../../../util/useUpdateEffect';
 
 export default function MultiTextbox({ attributes = {}, rules = {}, onChange }: ControlProps) {
     const { id = '' } = attributes;
+
     // Internal state to track list of values
-    const [items, setItems] = useState<{ key: string; value: string }[]>([
-        { key: 't1', value: '' }
-    ]);
+    const [items, setItems] = useState<{ key: string; value: string }[]>(() => {
+        if (attributes.value && typeof attributes.value === 'object') {
+            const initialItems = Object.entries(attributes.value).map(([key, val]) => ({
+                key,
+                value: String(val)
+            }));
+            if (initialItems.length > 0) return initialItems;
+        }
+        return [{ key: 't1', value: '' }];
+    });
 
     const isMandatory = rules?.validation?.some((v: any) => v.rule === 'mandatory') || false;
+
+    useUpdateEffect(() => {
+        if (attributes.value && typeof attributes.value === 'object') {
+            const newItems = Object.entries(attributes.value).map(([key, val]) => ({
+                key,
+                value: String(val)
+            }));
+
+            // Only update if fundamentally different to avoid infinite loops
+            if (JSON.stringify(newItems) !== JSON.stringify(items)) {
+                setItems(newItems.length > 0 ? newItems : [{ key: 't1', value: '' }]);
+            }
+        } else if (!attributes.value) {
+            // default clear state
+            setItems([{ key: 't1', value: '' }]);
+        }
+    }, [attributes.value]);
 
     // Update parent whenever items change
     useEffect(() => {

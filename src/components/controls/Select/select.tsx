@@ -6,6 +6,7 @@ import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import { checkboxSX, getInputProps } from '../../../util/helper';
 import { ControlProps } from '../../../types';
+import useUpdateEffect from '../../../util/useUpdateEffect';
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
@@ -38,7 +39,7 @@ const getValue = (options: any[] = [], defaultValue: any = '', isMultiple = fals
 
         return safeOptions.find(({ value }) => value === defaultValue);
     } catch (err) {
-         
+
         console.error('getValue error:', err);
         return isMultiple ? [] : null;
     }
@@ -56,6 +57,14 @@ export default function Select({ attributes = {}, rules = {}, onChange }: Contro
         attributes?.value &&
         getValue(options, attributes?.value, MuiAttributes.multiple, attributes?.separator),
     );
+
+    useUpdateEffect(() => {
+        setValue(
+            attributes?.value
+                ? getValue(options, attributes?.value, MuiAttributes.multiple, attributes?.separator)
+                : MuiAttributes.multiple ? [] : null
+        );
+    }, [attributes?.value]);
 
     // Validation State
     const [error, setError] = React.useState(false);
