@@ -1,1 +1,0 @@
-"use strict";Object.defineProperty(exports,Symbol.toStringTag,{value:"Module"});const o=require("./index-BFycuK80.js");exports.ClearFormData=o.ClearFormData;exports.Controls=o.Controls;exports.DynamicComponent=o.DynamicComponent;exports.FormData=o.FormData;exports.FormGenerator=o.FormGenerator;exports.MuiConfig=o.mui;
