@@ -74,5 +74,35 @@ export const COMPONENT_DOCS: Record<string, { title: string; description: string
             text: 'Content to display',
             variant: 'h1...h6 | body1 | body2'
         }
+    },
+    lineitemlist: {
+        title: 'Line Item List',
+        description: 'A dynamic list of rows — each row has a description field and a fee/amount field. Rows can be added or removed. The key prefix for each row is derived automatically from the patched data, or set via the keyPrefix prop.',
+        usage: 'Use for itemised charges, miscellaneous entries, or any repeatable description+amount pairs.',
+        props: {
+            id: 'Unique field identifier',
+            keyPrefix: 'Prefix for generated row keys, e.g. "charge" → charge1, charge2 (auto-detected from patch data)',
+            showRowBadge: 'Show/hide the row-number circle badge. Default: true',
+            'MuiAttributes.row': 'MUI Box props spread onto each row container',
+            'MuiAttributes.rowBadge': 'MUI Typography props spread onto the row-number badge',
+            'MuiAttributes.description': 'MUI TextField props spread onto the description input',
+            'MuiAttributes.fee': 'MUI TextField props spread onto the fee input',
+            'MuiAttributes.addButton': 'MUI Button props spread onto the Add (+) button',
+            'MuiAttributes.removeButton': 'MUI IconButton props spread onto the Remove button'
+        }
+    },
+    formrepeater: {
+        title: 'Form Repeater',
+        description: 'A number input that dynamically generates N copies of a form group. Each group renders any sub-fields defined in subFields. Output is an array of objects, one per group.',
+        usage: 'Use for repeating data entry — team members, line items, addresses, beneficiaries, etc.',
+        props: {
+            id: 'Unique field identifier',
+            label: 'Label prefix for each group heading (e.g. "Member" → Member 1, Member 2)',
+            count: 'Initial number of groups to render',
+            min: 'Minimum number of groups allowed (default: 1)',
+            max: 'Maximum number of groups allowed (optional)',
+            subFields: 'Array of FormField definitions rendered inside each group',
+            value: 'Array of patch objects, one per group, to pre-fill values'
+        }
     }
 };

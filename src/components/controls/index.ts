@@ -19,6 +19,8 @@ import Chip from './Chip/chip';
 import List from './List/list';
 import NumberField from './NumberField/numberfield';
 import MultiTextbox from './MultiTextbox/multitextbox';
+import LineItemList from './LineItemList/lineitemlist';
+import FormRepeater from './FormRepeater/formrepeater';
 import Signature from './Signature/signature';
 import Group from './Group/group';
 import Accordion from './Accordion/accordion';
@@ -48,6 +50,8 @@ const Controls = {
     List,
     NumberField,
     MultiTextbox,
+    LineItemList,
+    FormRepeater,
     Signature,
     Group,
     Accordion,

@@ -171,6 +171,38 @@ export const TEMPLATES: Record<string, FormField[]> = {
             layout: { xs: 12, sm: 12 }
         }
     ],
+    'lineitemlist': [
+        {
+            type: 'lineitemlist',
+            props: {
+                id: 'line-item-list',
+                value: [
+                    { fee: 0, miscellaneous1: '' }
+                ]
+            },
+            layout: { xs: 12, sm: 12 }
+        }
+    ],
+    'formrepeater': [
+        {
+            type: 'formrepeater',
+            props: {
+                id: 'form-repeater',
+                label: 'Group',
+                count: 1,
+                min: 1,
+                subFields: [
+                    {
+                        type: 'textfield',
+                        props: { id: 'field1', MuiAttributes: { label: 'Field 1', fullWidth: true } },
+                        layout: { xs: 12 },
+                        visible: true
+                    }
+                ]
+            },
+            layout: { xs: 12, sm: 12 }
+        }
+    ],
     'signature': [
         {
             type: 'signature',
@@ -340,6 +372,8 @@ export const TOOLBOX_ITEMS = [
     { type: 'timepicker', label: 'Time Picker', icon: 'access_time' },
     { type: 'numberfield', label: 'Number Field', icon: 'onetwothree' }, // Custom or generic icon
     { type: 'multitextbox', label: 'Multi Textbox', icon: 'playlist_add' },
+    { type: 'lineitemlist', label: 'Line Item List', icon: 'receipt_long' },
+    { type: 'formrepeater', label: 'Form Repeater', icon: 'dynamic_form' },
     { type: 'signature', label: 'Signature', icon: 'draw' },
     { type: 'button', label: 'Button', icon: 'smart_button' },
     { type: 'typography', label: 'Typography', icon: 'text_format' },

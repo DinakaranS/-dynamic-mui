@@ -6,7 +6,7 @@ import { COMPONENT_DOCS } from './documentation';
 import React, { useState } from 'react';
 
 const CATEGORIES = {
-    'Inputs': ['textfield', 'numberfield', 'select', 'checkbox', 'switch', 'radio', 'autocomplete', 'multitextbox', 'signature', 'datetime', 'timepicker'],
+    'Inputs': ['textfield', 'numberfield', 'select', 'checkbox', 'switch', 'radio', 'autocomplete', 'multitextbox', 'lineitemlist', 'formrepeater', 'signature', 'datetime', 'timepicker'],
     'Layout': ['group', 'accordion', 'tabs', 'divider'],
     'Display': ['typography', 'datatable', 'chip', 'list', 'imagelist', 'hyperlink'],
     'Actions': ['button'],

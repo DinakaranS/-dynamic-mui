@@ -142,6 +142,82 @@ export const ALL_CONTROLS_TEST_DATA: FormField[] = [
         layout: { xs: 12, sm: 5 }
     },
     {
+        type: 'lineitemlist',
+        props: {
+            id: 'lineitemlist',
+            value: [
+                { fee: 0, miscellaneous1: 'qwerty' },
+                { fee: 0, miscellaneous2: 'Keypad' },
+                { fee: 0, miscellaneous3: 'Lion' },
+                { fee: 0, miscellaneous4: 'mouse' },
+                { fee: 0, miscellaneous5: 'Cat' }
+            ]
+        },
+        layout: { xs: 12, sm: 7 }
+    },
+    {
+        type: 'lineitemlist',
+        props: {
+            id: 'charges',
+            keyPrefix: 'charge',
+            showRowBadge: true,
+            MuiAttributes: {
+                rowBadge: {},
+                description: {
+                    label: 'Item Name',
+                    variant: 'outlined'
+                },
+                fee: {
+                    label: 'Amount'
+                },
+                addButton: {
+                    color: 'success'
+                },
+                row: {}
+            }
+        },
+        layout: { xs: 12 }
+    },
+    {
+        type: 'formrepeater',
+        props: {
+            id: 'members',
+            label: 'Member',
+            count: 2,
+            min: 1,
+            max: 10,
+            subFields: [
+                {
+                    type: 'textfield',
+                    props: { id: 'fullName', MuiAttributes: { label: 'Full Name', fullWidth: true } },
+                    layout: { xs: 12, sm: 6 },
+                    visible: true
+                },
+                {
+                    type: 'numberfield',
+                    props: { id: 'age', MuiAttributes: { label: 'Age' } },
+                    layout: { xs: 12, sm: 6 },
+                    visible: true
+                },
+                {
+                    type: 'select',
+                    props: {
+                        id: 'role',
+                        MuiBoxAttributes: { label: 'Role' },
+                        options: [
+                            { value: 'admin', label: 'Admin' },
+                            { value: 'member', label: 'Member' },
+                            { value: 'viewer', label: 'Viewer' }
+                        ]
+                    },
+                    layout: { xs: 12 },
+                    visible: true
+                }
+            ]
+        },
+        layout: { xs: 12 }
+    },
+    {
         type: 'signature',
         props: { id: 'sig1' },
         layout: { xs: 12 }

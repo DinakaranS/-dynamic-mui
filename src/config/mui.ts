@@ -91,6 +91,14 @@ const mui: MuiConfigMap = {
         type: 'MultiTextbox',
         map: 'MultiTextbox',
     },
+    lineitemlist: {
+        type: 'LineItemList',
+        map: 'LineItemList',
+    },
+    formrepeater: {
+        type: 'FormRepeater',
+        map: 'FormRepeater',
+    },
     signature: {
         type: 'Signature',
         map: 'Signature',
