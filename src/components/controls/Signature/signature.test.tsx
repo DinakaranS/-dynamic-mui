@@ -64,6 +64,6 @@ describe('Signature Control', () => {
     it('has clear and save buttons', () => {
         render(<Signature {...defaultProps} />);
         expect(screen.getByText('Clear')).toBeInTheDocument();
-        expect(screen.getByText('Save & Upload')).toBeInTheDocument();
+        expect(screen.getByText('Save')).toBeInTheDocument();
     });
 });
