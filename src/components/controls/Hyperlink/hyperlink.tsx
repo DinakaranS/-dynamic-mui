@@ -16,9 +16,9 @@ export default function Hyperlink({ attributes = {}, rules = {} }: ControlProps)
     const finalLabel = displayText || label || finalUrl;
 
     return (
-        <Box sx={{ width: '100%', ...MuiAttributes.sx }}>
+        <Box sx={{ width: '100%' }} {...MuiAttributes.container}>
             {label && displayText && (
-                <Typography variant="subtitle2" gutterBottom sx={{ display: 'flex' }}>
+                <Typography variant="subtitle2" gutterBottom sx={{ display: 'flex' }} {...MuiAttributes.displayText}>
                     {label}
                     {isMandatory && <Box component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Box>}
                 </Typography>
@@ -28,7 +28,7 @@ export default function Hyperlink({ attributes = {}, rules = {} }: ControlProps)
                 href={finalUrl as string}
                 target={target}
                 rel={target === '_blank' ? "noopener noreferrer" : undefined}
-                {...MuiAttributes}
+                {...MuiAttributes.link}
             >
                 {finalLabel}
             </Link>
