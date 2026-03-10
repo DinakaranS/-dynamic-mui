@@ -85,6 +85,9 @@ export default function Switch({ attributes = {}, rules = {}, onChange }: Contro
         label
     );
 
+    // Build color prop: custom color for ColorSwitch, valid MUI color or 'primary' default for MuiSwitch
+    const switchColorProp = color ? { color } : { color: 'primary' as const };
+
     return (
         <FormControl required={isMandatory} error={error} component="fieldset">
             <FormControlLabel
@@ -97,7 +100,7 @@ export default function Switch({ attributes = {}, rules = {}, onChange }: Contro
                         required={isMandatory}
                         {...otherMuiAttributes}
                         // @ts-ignore
-                        color={color}
+                        {...switchColorProp}
                         inputProps={{ 'aria-label': 'controlled' }}
                     />
                 }

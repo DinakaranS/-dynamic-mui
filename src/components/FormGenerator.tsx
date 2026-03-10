@@ -239,18 +239,11 @@ export function FormGenerator({
                     </React.Fragment>
                 ))}
             </Grid>
-            {layout.worows.map((field, index) => {
-                const fId = field?.id || field?.props?.id;
-                return (
-                    <div
-                        key={fId || `layout-comp-${index}`}
-                        style={field.style || {}}
-                        className={`${field.className || ''} ${field.visible ? 'show' : 'hidden'}`}
-                    >
-                        {renderDynamicComponent(field, index)}
-                    </div>
-                );
-            })}
+            {layout.worows.length > 0 && (
+                <Grid key={`layout-grid-worows-${guid}`} container {...MuiGridAttributes}>
+                    {layout.worows.map((field, index) => renderDynamicComponent(field, index))}
+                </Grid>
+            )}
             <button
                 aria-label="button"
                 type="button"

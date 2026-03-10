@@ -7,23 +7,42 @@ import { uploadToS3 } from '../../../util/s3Upload';
 export default function Signature({ attributes = {}, rules = {}, onChange }: ControlProps) {
     const { id = '', MuiAttributes = {}, label = 'Signature', bucket = '', region = '', identityPoolId = '', path = '', disabled = false, CanvasProps = {} } = attributes;
     const sigPad = useRef<SignatureCanvas>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
     const [loading, setLoading] = useState(false);
     const [savedUrl, setSavedUrl] = useState<string | null>(attributes.value || null);
+    const [canvasWidth, setCanvasWidth] = useState(400);
+    const [userSaved, setUserSaved] = useState(false);
 
     const isMandatory = rules?.validation?.some((v: any) => v.rule === 'mandatory') || false;
+
+    const canvasHeight = CanvasProps?.style?.height || 150;
+
+    // Observe parent grid container width using ResizeObserver
+    useEffect(() => {
+        const el = containerRef.current;
+        if (!el) return;
+
+        const observer = new ResizeObserver((entries) => {
+            const width = entries[0]?.contentRect?.width;
+            if (width && width > 0) setCanvasWidth(Math.floor(width));
+        });
+        observer.observe(el);
+        return () => observer.disconnect();
+    }, []);
 
     useEffect(() => {
         if (attributes.value && sigPad.current) {
             // Load existing signature if provided in initial patch/attributes
-            sigPad.current.fromDataURL(attributes.value);
+            sigPad.current.fromDataURL(attributes.value, { width: canvasWidth, height: canvasHeight });
         }
-    }, [attributes.value]);
+    }, [attributes.value, canvasWidth, canvasHeight]);
 
     const clear = () => {
         if (sigPad.current) {
             sigPad.current.clear();
         }
         setSavedUrl(null);
+        setUserSaved(false);
         if (onChange) onChange({ id, value: '' });
     };
 
@@ -37,10 +56,10 @@ export default function Signature({ attributes = {}, rules = {}, onChange }: Con
         try {
             const uploadedUrl = await uploadToS3(dataUrl, fileName, bucket, region, identityPoolId, path);
             setSavedUrl(uploadedUrl);
+            setUserSaved(true);
             if (onChange) onChange({ id, value: uploadedUrl });
         } catch (error) {
             console.error("Signature upload failed", error);
-            // Optionally, we could show an error toast here
         } finally {
             setLoading(false);
         }
@@ -54,6 +73,7 @@ export default function Signature({ attributes = {}, rules = {}, onChange }: Con
             </Typography>
 
             <Box
+                ref={containerRef}
                 sx={{
                     border: '1px solid',
                     borderColor: 'divider',
@@ -67,13 +87,15 @@ export default function Signature({ attributes = {}, rules = {}, onChange }: Con
                     penColor="black"
                     canvasProps={{
                         className: 'sigCanvas',
-                        style: { width: '100%', height: 150, pointerEvents: disabled ? 'none' : 'auto', ...CanvasProps?.style },
+                        width: canvasWidth,
+                        height: canvasHeight,
+                        style: { display: 'block', pointerEvents: disabled ? 'none' : 'auto', ...CanvasProps?.style, width: '100%', height: canvasHeight },
                     }}
                     backgroundColor="transparent"
                 />
             </Box>
 
-            <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', mt: 1 }}>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, alignItems: 'center', mt: 1 }}>
                 <Button variant="outlined" color="secondary" onClick={clear} size="small" disabled={disabled || loading}>
                     Clear
                 </Button>
@@ -87,7 +109,7 @@ export default function Signature({ attributes = {}, rules = {}, onChange }: Con
                 >
                     {savedUrl ? 'Saved' : 'Save'}
                 </Button>
-                {savedUrl && (
+                {userSaved && savedUrl && (
                     <Typography variant="caption" color="success.main">
                         Signature Saved!
                     </Typography>
