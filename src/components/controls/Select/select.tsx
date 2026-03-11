@@ -24,6 +24,7 @@ const getValue = (options: any[] = [], defaultValue: any = '', isMultiple = fals
                 let tempSeparator = separator;
                 if (defaultValue.includes(',')) tempSeparator = ',';
                 else if (defaultValue.includes(';')) tempSeparator = ';';
+                else if (defaultValue.includes(':')) tempSeparator = ':';
 
                 values = defaultValue.split(tempSeparator).map((v) => v.trim());
             }
@@ -53,9 +54,10 @@ export default function Select({ attributes = {}, rules = {}, onChange }: Contro
         id = '',
         InputProps = {},
     } = attributes;
-    const [value, setValue] = React.useState(
-        attributes?.value &&
-        getValue(options, attributes?.value, MuiAttributes.multiple, attributes?.separator),
+    const [value, setValue] = React.useState(() =>
+        attributes?.value
+            ? getValue(options, attributes?.value, MuiAttributes.multiple, attributes?.separator)
+            : MuiAttributes.multiple ? [] : null,
     );
 
     useUpdateEffect(() => {
@@ -64,7 +66,7 @@ export default function Select({ attributes = {}, rules = {}, onChange }: Contro
                 ? getValue(options, attributes?.value, MuiAttributes.multiple, attributes?.separator)
                 : MuiAttributes.multiple ? [] : null
         );
-    }, [attributes?.value]);
+    }, [attributes?.value, options]);
 
     // Validation State
     const [error, setError] = React.useState(false);
