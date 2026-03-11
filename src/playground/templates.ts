@@ -359,6 +359,21 @@ export const TEMPLATES: Record<string, FormField[]> = {
             },
             layout: { xs: 12 }
         }
+    ],
+    'locationfield': [
+        {
+            type: 'locationfield',
+            props: {
+                id: 'location-1',
+                value: '',
+                buttonText: 'Update Location',
+                buttonIcon: 'location_on',
+                buttonDisplay: 'both',
+                MuiAttributes: { label: 'Address', variant: 'outlined' },
+                MuiButtonAttributes: { variant: 'contained', color: 'primary' }
+            },
+            layout: { xs: 12, sm: 6 }
+        }
     ]
 };
 
@@ -391,4 +406,5 @@ export const TOOLBOX_ITEMS = [
     { type: 'autocomplete', label: 'Auto Complete', icon: 'arrow_drop_down_circle' },
     { type: 'imagelist', label: 'Image List', icon: 'collections' },
     { type: 'hyperlink', label: 'Hyperlink', icon: 'link' },
+    { type: 'locationfield', label: 'Location Field', icon: 'location_on' },
 ];

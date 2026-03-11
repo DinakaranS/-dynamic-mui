@@ -82,7 +82,7 @@ export const Builder = () => {
                             <Icon fontSize="small">dashboard</Icon>
                         </Box>
                         <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontWeight: 700, letterSpacing: '-0.5px' }}>
-                            Dynamic Form Builder
+                            Form Builder
                         </Typography>
                         <Button
                             variant="outlined"

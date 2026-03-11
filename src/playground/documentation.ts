@@ -91,6 +91,21 @@ export const COMPONENT_DOCS: Record<string, { title: string; description: string
             'MuiAttributes.removeButton': 'MUI IconButton props spread onto the Remove button'
         }
     },
+    locationfield: {
+        title: 'Location Field',
+        description: 'A text field with an adjacent button for updating location/address. Clicking the button sends an onChange event with option "location_update_request" to the parent, which can then enable a map picker. The updated address can be patched back.',
+        usage: 'Use for address fields where the user can update the location via a map or geocoding.',
+        props: {
+            id: 'Unique field identifier',
+            value: 'Initial address string',
+            buttonText: 'Text on the update button (default: "Update Location")',
+            buttonIcon: 'Iconify icon name for the button (default: "mdi:map-marker")',
+            buttonDisplay: '"text" | "icon" | "both" — controls what the button shows (default: "both")',
+            MuiAttributes: 'MUI TextField props (label, variant, etc.)',
+            MuiButtonAttributes: 'MUI Button props (variant, color, size, sx, etc.)',
+            disabled: 'Disables both the text field and the button'
+        }
+    },
     formrepeater: {
         title: 'Form Repeater',
         description: 'A number input that dynamically generates N copies of a form group. Each group renders any sub-fields defined in subFields. Output is an array of objects, one per group.',

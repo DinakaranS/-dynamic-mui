@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find /Users/Dinakaran/Projects/-dynamic-mui/src -type f -name *.ts -o -name *.tsx)"
+    ]
+  }
+}

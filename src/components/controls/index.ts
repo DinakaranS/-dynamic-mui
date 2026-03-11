@@ -28,6 +28,7 @@ import Tabs from './Tabs/tabs';
 import AutoComplete from './Autocomplete/autocomplete';
 import ImgList from './ImageList/imagelist';
 import Hyperlink from './Hyperlink/hyperlink';
+import LocationField from './LocationField/locationfield';
 
 const Controls = {
     Typography,
@@ -58,7 +59,8 @@ const Controls = {
     Tabs,
     AutoComplete,
     ImgList,
-    Hyperlink
+    Hyperlink,
+    LocationField
 };
 
 export default Controls;

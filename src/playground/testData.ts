@@ -218,6 +218,28 @@ export const ALL_CONTROLS_TEST_DATA: FormField[] = [
         layout: { xs: 12 }
     },
     {
+        type: 'locationfield',
+        props: {
+            id: 'location1',
+            value: '123 Main Street, Springfield',
+            buttonText: 'Update Location',
+            buttonDisplay: 'both',
+            MuiAttributes: { label: 'Address', variant: 'outlined' }
+        },
+        layout: { xs: 12, sm: 6 }
+    },
+    {
+        type: 'locationfield',
+        props: {
+            id: 'location2',
+            value: '',
+            buttonText: 'Pick',
+            buttonDisplay: 'icon',
+            MuiAttributes: { label: 'Site Location' }
+        },
+        layout: { xs: 12, sm: 6 }
+    },
+    {
         type: 'signature',
         props: { id: 'sig1' },
         layout: { xs: 12 }

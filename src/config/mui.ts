@@ -127,6 +127,10 @@ const mui: MuiConfigMap = {
         type: 'Hyperlink',
         map: 'Hyperlink',
     },
+    locationfield: {
+        type: 'LocationField',
+        map: 'LocationField',
+    },
 };
 
 export default mui;
