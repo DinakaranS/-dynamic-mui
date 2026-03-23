@@ -1,7 +1,6 @@
 // eslint-disable-next-line import/no-cycle
 import * as Controls from '../components/controls';
 import mui, { MuiConfigMap } from '../config/mui';
-import { generateKey } from './helper';
 
 interface StepperComponentsProps {
     components?: any[];
@@ -18,9 +17,10 @@ export default function StepperComponents({ components = [], onUpdate }: Stepper
                 const CustomComponent = (Controls as any).default[config.map];
                 if (!CustomComponent) return null;
 
+                const compId = component.id || component.props?.id || `stepper-comp-${index}`;
                 return (
                     <CustomComponent
-                        key={generateKey('dynamic-stepper-comp', index)}
+                        key={compId}
                         attributes={component.props}
                         onChange={onUpdate}
                     />

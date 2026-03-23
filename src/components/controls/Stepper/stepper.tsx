@@ -67,6 +67,17 @@ export default function Stepper({ attributes = {}, onChange, onStepUpdate, curre
         dispatch({ type: 'SET_STEP', payload: { currentStep } });
     }, [currentStep]);
 
+    // Sync patch into stepperResponse when patch changes (e.g. async load)
+    useEffect(() => {
+        if (patch && Object.keys(patch).length > 0) {
+            Object.entries(patch).forEach(([key, value]) => {
+                if (stepperResponse[key] !== value) {
+                    dispatch({ type: 'UPDATE_RESPONSE', payload: { id: key, value } });
+                }
+            });
+        }
+    }, [patch]);
+
     const handleStepChange = useCallback(
         (stepChange: number, isScreenChange: boolean, isLastStep: boolean) => {
             dispatch({ type: 'CHANGE_STEP', payload: { stepChange } });
