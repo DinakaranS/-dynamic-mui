@@ -154,7 +154,7 @@ export default function Stepper({ attributes = {}, onChange, onStepUpdate, curre
                                     onUpdate={handleUpdate}
                                     components={updatePatchData(
                                         step.components,
-                                        stepperResponse,
+                                        { ...stepperResponse },
                                         '',
                                         {},
                                         step.enableDisableIds,
