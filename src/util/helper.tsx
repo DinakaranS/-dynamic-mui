@@ -164,10 +164,9 @@ export const updatePatchData = (
     enableDisableIds: EnableDisableConfig[] = [],
 ): FormField[] => {
     try {
-        // Merge patch into existing response for the provided GUID
-        // (preserve user-entered values that are not in the patch)
-        if (!response[guid]) response[guid] = {};
-        Object.assign(response[guid], patch);
+        // Update response with the patch for the provided GUID
+
+        response[guid] = patch;
 
         // Map and update fields with response data
         const updatedFields = map(fields, (field: any) => {

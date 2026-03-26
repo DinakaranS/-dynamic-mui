@@ -24,7 +24,7 @@ interface StepperState {
 }
 
 interface StepperAction {
-    type: 'SET_STEPS' | 'SET_STEP' | 'UPDATE_RESPONSE' | 'CHANGE_STEP' | 'MERGE_DEFAULTS';
+    type: 'SET_STEPS' | 'SET_STEP' | 'UPDATE_RESPONSE' | 'CHANGE_STEP';
     payload: any;
 }
 
@@ -47,31 +47,11 @@ const reducer = (state: StepperState, action: StepperAction): StepperState => {
                 ...state,
                 stepperResponse: { ...state.stepperResponse, [payload.id]: payload.value },
             };
-        case 'MERGE_DEFAULTS':
-            // Merge defaults without overwriting existing values
-            return {
-                ...state,
-                stepperResponse: { ...payload.defaults, ...state.stepperResponse },
-            };
         case 'CHANGE_STEP':
             return { ...state, activeStep: state.activeStep + payload.stepChange };
         default:
             return state;
     }
-};
-
-// Collect default values from all step component props
-const getComponentDefaults = (steps: any[]): Record<string, any> => {
-    const defaults: Record<string, any> = {};
-    steps.forEach((step: any) => {
-        (step.components || []).forEach((comp: any) => {
-            const fieldId = comp.id || comp.props?.id;
-            if (fieldId && comp.props?.value !== undefined) {
-                defaults[fieldId] = comp.props.value;
-            }
-        });
-    });
-    return defaults;
 };
 
 export default function Stepper({ attributes = {}, onChange, onStepUpdate, currentStep = 0, patch = {} }: StepperProps) {
@@ -98,19 +78,31 @@ export default function Stepper({ attributes = {}, onChange, onStepUpdate, curre
         }
     }, [patch]);
 
+    // Initialize stepperResponse with default values from all step component props
+    // so that untouched fields are still captured on submit
+    useEffect(() => {
+        MuiSteps.forEach((step: any) => {
+            (step.components || []).forEach((comp: any) => {
+                const fieldId = comp.id || comp.props?.id;
+                if (fieldId && comp.props?.value !== undefined && stepperResponse[fieldId] === undefined) {
+                    dispatch({ type: 'UPDATE_RESPONSE', payload: { id: fieldId, value: comp.props.value } });
+                    if (onChange) onChange({ id: fieldId, value: comp.props.value });
+                }
+            });
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
     const handleStepChange = useCallback(
         (stepChange: number, isScreenChange: boolean, isLastStep: boolean) => {
             dispatch({ type: 'CHANGE_STEP', payload: { stepChange } });
             const newStep = activeStep + stepChange;
             if (onStepUpdate) onStepUpdate(newStep, isScreenChange && stepChange > 0, isLastStep);
             if (isLastStep && onChange && attributes.id) {
-                // Merge defaults for untouched fields before sending final value
-                const defaults = getComponentDefaults(MuiSteps);
-                const finalResponse = { ...defaults, ...stepperResponse };
-                onChange({ id: attributes.id, value: finalResponse });
+                onChange({ id: attributes.id, value: stepperResponse });
             }
         },
-        [activeStep, attributes.id, onChange, onStepUpdate, stepperResponse, MuiSteps],
+        [activeStep, attributes.id, onChange, onStepUpdate, stepperResponse],
     );
 
     const handleUpdate = useCallback(
@@ -177,7 +169,7 @@ export default function Stepper({ attributes = {}, onChange, onStepUpdate, curre
                                     onUpdate={handleUpdate}
                                     components={updatePatchData(
                                         step.components,
-                                        stepperResponse,
+                                        { ...stepperResponse },
                                         '',
                                         {},
                                         step.enableDisableIds,
