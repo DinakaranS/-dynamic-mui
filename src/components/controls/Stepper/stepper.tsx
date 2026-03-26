@@ -78,6 +78,21 @@ export default function Stepper({ attributes = {}, onChange, onStepUpdate, curre
         }
     }, [patch]);
 
+    // Initialize stepperResponse with default values from all step component props
+    // so that untouched fields are still captured on submit
+    useEffect(() => {
+        MuiSteps.forEach((step: any) => {
+            (step.components || []).forEach((comp: any) => {
+                const fieldId = comp.id || comp.props?.id;
+                if (fieldId && comp.props?.value !== undefined && stepperResponse[fieldId] === undefined) {
+                    dispatch({ type: 'UPDATE_RESPONSE', payload: { id: fieldId, value: comp.props.value } });
+                    if (onChange) onChange({ id: fieldId, value: comp.props.value });
+                }
+            });
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
     const handleStepChange = useCallback(
         (stepChange: number, isScreenChange: boolean, isLastStep: boolean) => {
             dispatch({ type: 'CHANGE_STEP', payload: { stepChange } });
