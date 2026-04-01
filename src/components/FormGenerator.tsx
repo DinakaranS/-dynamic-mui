@@ -99,8 +99,8 @@ export function FormGenerator({
     );
 
     useEffect(() => {
-        if (isEmpty(response[guid])) response[guid] = patch;
-    }, []);
+        if (isEmpty(response[guid])) response[guid] = { ...patch };
+    }, [guid, patch]);
 
     useUpdateEffect(() => {
         setNewPatch({ ...patch });
