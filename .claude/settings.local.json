@@ -1,7 +1,19 @@
 {
   "permissions": {
     "allow": [
-      "Bash(find /Users/Dinakaran/Projects/-dynamic-mui/src -type f -name *.ts -o -name *.tsx)"
+      "Bash(find /Users/Dinakaran/Projects/-dynamic-mui/src -type f -name *.ts -o -name *.tsx)",
+      "Bash(npx tsc:*)",
+      "Bash(npx vitest:*)",
+      "Bash(npx eslint:*)",
+      "Bash(yarn build:*)",
+      "Bash(npm publish:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(node -e \"const dayjs = require\\(''dayjs''\\); console.log\\(''03/11/2026 valid:'', dayjs\\(''03/11/2026''\\).isValid\\(\\), dayjs\\(''03/11/2026''\\).format\\(\\)\\); console.log\\(''2026-03-11 valid:'', dayjs\\(''2026-03-11''\\).isValid\\(\\), dayjs\\(''2026-03-11''\\).format\\(\\)\\);\")",
+      "Bash(npm whoami:*)",
+      "Bash(git checkout:*)",
+      "Bash(gh release create v2.0.19 --title v2.0.19 --notes ':*)"
     ]
   }
 }

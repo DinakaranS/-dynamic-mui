@@ -31,9 +31,10 @@ describe('Select Control', () => {
 
     it('opens dropdown and selects option', () => {
         render(<Select {...defaultProps} />);
-        // Helper to open: clicking the combobox or label usually works
-        const input = screen.getByRole('combobox');
-        fireEvent.mouseDown(input); // MUI Autocomplete often reacts to mouseDown
+        // MUI v9 Autocomplete: focus input then press ArrowDown to open (wrap in act)
+        const input = screen.getByRole('combobox') as HTMLInputElement;
+        input.focus();
+        fireEvent.keyDown(input, { key: 'ArrowDown' });
 
         // Find option in portal
         const option1 = screen.getByText('Option 1');

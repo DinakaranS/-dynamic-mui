@@ -75,13 +75,15 @@ export default function FormRepeater({ attributes = {}, rules = {}, onChange }: 
                 value={count}
                 onChange={(e) => handleCountChange(e.target.value)}
                 required={isMandatory}
-                inputProps={{ min, ...(max !== undefined ? { max } : {}) }}
-                InputProps={{
-                    startAdornment: (
-                        <InputAdornment position="start">
-                            <Icon fontSize="small">format_list_numbered</Icon>
-                        </InputAdornment>
-                    ),
+                slotProps={{
+                    htmlInput: { min, ...(max !== undefined ? { max } : {}) },
+                    input: {
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                <Icon fontSize="small">format_list_numbered</Icon>
+                            </InputAdornment>
+                        ),
+                    },
                 }}
                 sx={{ mb: 2, minWidth: 200 }}
             />
@@ -94,7 +96,7 @@ export default function FormRepeater({ attributes = {}, rules = {}, onChange }: 
                 return (
                     <Accordion key={groupGuid} defaultExpanded={i === 0} sx={{ mb: 1 }}>
                         <AccordionSummary expandIcon={<Icon>expand_more</Icon>}>
-                            <Typography fontWeight={600}>
+                            <Typography sx={{ fontWeight: 600 }}>
                                 {label} {i + 1}
                             </Typography>
                         </AccordionSummary>

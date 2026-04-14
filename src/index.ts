@@ -2,4 +2,5 @@ export { FormGenerator, FormData, ClearFormData } from './components/FormGenerat
 export { default as DynamicComponent } from './components/DynamicComponent';
 export { default as Controls } from './components/controls';
 export { default as MuiConfig } from './config/mui';
+export { migrateFormData, migrateFormField } from './util/helper';
 export * from './types';

@@ -66,40 +66,42 @@ export default function TextField({ attributes = {}, rules = {}, onChange }: Con
         setTimeout(() => el.focus(), 0);
     };
 
-    // Build merged input props we want to ensure exist
-    const ourInputProps = {
+    // Our extra input behaviors (wheel block, inputMode for numeric)
+    const ourHtmlInputProps: any = {
         ...(isNumberType ? { onWheel: onWheelBlock } : {}),
-        inputMode:
-            (MuiAttributes?.inputProps && MuiAttributes.inputProps.inputMode) ||
-            (MuiAttributes?.slotProps?.input && MuiAttributes.slotProps.input.inputMode) ||
-            'numeric',
+    };
+    if (isNumberType) {
+        ourHtmlInputProps.inputMode = 'numeric';
+    }
+
+    const baseAttrs: any = { ...MuiAttributes };
+
+    // Legacy compatibility: if the consumer passed InputProps / inputProps
+    // directly on MuiAttributes (pre-v9 shape), fold them into slotProps.
+    const legacyInputProps = baseAttrs.InputProps;
+    const legacyHtmlInputProps = baseAttrs.inputProps;
+    delete baseAttrs.InputProps;
+    delete baseAttrs.inputProps;
+
+    const existingSlot = baseAttrs.slotProps || {};
+    const existingSlotInput = existingSlot.input || {};
+    const existingSlotHtmlInput = existingSlot.htmlInput || {};
+
+    const mergedInput = {
+        ...legacyInputProps,
+        ...existingSlotInput,
+        ...getInputProps(InputProps), // adornments from ControlProps.InputProps config
+    };
+    const mergedHtmlInput = {
+        ...legacyHtmlInputProps,
+        ...existingSlotHtmlInput,
+        ...ourHtmlInputProps,
     };
 
-    const isV6 = !!MuiAttributes?.slotProps;
-
-    const baseAttrs = { ...MuiAttributes };
-
-    let finalInputProps;
-    let finalSlotProps;
-
-    if (isV6) {
-        const existingSlotInput = (MuiAttributes.slotProps && MuiAttributes.slotProps.input) || {};
-        finalSlotProps = {
-            ...(MuiAttributes.slotProps || {}),
-            input: {
-                ...existingSlotInput,
-                ...ourInputProps,
-            },
-        };
-        delete baseAttrs.slotProps;
-    } else {
-        const existingInputProps = MuiAttributes.inputProps || {};
-        finalInputProps = {
-            ...existingInputProps,
-            ...ourInputProps,
-        };
-        delete baseAttrs.inputProps;
-    }
+    const finalSlotProps: any = { ...existingSlot };
+    if (Object.keys(mergedInput).length) finalSlotProps.input = mergedInput;
+    if (Object.keys(mergedHtmlInput).length) finalSlotProps.htmlInput = mergedHtmlInput;
+    delete baseAttrs.slotProps;
 
     const isMandatory = rules?.validation?.some((v: any) => v.rule === 'mandatory') || false;
 
@@ -108,9 +110,7 @@ export default function TextField({ attributes = {}, rules = {}, onChange }: Con
             fullWidth
             {...baseAttrs}
             required={isMandatory}
-            inputProps={!isV6 ? finalInputProps : undefined}
-            slotProps={isV6 ? finalSlotProps : undefined}
-            InputProps={getInputProps(InputProps)}
+            slotProps={finalSlotProps}
             onChange={handleOnChange}
             onBlur={handleOnBlur}
             onFocus={handleOnFocus}

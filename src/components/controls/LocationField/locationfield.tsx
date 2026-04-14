@@ -93,25 +93,29 @@ export default function LocationField({ attributes = {}, rules = {}, onChange }:
 
     const isMandatory = rules?.validation?.some((v: any) => v.rule === 'mandatory') || false;
 
-    // Handle MUI v5 vs v6 inputProps/slotProps
-    const isV6 = !!MuiAttributes?.slotProps;
-    const baseAttrs = { ...MuiAttributes };
+    // MUI v9 uses slotProps; legacy InputProps/inputProps on MuiAttributes
+    // are folded into slotProps for compatibility
+    const baseAttrs: any = { ...MuiAttributes };
+    const legacyInputProps = baseAttrs.InputProps;
+    const legacyHtmlInputProps = baseAttrs.inputProps;
+    delete baseAttrs.InputProps;
+    delete baseAttrs.inputProps;
 
-    let finalInputProps;
-    let finalSlotProps;
+    const existingSlot = baseAttrs.slotProps || {};
+    const mergedInputSlot = {
+        ...legacyInputProps,
+        ...(existingSlot.input || {}),
+        ...getInputProps(InputProps),
+    };
+    const mergedHtmlInputSlot = {
+        ...legacyHtmlInputProps,
+        ...(existingSlot.htmlInput || {}),
+    };
 
-    if (isV6) {
-        const existingSlotInput = (MuiAttributes.slotProps && MuiAttributes.slotProps.input) || {};
-        finalSlotProps = {
-            ...(MuiAttributes.slotProps || {}),
-            input: { ...existingSlotInput },
-        };
-        delete baseAttrs.slotProps;
-    } else {
-        const existingInputProps = MuiAttributes.inputProps || {};
-        finalInputProps = { ...existingInputProps };
-        delete baseAttrs.inputProps;
-    }
+    const finalSlotProps: any = { ...existingSlot };
+    if (Object.keys(mergedInputSlot).length) finalSlotProps.input = mergedInputSlot;
+    if (Object.keys(mergedHtmlInputSlot).length) finalSlotProps.htmlInput = mergedHtmlInputSlot;
+    delete baseAttrs.slotProps;
 
     // Determine field height based on variant + size for button alignment
     const variant = MuiAttributes.variant || 'outlined';
@@ -126,9 +130,7 @@ export default function LocationField({ attributes = {}, rules = {}, onChange }:
                     fullWidth
                     {...baseAttrs}
                     required={isMandatory}
-                    inputProps={!isV6 ? finalInputProps : undefined}
-                    slotProps={isV6 ? finalSlotProps : undefined}
-                    InputProps={getInputProps(InputProps)}
+                    slotProps={finalSlotProps}
                     onChange={handleOnChange}
                     onBlur={handleOnBlur}
                     value={textData.value}

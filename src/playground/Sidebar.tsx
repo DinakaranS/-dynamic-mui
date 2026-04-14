@@ -115,7 +115,7 @@ export const Sidebar = () => {
                                     </ListItemIcon>
                                     <ListItemText
                                         primary={item.label}
-                                        primaryTypographyProps={{ fontSize: '0.875rem', fontWeight: 500 }}
+                                        slotProps={{ primary: { sx: { fontSize: '0.875rem', fontWeight: 500 } } }}
                                     />
                                     <Icon fontSize="small" sx={{ color: 'text.disabled', fontSize: 16 }}>chevron_right</Icon>
                                 </ListItemButton>
@@ -141,19 +141,19 @@ export const Sidebar = () => {
                         size="small"
                         sx={{ minWidth: 'auto', px: 1 }}
                     />
-                    <Typography variant="subtitle1" fontWeight={600}>
+                    <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
                         {item?.label || selectedDoc}
                     </Typography>
                 </Box>
 
                 {doc ? (
                     <Box sx={{ p: 3 }}>
-                        <Typography variant="body2" color="text.secondary" paragraph>
+                        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
                             {doc.description}
                         </Typography>
 
                         <Box sx={{ mb: 3 }}>
-                            <Typography variant="caption" fontWeight={700} color="primary" sx={{ display: 'block', mb: 1, letterSpacing: '0.5px' }}>
+                            <Typography variant="caption" color="primary" sx={{ fontWeight: 700, display: 'block', mb: 1, letterSpacing: '0.5px' }}>
                                 USAGE
                             </Typography>
                             <Paper elevation={0} sx={{ p: 2, bgcolor: '#f1f5f9', borderRadius: 2, border: '1px solid', borderColor: 'divider' }}>
@@ -163,7 +163,7 @@ export const Sidebar = () => {
                             </Paper>
                         </Box>
 
-                        <Typography variant="caption" fontWeight={700} color="primary" sx={{ display: 'block', mb: 1, letterSpacing: '0.5px' }}>
+                        <Typography variant="caption" color="primary" sx={{ fontWeight: 700, display: 'block', mb: 1, letterSpacing: '0.5px' }}>
                             PROPERTIES
                         </Typography>
                         <TableContainer component={Paper} elevation={0} variant="outlined">

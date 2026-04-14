@@ -247,6 +247,118 @@ export const DateComponent = (name: string): any => {
     return DatePicker;
 };
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Legacy MUI prop migration (pre-v9 → v9+)
+// ─────────────────────────────────────────────────────────────────────────────
+// Forms authored against MUI v5-v8 use prop names that were renamed/moved in
+// v9 (InputProps → slotProps.input, primaryTypographyProps → slotProps.primary,
+// Typography fontWeight/paragraph → sx). This migrator is a no-op on already-
+// current JSON, so it's safe to run unconditionally on incoming form data.
+
+const TYPOGRAPHY_DIRECT_TO_SX_KEYS = ['fontWeight', 'fontSize', 'fontStyle', 'fontFamily'];
+
+const migrateMuiAttributes = (attrs: any): any => {
+    if (!attrs || typeof attrs !== 'object') return attrs;
+    const out: any = { ...attrs };
+
+    // TextField-style: InputProps / inputProps → slotProps.{input, htmlInput}
+    if (out.InputProps || out.inputProps) {
+        const existingSlot = out.slotProps || {};
+        const nextSlot: any = { ...existingSlot };
+        if (out.InputProps) {
+            nextSlot.input = { ...(existingSlot.input || {}), ...out.InputProps };
+            delete out.InputProps;
+        }
+        if (out.inputProps) {
+            nextSlot.htmlInput = { ...(existingSlot.htmlInput || {}), ...out.inputProps };
+            delete out.inputProps;
+        }
+        out.slotProps = nextSlot;
+    }
+
+    // ListItemText: primaryTypographyProps / secondaryTypographyProps → slotProps.{primary, secondary}
+    if (out.primaryTypographyProps || out.secondaryTypographyProps) {
+        const existingSlot = out.slotProps || {};
+        const nextSlot: any = { ...existingSlot };
+        if (out.primaryTypographyProps) {
+            // Typography props were flattened; move fontWeight/etc into sx inside the slot
+            const p = out.primaryTypographyProps;
+            const sx: any = { ...(p.sx || {}) };
+            const rest: any = {};
+            Object.keys(p).forEach((k) => {
+                if (TYPOGRAPHY_DIRECT_TO_SX_KEYS.includes(k)) sx[k] = p[k];
+                else if (k !== 'sx') rest[k] = p[k];
+            });
+            nextSlot.primary = { ...(existingSlot.primary || {}), ...rest, sx };
+            delete out.primaryTypographyProps;
+        }
+        if (out.secondaryTypographyProps) {
+            const p = out.secondaryTypographyProps;
+            const sx: any = { ...(p.sx || {}) };
+            const rest: any = {};
+            Object.keys(p).forEach((k) => {
+                if (TYPOGRAPHY_DIRECT_TO_SX_KEYS.includes(k)) sx[k] = p[k];
+                else if (k !== 'sx') rest[k] = p[k];
+            });
+            nextSlot.secondary = { ...(existingSlot.secondary || {}), ...rest, sx };
+            delete out.secondaryTypographyProps;
+        }
+        out.slotProps = nextSlot;
+    }
+
+    // Typography direct props → sx; `paragraph` → sx.mb fallback
+    if (TYPOGRAPHY_DIRECT_TO_SX_KEYS.some((k) => k in out) || 'paragraph' in out) {
+        const sx: any = { ...(out.sx || {}) };
+        TYPOGRAPHY_DIRECT_TO_SX_KEYS.forEach((k) => {
+            if (k in out) {
+                sx[k] = out[k];
+                delete out[k];
+            }
+        });
+        if ('paragraph' in out) {
+            if (out.paragraph) sx.mb = sx.mb ?? 2;
+            delete out.paragraph;
+        }
+        out.sx = sx;
+    }
+
+    return out;
+};
+
+export const migrateFormField = (field: any): any => {
+    if (!field || typeof field !== 'object') return field;
+    const migrated: any = { ...field };
+    const props = migrated.props || {};
+    migrated.props = {
+        ...props,
+        ...(props.MuiAttributes ? { MuiAttributes: migrateMuiAttributes(props.MuiAttributes) } : {}),
+    };
+    // Recurse into stepper steps
+    if (migrated.type === 'stepper' && Array.isArray(migrated.props?.MuiSteps)) {
+        migrated.props.MuiSteps = migrated.props.MuiSteps.map((step: any) => ({
+            ...step,
+            components: Array.isArray(step.components) ? step.components.map(migrateFormField) : step.components,
+        }));
+    }
+    // Recurse into subforms
+    if (Array.isArray(migrated.subforms)) {
+        migrated.subforms = migrated.subforms.map((sub: any) => ({
+            ...sub,
+            data: Array.isArray(sub.data) ? sub.data.map(migrateFormField) : sub.data,
+        }));
+    }
+    // Recurse into nested fields (Group, Accordion, Tabs, FormRepeater, etc.)
+    if (Array.isArray(migrated.props?.subFields)) {
+        migrated.props.subFields = migrated.props.subFields.map(migrateFormField);
+    }
+    return migrated;
+};
+
+export const migrateFormData = (data: any[]): any[] => {
+    if (!Array.isArray(data)) return data;
+    return data.map(migrateFormField);
+};
+
 export const checkboxSX = (color?: string): CSSProperties | any => {
     if (color)
         return {
@@ -265,4 +377,6 @@ export default {
     updatePatchData,
     DateComponent,
     checkboxSX,
+    migrateFormData,
+    migrateFormField,
 };

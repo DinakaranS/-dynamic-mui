@@ -205,10 +205,12 @@ export default function LineItemList({ attributes = {}, rules = {}, onChange }: 
                         required={isMandatory}
                         value={item.fee}
                         onChange={(e) => handleFeeChange(index, e.target.value)}
-                        InputProps={{
-                            startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                        slotProps={{
+                            input: {
+                                startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                            },
+                            htmlInput: { min: 0, step: 0.01 },
                         }}
-                        inputProps={{ min: 0, step: 0.01 }}
                         {...feeProps}
                     />
 

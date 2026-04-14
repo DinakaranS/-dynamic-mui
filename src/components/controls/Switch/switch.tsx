@@ -101,7 +101,7 @@ export default function Switch({ attributes = {}, rules = {}, onChange }: Contro
                         {...otherMuiAttributes}
                         // @ts-ignore
                         {...switchColorProp}
-                        inputProps={{ 'aria-label': 'controlled' }}
+                        slotProps={{ input: { 'aria-label': 'controlled' } }}
                     />
                 }
             />

@@ -164,7 +164,7 @@ export const Canvas = ({ fields, onSelectField, selectedId: _selectedId, onDelet
                 fullWidth
             >
                 <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Typography variant="h6" fontWeight={600}>Form Data</Typography>
+                    <Typography variant="h6" sx={{ fontWeight: 600 }}>Form Data</Typography>
                     <Icon
                         sx={{ cursor: 'pointer', color: 'text.secondary' }}
                         onClick={() => setOpenData(false)}

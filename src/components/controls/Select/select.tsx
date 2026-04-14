@@ -183,23 +183,27 @@ export default function Select({ attributes = {}, rules = {}, onChange }: Contro
             renderInput={(params) => {
                 // Ensure custom adornments are incorporated without overriding other essential props
                 const customInputProps = getInputProps(InputProps);
+                // MUI v9: AutocompleteRenderInputParams exposes slotProps.input instead of InputProps
+                // Fall back to the older InputProps for compatibility with v5-v8
+                const paramsInput: any = (params as any).slotProps?.input || (params as any).InputProps || {};
                 const mergedInputProps = {
-                    ...params.InputProps,
+                    ...paramsInput,
                     ...customInputProps,
                     startAdornment: (
                         <>
                             {customInputProps?.startAdornment}
-                            {params.InputProps.startAdornment}
+                            {paramsInput.startAdornment}
                         </>
                     ),
                     endAdornment: (
                         <>
                             {customInputProps?.endAdornment}
-                            {params.InputProps.endAdornment}
+                            {paramsInput.endAdornment}
                         </>
                     ),
                 };
 
+                const paramsSlotProps: any = (params as any).slotProps || {};
                 return (
                     <TextField
                         {...params}
@@ -208,6 +212,7 @@ export default function Select({ attributes = {}, rules = {}, onChange }: Contro
                         error={error}
                         helperText={helperText}
                         slotProps={{
+                            ...paramsSlotProps,
                             input: {
                                 ...mergedInputProps,
                                 autoComplete: 'new-password',

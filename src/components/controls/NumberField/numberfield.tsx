@@ -91,12 +91,22 @@ export default function NumberField({ attributes = {}, rules = {}, onChange }: C
                 setError(!v.isValid);
                 setHelperText(v.message);
             }}
-            {...MuiAttributes}
+            {...(() => {
+                const rest: any = { ...MuiAttributes };
+                delete rest.InputProps;
+                delete rest.inputProps;
+                delete rest.slotProps;
+                return rest;
+            })()}
             name="numberformat"
             id={id}
-            InputProps={{
-                inputComponent: NumericFormatCustom as any,
-                ...MuiAttributes.InputProps
+            slotProps={{
+                ...((MuiAttributes as any).slotProps || {}),
+                input: {
+                    inputComponent: NumericFormatCustom as any,
+                    ...((MuiAttributes as any).InputProps || {}),
+                    ...(((MuiAttributes as any).slotProps || {}).input || {}),
+                },
             }}
         />
     );

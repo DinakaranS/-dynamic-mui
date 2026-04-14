@@ -166,8 +166,10 @@ export const PropertiesEditor = ({ field, onUpdate, onDelete, allFields = [], on
                         helperText={jsonError}
                         fullWidth
                         variant="outlined"
-                        InputProps={{
-                            style: { fontFamily: 'Consolas, Monaco, monospace', fontSize: 12 }
+                        slotProps={{
+                            input: {
+                                style: { fontFamily: 'Consolas, Monaco, monospace', fontSize: 12 }
+                            }
                         }}
                         placeholder="Paste form JSON here..."
                     />
@@ -311,8 +313,10 @@ export const PropertiesEditor = ({ field, onUpdate, onDelete, allFields = [], on
                     helperText={jsonError}
                     fullWidth
                     variant="outlined"
-                    InputProps={{
-                        style: { fontFamily: 'Consolas, Monaco, monospace', fontSize: 12 }
+                    slotProps={{
+                        input: {
+                            style: { fontFamily: 'Consolas, Monaco, monospace', fontSize: 12 }
+                        }
                     }}
                 />
             </Box>

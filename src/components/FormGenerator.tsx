@@ -6,7 +6,7 @@ import isEmpty from 'lodash/isEmpty';
 // eslint-disable-next-line import/no-cycle
 import mui from '../config/mui';
 import DynamicComponent from './DynamicComponent';
-import { generateLayout, generateKey, updatePatchData, FormField } from '../util/helper';
+import { generateLayout, generateKey, updatePatchData, migrateFormData, FormField } from '../util/helper';
 import useUpdateEffect from '../util/useUpdateEffect';
 import val from '../util/validation';
 
@@ -93,9 +93,11 @@ export function FormGenerator({
     const [newPatch, setNewPatch] = useState(patch);
     const [renderTrigger, setRenderTrigger] = useState(0);
     const config = LIBMap.MUI;
+    // Migrate legacy (pre-v9 MUI) JSON configs to current prop shape
+    const migratedData = useMemo(() => migrateFormData(data), [data]);
     const layout = useMemo(
-        () => generateLayout(updatePatchData(data, newPatch, guid, response)),
-        [newPatch, data, guid],
+        () => generateLayout(updatePatchData(migratedData, newPatch, guid, response)),
+        [newPatch, migratedData, guid],
     );
 
     useEffect(() => {
