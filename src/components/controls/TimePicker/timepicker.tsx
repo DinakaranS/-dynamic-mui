@@ -17,23 +17,22 @@ export default function TimePicker({ attributes = {}, rules = {}, onChange }: Co
 
     const isMandatory = rules?.validation?.some((v: any) => v.rule === 'mandatory') || false;
 
-    const MuiTimePicker = DateComponent(name);
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <MuiTimePicker
-                value={value}
-                onChange={(newValue: dayjs.Dayjs | null) => {
+            {React.createElement(DateComponent(name), {
+                value,
+                onChange: (newValue: dayjs.Dayjs | null) => {
                     setValue(newValue);
                     if (onChange) onChange({ id, value: newValue });
-                }}
-                slotProps={{
+                },
+                slotProps: {
                     textField: {
                         required: isMandatory,
-                        fullWidth: true
-                    }
-                }}
-                {...MuiAttributes}
-            />
+                        fullWidth: true,
+                    },
+                },
+                ...MuiAttributes,
+            })}
         </LocalizationProvider>
     );
 }

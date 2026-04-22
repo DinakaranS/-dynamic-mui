@@ -1,4 +1,10 @@
-import { remove, clone, map, uniq, sortBy, each, cloneDeep } from 'lodash';
+import remove from 'lodash/remove';
+import clone from 'lodash/clone';
+import map from 'lodash/map';
+import uniq from 'lodash/uniq';
+import sortBy from 'lodash/sortBy';
+import each from 'lodash/each';
+import cloneDeep from 'lodash/cloneDeep';
 import isEmpty from 'lodash/isEmpty';
 import { Icon, InputAdornment } from '@mui/material';
 import {

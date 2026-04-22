@@ -17,24 +17,22 @@ export default function DateTime({ attributes = {}, rules = {}, onChange }: Cont
 
     const isMandatory = rules?.validation?.some((v: any) => v.rule === 'mandatory') || false;
 
-    const MuiDateTime = DateComponent(name);
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <MuiDateTime
-                value={value}
-                onChange={(newValue: dayjs.Dayjs | null) => {
+            {React.createElement(DateComponent(name), {
+                value,
+                onChange: (newValue: dayjs.Dayjs | null) => {
                     setValue(newValue);
                     if (onChange) onChange({ id, value: newValue });
-                }}
-                slotProps={{
+                },
+                slotProps: {
                     textField: {
                         required: isMandatory,
-                        fullWidth: true
-                    }
-                }}
-                {...MuiAttributes}
-            />
-
+                        fullWidth: true,
+                    },
+                },
+                ...MuiAttributes,
+            })}
         </LocalizationProvider>
     );
 }

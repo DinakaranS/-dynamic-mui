@@ -1,7 +1,9 @@
 import { Paper, Typography, Box, TextField, Button, Divider, Icon, Switch, FormControlLabel, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { FormField } from '../util/helper';
 import { useState, useEffect } from 'react';
-import { get, set, cloneDeep } from 'lodash';
+import get from 'lodash/get';
+import set from 'lodash/set';
+import cloneDeep from 'lodash/cloneDeep';
 
 interface PropertiesEditorProps {
     field: FormField | null;
