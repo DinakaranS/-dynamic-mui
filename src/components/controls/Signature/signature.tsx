@@ -32,7 +32,10 @@ export default function Signature({ attributes = {}, rules = {}, onChange }: Con
 
     useEffect(() => {
         if (attributes.value && sigPad.current) {
-            // Load existing signature if provided in initial patch/attributes
+            // Clear any in-progress strokes before loading the stored signature,
+            // otherwise the loaded image renders on top of the user's strokes
+            // (e.g. right after Save, when value flows back via onChange).
+            sigPad.current.clear();
             sigPad.current.fromDataURL(attributes.value, { width: canvasWidth, height: canvasHeight });
         }
     }, [attributes.value, canvasWidth, canvasHeight]);
