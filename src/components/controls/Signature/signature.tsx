@@ -53,7 +53,11 @@ export default function Signature({ attributes = {}, rules = {}, onChange }: Con
         if (!sigPad.current || sigPad.current.isEmpty()) return;
 
         setLoading(true);
-        const dataUrl = sigPad.current.getTrimmedCanvas().toDataURL('image/png');
+        // Use full canvas (not getTrimmedCanvas) so the saved image dimensions
+        // match the canvas. fromDataURL on reload then renders at the same
+        // size — trimming produces a tiny bbox image that gets stretched up
+        // to canvas size on reload, looking blurry and oversized.
+        const dataUrl = sigPad.current.toDataURL('image/png');
         const fileName = `${id}-${Date.now()}.png`;
 
         try {
