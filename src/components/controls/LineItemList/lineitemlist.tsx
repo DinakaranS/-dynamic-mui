@@ -209,6 +209,7 @@ export default function LineItemList({ attributes = {}, rules = {}, onChange }: 
                             startAdornment: <InputAdornment position="start">$</InputAdornment>,
                         }}
                         inputProps={{ min: 0, step: 0.01 }}
+                        onWheel={(e) => (e.target as HTMLElement).blur()}
                         {...feeProps}
                     />
 
