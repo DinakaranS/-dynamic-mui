@@ -31,7 +31,21 @@ export default function Signature({ attributes = {}, rules = {}, onChange }: Con
     }, []);
 
     useEffect(() => {
-        if (!attributes.value || !sigPad.current) return;
+        if (!sigPad.current) return;
+
+        // Patch cleared the signature (e.g. a later patch removes it): wipe the
+        // canvas and reset state so the previously-loaded image doesn't linger
+        // and the Save button becomes usable again.
+        if (!attributes.value) {
+            sigPad.current.clear();
+            setSavedUrl(null);
+            setUserSaved(false);
+            return;
+        }
+
+        // Keep saved-state in sync with the incoming patch so the Save button
+        // reflects the current value across patch changes (not just on mount).
+        setSavedUrl(attributes.value);
 
         // fromDataURL is async (it loads an Image and draws on its onload).
         // On mount, canvasWidth changes 400 -> measured width, firing this
