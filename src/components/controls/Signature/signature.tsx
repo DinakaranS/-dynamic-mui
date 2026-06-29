@@ -31,13 +31,24 @@ export default function Signature({ attributes = {}, rules = {}, onChange }: Con
     }, []);
 
     useEffect(() => {
-        if (attributes.value && sigPad.current) {
+        if (!attributes.value || !sigPad.current) return;
+
+        // fromDataURL is async (it loads an Image and draws on its onload).
+        // On mount, canvasWidth changes 400 -> measured width, firing this
+        // effect twice in quick succession; both async draws complete and
+        // render at different sizes, producing a doubled/overlapping image.
+        // Debounce so only the final (stable-width) draw runs, and clear any
+        // pending draw on cleanup so a stale size never lands on the canvas.
+        const timer = setTimeout(() => {
+            if (!sigPad.current) return;
             // Clear any in-progress strokes before loading the stored signature,
             // otherwise the loaded image renders on top of the user's strokes
             // (e.g. right after Save, when value flows back via onChange).
             sigPad.current.clear();
             sigPad.current.fromDataURL(attributes.value, { width: canvasWidth, height: canvasHeight });
-        }
+        }, 50);
+
+        return () => clearTimeout(timer);
     }, [attributes.value, canvasWidth, canvasHeight]);
 
     const clear = () => {
