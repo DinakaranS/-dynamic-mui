@@ -30,40 +30,23 @@ export default function Signature({ attributes = {}, rules = {}, onChange }: Con
         return () => observer.disconnect();
     }, []);
 
+    // Sync the stored signature (from patch / after save) into local state.
+    // The stored value is rendered as an <img> preview (see below) — we
+    // deliberately do NOT draw it onto the SignatureCanvas: the value is a
+    // cross-origin S3 URL, and drawing a cross-origin image taints the canvas,
+    // which then makes toDataURL() throw "Tainted canvases may not be exported"
+    // on the next Save. Keeping the canvas image-free avoids that entirely and
+    // also sidesteps the async fromDataURL draw races (double / disappearing image).
     useEffect(() => {
-        if (!sigPad.current) return;
-
-        // Patch cleared the signature (e.g. a later patch removes it): wipe the
-        // canvas and reset state so the previously-loaded image doesn't linger
-        // and the Save button becomes usable again.
         if (!attributes.value) {
-            sigPad.current.clear();
+            // Patch cleared the signature: reset state and wipe any fresh strokes.
             setSavedUrl(null);
             setUserSaved(false);
+            if (sigPad.current) sigPad.current.clear();
             return;
         }
-
-        // Keep saved-state in sync with the incoming patch so the Save button
-        // reflects the current value across patch changes (not just on mount).
         setSavedUrl(attributes.value);
-
-        // fromDataURL is async (it loads an Image and draws on its onload).
-        // On mount, canvasWidth changes 400 -> measured width, firing this
-        // effect twice in quick succession; both async draws complete and
-        // render at different sizes, producing a doubled/overlapping image.
-        // Debounce so only the final (stable-width) draw runs, and clear any
-        // pending draw on cleanup so a stale size never lands on the canvas.
-        const timer = setTimeout(() => {
-            if (!sigPad.current) return;
-            // Clear any in-progress strokes before loading the stored signature,
-            // otherwise the loaded image renders on top of the user's strokes
-            // (e.g. right after Save, when value flows back via onChange).
-            sigPad.current.clear();
-            sigPad.current.fromDataURL(attributes.value, { width: canvasWidth, height: canvasHeight });
-        }, 50);
-
-        return () => clearTimeout(timer);
-    }, [attributes.value, canvasWidth, canvasHeight]);
+    }, [attributes.value]);
 
     const clear = () => {
         if (sigPad.current) {
@@ -107,6 +90,7 @@ export default function Signature({ attributes = {}, rules = {}, onChange }: Con
             <Box
                 ref={containerRef}
                 sx={{
+                    position: 'relative',
                     border: '1px solid',
                     borderColor: 'divider',
                     borderRadius: 1,
@@ -125,6 +109,25 @@ export default function Signature({ attributes = {}, rules = {}, onChange }: Con
                     }}
                     backgroundColor="transparent"
                 />
+
+                {/* Stored signature shown as a plain image overlay — keeps the
+                    canvas untainted so re-signing + toDataURL() stays exportable.
+                    Cleared via the Clear button (savedUrl -> null) to re-sign. */}
+                {savedUrl && (
+                    <Box
+                        component="img"
+                        src={savedUrl}
+                        alt="Signature"
+                        sx={{
+                            position: 'absolute',
+                            inset: 0,
+                            width: '100%',
+                            height: canvasHeight,
+                            objectFit: 'contain',
+                            bgcolor: 'background.paper',
+                        }}
+                    />
+                )}
             </Box>
 
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, alignItems: 'center', mt: 1 }}>

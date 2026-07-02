@@ -164,9 +164,11 @@ export const updatePatchData = (
     enableDisableIds: EnableDisableConfig[] = [],
 ): FormField[] => {
     try {
-        // Update response with the patch for the provided GUID
-
-        response[guid] = patch;
+        // Update response with the patch for the provided GUID.
+        // Merge (don't replace) so values already in the response — earlier
+        // patches and user edits — survive when a later, partial patch arrives.
+        // Replacing wholesale wiped every field not present in the new patch.
+        response[guid] = { ...response[guid], ...patch };
 
         // Map and update fields with response data
         const updatedFields = map(fields, (field: any) => {
