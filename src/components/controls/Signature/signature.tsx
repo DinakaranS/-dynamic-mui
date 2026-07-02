@@ -91,6 +91,10 @@ export default function Signature({ attributes = {}, rules = {}, onChange }: Con
                 ref={containerRef}
                 sx={{
                     position: 'relative',
+                    // Own stacking context so neighbouring fields can never paint
+                    // over the drawing surface and steal pointer events.
+                    isolation: 'isolate',
+                    zIndex: 1,
                     border: '1px solid',
                     borderColor: 'divider',
                     borderRadius: 1,
@@ -105,7 +109,20 @@ export default function Signature({ attributes = {}, rules = {}, onChange }: Con
                         className: 'sigCanvas',
                         width: canvasWidth,
                         height: canvasHeight,
-                        style: { display: 'block', pointerEvents: disabled ? 'none' : 'auto', ...CanvasProps?.style, width: '100%', height: canvasHeight },
+                        style: {
+                            display: 'block',
+                            position: 'relative',
+                            zIndex: 1,
+                            // Prevent the browser from treating a signing drag as a
+                            // scroll/pan gesture (touch & stylus) — without this,
+                            // strokes are swallowed whenever the page can scroll,
+                            // which is exactly when other fields are present.
+                            touchAction: 'none',
+                            pointerEvents: disabled ? 'none' : 'auto',
+                            ...CanvasProps?.style,
+                            width: '100%',
+                            height: canvasHeight,
+                        },
                     }}
                     backgroundColor="transparent"
                 />
