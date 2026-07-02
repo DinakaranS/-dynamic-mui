@@ -97,15 +97,19 @@ export default function Radio({ attributes = {}, rules = {}, onChange }: Control
                 value={value}
                 onChange={handleChange}
             >
-                {MuiFCLabels.map((label: string) => (
-                    <FormControlLabel
-                        key={label}
-                        {...MuiFCLAttributes}
-                        value={label}
-                        control={<MuiRadio {...MuiAttributes} />}
-                        label={label}
-                    />
-                ))}
+                {MuiFCLabels.map((option: string | { label: string; value: string }) => {
+                    const optLabel = typeof option === 'string' ? option : option.label;
+                    const optValue = typeof option === 'string' ? option : option.value;
+                    return (
+                        <FormControlLabel
+                            key={optValue}
+                            {...MuiFCLAttributes}
+                            value={optValue}
+                            control={<MuiRadio {...MuiAttributes} />}
+                            label={optLabel}
+                        />
+                    );
+                })}
             </RadioGroup>
             {helperText && <FormHelperText>{helperText}</FormHelperText>}
         </FormControl>

@@ -63,7 +63,12 @@ export const ALL_CONTROLS_TEST_DATA: FormField[] = [
         props: {
             id: 'radio1',
             MuiFLabel: 'Radio Group',
-            MuiFCLabels: ['Option A', 'Option B'],
+            // Options accept plain strings (label === value) OR
+            // { label, value } objects for a separate display label vs. value.
+            MuiFCLabels: [
+                { label: 'Option A', value: 'a' },
+                { label: 'Option B', value: 'b' }
+            ],
             MuiRGAttributes: { row: true }
         },
         layout: { xs: 12, sm: 4 }
