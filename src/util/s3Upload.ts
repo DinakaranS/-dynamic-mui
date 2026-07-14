@@ -1,6 +1,3 @@
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
-import { fromCognitoIdentityPool } from '@aws-sdk/credential-providers';
-
 /**
  * Converts a base64 Data URL to a Blob
  * @param dataurl
@@ -39,6 +36,13 @@ export async function uploadToS3(dataUrl: string, fileName: string, bucket: stri
     }
 
     try {
+        // Loaded on demand so the (heavy) AWS SDK is only pulled into the bundle
+        // when an app actually uploads — not for every consumer of this library.
+        const [{ S3Client, PutObjectCommand }, { fromCognitoIdentityPool }] = await Promise.all([
+            import('@aws-sdk/client-s3'),
+            import('@aws-sdk/credential-providers'),
+        ]);
+
         const s3Client = new S3Client({
             region: region,
             credentials: fromCognitoIdentityPool({
@@ -68,7 +72,10 @@ export async function uploadToS3(dataUrl: string, fileName: string, bucket: stri
 
         await s3Client.send(command);
 
-        // Construct the expected object URL using path-style for buckets with dots
+        // IMPORTANT: `bucket` is a CloudFront / Route 53 custom domain (a CNAME to
+        // the S3 bucket), NOT a raw bucket name. The public URL must therefore be
+        // `https://{bucket}/{key}` so it resolves through CloudFront to the
+        // user-visible asset. Do NOT rewrite this to an s3.amazonaws.com URL.
         const objectUrl = `https://${bucket}/${key}`;
         return objectUrl;
     } catch (error) {

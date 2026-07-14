@@ -6,9 +6,9 @@ import { COMPONENT_DOCS } from './documentation';
 import React, { useState } from 'react';
 
 const CATEGORIES = {
-    'Inputs': ['textfield', 'numberfield', 'select', 'checkbox', 'switch', 'radio', 'autocomplete', 'multitextbox', 'lineitemlist', 'formrepeater', 'signature', 'locationfield', 'datetime', 'timepicker'],
-    'Layout': ['group', 'accordion', 'tabs', 'divider'],
-    'Display': ['typography', 'datatable', 'chip', 'list', 'imagelist', 'hyperlink'],
+    'Inputs': ['textfield', 'numberfield', 'numberstepper', 'password', 'phone', 'currency', 'otp', 'select', 'cascadeselect', 'checkbox', 'switch', 'radio', 'chipselect', 'togglebuttons', 'rating', 'slider', 'tagsinput', 'keyvalue', 'matrix', 'colorpicker', 'markdown', 'address', 'consent', 'autocomplete', 'multitextbox', 'lineitemlist', 'formrepeater', 'signature', 'fileupload', 'locationfield', 'geo', 'datetime', 'daterangepicker', 'timepicker'],
+    'Layout': ['group', 'accordion', 'tabs', 'divider', 'formwizard'],
+    'Display': ['typography', 'datatable', 'chip', 'list', 'imagelist', 'hyperlink', 'alert', 'computed', 'summary'],
     'Actions': ['button'],
     'Charts': ['chart-bar', 'chart-line', 'chart-pie']
 };

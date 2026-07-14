@@ -9,11 +9,14 @@ import { TEMPLATES } from './templates';
 import { v4 as uuidv4 } from 'uuid';
 import { Icon } from '@mui/material';
 import { ALL_CONTROLS_TEST_DATA } from './testData';
+import { AIPanel } from './AIPanel';
+import { AIProvider } from './AIContext';
 
 export const Builder = () => {
     const [fields, setFields] = useState<FormField[]>([]);
     const [selectedId, setSelectedId] = useState<string | null>(null);
     const [activeDragItem, setActiveDragItem] = useState<any>(null);
+    const [aiOpen, setAiOpen] = useState(false);
 
     const handleDragStart = (event: DragStartEvent) => {
         setActiveDragItem(event.active.data.current);
@@ -74,6 +77,7 @@ export const Builder = () => {
     }) || null;
 
     return (
+        <AIProvider>
         <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
             <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden', bgcolor: 'background.default' }}>
                 <AppBar position="static" color="inherit" elevation={0} sx={{ borderBottom: '1px solid', borderColor: 'divider', bgcolor: 'white/80', backdropFilter: 'blur(8px)' }}>
@@ -84,6 +88,14 @@ export const Builder = () => {
                         <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontWeight: 700, letterSpacing: '-0.5px' }}>
                             Form Builder
                         </Typography>
+                        <Button
+                            variant="contained"
+                            startIcon={<Icon>auto_awesome</Icon>}
+                            onClick={() => setAiOpen(true)}
+                            sx={{ mr: 1, borderRadius: 2, textTransform: 'none', fontWeight: 600 }}
+                        >
+                            Build with AI
+                        </Button>
                         <Button
                             variant="outlined"
                             startIcon={<Icon>download</Icon>}
@@ -129,6 +141,13 @@ export const Builder = () => {
                     />
                 </Box>
 
+                <AIPanel
+                    open={aiOpen}
+                    onClose={() => setAiOpen(false)}
+                    currentFields={fields}
+                    onApply={setFields}
+                />
+
                 <DragOverlay>
                     {activeDragItem ? (
                         <Box sx={{
@@ -146,5 +165,6 @@ export const Builder = () => {
                 </DragOverlay>
             </Box>
         </DndContext>
+        </AIProvider>
     );
 };

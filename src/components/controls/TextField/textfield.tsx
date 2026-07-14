@@ -4,6 +4,7 @@ import numeral from 'numeral';
 import MuiTextField from '@mui/material/TextField';
 import { getInputProps } from '../../../util/helper';
 import Validation from '../../../util/validation';
+import { premiumInputSx, mergeSx } from '../../../util/premiumStyles';
 import { ControlProps } from '../../../types';
 
 export default function TextField({ attributes = {}, rules = {}, onChange }: ControlProps) {
@@ -29,7 +30,9 @@ export default function TextField({ attributes = {}, rules = {}, onChange }: Con
         if (validation) {
             for (let i = 0; i < validation.length; i += 1) {
                 const data = validation[i];
-                isValid = Validation[data.rule](value, data.value);
+                const validatorFn = Validation[data.rule];
+                // Unknown rule names are ignored rather than throwing.
+                isValid = typeof validatorFn === 'function' ? validatorFn(value, data.value) : true;
                 if (!isValid) {
                     return { isValid: false, message: data.message };
                 }
@@ -103,10 +106,13 @@ export default function TextField({ attributes = {}, rules = {}, onChange }: Con
 
     const isMandatory = rules?.validation?.some((v: any) => v.rule === 'mandatory') || false;
 
+    const { sx: userSx, ...restAttrs } = baseAttrs;
+
     return (
         <MuiTextField
             fullWidth
-            {...baseAttrs}
+            {...restAttrs}
+            sx={mergeSx(premiumInputSx as any, userSx)}
             required={isMandatory}
             inputProps={!isV6 ? finalInputProps : undefined}
             slotProps={isV6 ? finalSlotProps : undefined}

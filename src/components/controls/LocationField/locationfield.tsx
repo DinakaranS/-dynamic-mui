@@ -42,7 +42,8 @@ export default function LocationField({ attributes = {}, rules = {}, onChange }:
         if (validation) {
             for (let i = 0; i < validation.length; i += 1) {
                 const data = validation[i];
-                const isValid = Validation[data.rule](value, data.value);
+                const validatorFn = Validation[data.rule];
+                const isValid = typeof validatorFn === 'function' ? validatorFn(value, data.value) : true;
                 if (!isValid) {
                     return { isValid: false, message: data.message };
                 }

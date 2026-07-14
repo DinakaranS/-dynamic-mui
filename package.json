@@ -54,7 +54,7 @@
     "lint": "eslint . --max-warnings 0",
     "preview": "vite preview",
     "test": "vitest run",
-    "prepublishOnly": "yarn run build"
+    "prepublishOnly": "yarn run lint && yarn run test && yarn run build"
   },
   "browserslist": {
     "production": [

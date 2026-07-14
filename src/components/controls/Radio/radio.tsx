@@ -8,6 +8,7 @@ import FormLabel from '@mui/material/FormLabel';
 import FormHelperText from '@mui/material/FormHelperText';
 import { Icon } from '@mui/material';
 import useUpdateEffect from '../../../util/useUpdateEffect';
+import { premiumControlLabelSx, mergeSx } from '../../../util/premiumStyles';
 import { ControlProps } from '../../../types';
 
 /** Radio Component */
@@ -100,13 +101,15 @@ export default function Radio({ attributes = {}, rules = {}, onChange }: Control
                 {MuiFCLabels.map((option: string | { label: string; value: string }) => {
                     const optLabel = typeof option === 'string' ? option : option.label;
                     const optValue = typeof option === 'string' ? option : option.value;
+                    const { sx: fclSx, ...restFCL } = MuiFCLAttributes;
                     return (
                         <FormControlLabel
                             key={optValue}
-                            {...MuiFCLAttributes}
+                            {...restFCL}
                             value={optValue}
                             control={<MuiRadio {...MuiAttributes} />}
                             label={optLabel}
+                            sx={mergeSx(premiumControlLabelSx as any, fclSx)}
                         />
                     );
                 })}

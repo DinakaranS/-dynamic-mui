@@ -16,6 +16,33 @@ import Pie from '../charts/Pie/pie';
 import MixChart from '../charts/Mixchart/mixChart';
 import Divider from './Divider/divider';
 import Chip from './Chip/chip';
+import ChipSelect from './ChipSelect/chipselect';
+import Button from './Button/button';
+import DateRangePicker from './DateRangePicker/daterangepicker';
+import Rating from './Rating/rating';
+import Slider from './Slider/slider';
+import TagsInput from './TagsInput/tagsinput';
+import ToggleButtons from './ToggleButtons/togglebuttons';
+import PasswordField from './PasswordField/passwordfield';
+import OtpField from './OtpField/otpfield';
+import PhoneField from './PhoneField/phonefield';
+import CurrencyField from './CurrencyField/currencyfield';
+import FileUpload from './FileUpload/fileupload';
+import Alert from './Alert/alert';
+import Computed from './Computed/computed';
+import KeyValueField from './KeyValueField/keyvaluefield';
+import NumberStepper from './NumberStepper/numberstepper';
+import MatrixField from './MatrixField/matrixfield';
+import ConsentField from './ConsentField/consentfield';
+import ColorPicker from './ColorPicker/colorpicker';
+import MarkdownEditor from './MarkdownEditor/markdowneditor';
+import AddressField from './AddressField/addressfield';
+import CascadeSelect from './CascadeSelect/cascadeselect';
+// eslint-disable-next-line import/no-cycle
+import FormWizard from './FormWizard/formwizard';
+// eslint-disable-next-line import/no-cycle
+import SummaryField from './SummaryField/summaryfield';
+import GeoField from './GeoField/geofield';
 import List from './List/list';
 import NumberField from './NumberField/numberfield';
 import MultiTextbox from './MultiTextbox/multitextbox';
@@ -48,6 +75,31 @@ const Controls = {
     MixChart,
     Divider,
     Chip,
+    ChipSelect,
+    Button,
+    DateRangePicker,
+    Rating,
+    Slider,
+    TagsInput,
+    ToggleButtons,
+    PasswordField,
+    OtpField,
+    PhoneField,
+    CurrencyField,
+    FileUpload,
+    Alert,
+    Computed,
+    KeyValueField,
+    NumberStepper,
+    MatrixField,
+    ConsentField,
+    ColorPicker,
+    MarkdownEditor,
+    AddressField,
+    CascadeSelect,
+    FormWizard,
+    SummaryField,
+    GeoField,
     List,
     NumberField,
     MultiTextbox,

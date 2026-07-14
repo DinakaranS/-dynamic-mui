@@ -5,6 +5,7 @@ import dayjs from 'dayjs';
 import { DateComponent } from '../../../util/helper';
 import useUpdateEffect from '../../../util/useUpdateEffect';
 import { ControlProps } from '../../../types';
+import { premiumInputSx } from '../../../util/premiumStyles';
 
 export default function DateTimePicker({ attributes = {}, rules = {}, onChange }: ControlProps) {
     const { MuiAttributes = {}, name = 'DateTimePicker', id = '' } = attributes;
@@ -29,7 +30,8 @@ export default function DateTimePicker({ attributes = {}, rules = {}, onChange }
                 slotProps={{
                     textField: {
                         required: isMandatory,
-                        fullWidth: true
+                        fullWidth: true,
+                        sx: premiumInputSx
                     }
                 }}
                 {...MuiAttributes}

@@ -79,6 +79,102 @@ const mui: MuiConfigMap = {
         type: 'Chip',
         map: 'Chip',
     },
+    chipselect: {
+        type: 'ChipSelect',
+        map: 'ChipSelect',
+    },
+    button: {
+        type: 'Button',
+        map: 'Button',
+    },
+    rating: {
+        type: 'Rating',
+        map: 'Rating',
+    },
+    slider: {
+        type: 'Slider',
+        map: 'Slider',
+    },
+    tagsinput: {
+        type: 'TagsInput',
+        map: 'TagsInput',
+    },
+    togglebuttons: {
+        type: 'ToggleButtons',
+        map: 'ToggleButtons',
+    },
+    password: {
+        type: 'PasswordField',
+        map: 'PasswordField',
+    },
+    otp: {
+        type: 'OtpField',
+        map: 'OtpField',
+    },
+    phone: {
+        type: 'PhoneField',
+        map: 'PhoneField',
+    },
+    currency: {
+        type: 'CurrencyField',
+        map: 'CurrencyField',
+    },
+    fileupload: {
+        type: 'FileUpload',
+        map: 'FileUpload',
+    },
+    alert: {
+        type: 'Alert',
+        map: 'Alert',
+    },
+    computed: {
+        type: 'Computed',
+        map: 'Computed',
+    },
+    keyvalue: {
+        type: 'KeyValueField',
+        map: 'KeyValueField',
+    },
+    numberstepper: {
+        type: 'NumberStepper',
+        map: 'NumberStepper',
+    },
+    matrix: {
+        type: 'MatrixField',
+        map: 'MatrixField',
+    },
+    consent: {
+        type: 'ConsentField',
+        map: 'ConsentField',
+    },
+    colorpicker: {
+        type: 'ColorPicker',
+        map: 'ColorPicker',
+    },
+    markdown: {
+        type: 'MarkdownEditor',
+        map: 'MarkdownEditor',
+    },
+    address: {
+        type: 'AddressField',
+        map: 'AddressField',
+    },
+    cascadeselect: {
+        type: 'CascadeSelect',
+        map: 'CascadeSelect',
+    },
+    formwizard: {
+        type: 'FormWizard',
+        map: 'FormWizard',
+    },
+    summary: {
+        type: 'SummaryField',
+        map: 'SummaryField',
+    },
+    geo: {
+        type: 'GeoField',
+        map: 'GeoField',
+    },
     list: {
         type: 'List',
         map: 'List',

@@ -1,5 +1,6 @@
 import { remove, clone, map, uniq, sortBy, each, cloneDeep } from 'lodash';
 import isEmpty from 'lodash/isEmpty';
+import { v4 as uuidv4 } from 'uuid';
 import { Icon, InputAdornment } from '@mui/material';
 import {
     DatePicker,
@@ -16,40 +17,13 @@ import {
     MobileTimePicker,
 } from '@mui/x-date-pickers';
 import { CSSProperties } from 'react';
+// Single source of truth for the schema types (re-exported for back-compat:
+// existing code imports FormField/LayoutConfig from this module).
+import type { FormField } from '../types';
+
+export type { FormField, LayoutConfig } from '../types';
 
 // --- Types ---
-export interface LayoutConfig {
-    row?: number;
-    xs?: number;
-    sm?: number;
-    md?: number;
-    lg?: number;
-    xl?: number;
-    size?: any;
-    [key: string]: any;
-}
-
-export interface FormField {
-    id?: string;
-    type?: string;
-    layout?: LayoutConfig;
-    props?: {
-        id?: string;
-        value?: any;
-        MuiAttributes?: Record<string, any>;
-        [key: string]: any;
-    };
-    visible?: boolean;
-    style?: CSSProperties;
-    className?: string;
-    rules?: any;
-    subforms?: {
-        conditionValue: any;
-        data: FormField[];
-    }[];
-    [key: string]: any;
-}
-
 export interface LayoutResult {
     wrows: FormField[][];
     worows: FormField[];
@@ -131,12 +105,7 @@ export function getInputProps(InputProps: InputPropsConfig) {
     return {};
 }
 
-export const generateKey = (prefix = '', index = 0): string => {
-    const random = Math.random().toString(36).substr(2, 9);
-    const currentTime = new Date().toLocaleTimeString('en').trim();
-
-    return `${prefix}_${index}_${random}_${currentTime}`;
-};
+export const generateKey = (prefix = '', index = 0): string => `${prefix}_${index}_${uuidv4()}`;
 
 function isEmptyCustom(value: any): boolean {
     return (

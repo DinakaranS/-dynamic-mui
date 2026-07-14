@@ -1,17 +1,21 @@
-// @ts-nocheck
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import { Grid, GridProps, Box } from '@mui/material';
 import isEmpty from 'lodash/isEmpty';
 
 // eslint-disable-next-line import/no-cycle
 import mui from '../config/mui';
 import DynamicComponent from './DynamicComponent';
-import { generateLayout, generateKey, updatePatchData, FormField } from '../util/helper';
+import { generateLayout, updatePatchData, FormField } from '../util/helper';
 import useUpdateEffect from '../util/useUpdateEffect';
 import val from '../util/validation';
+import { evaluateRule, computeFormula, CROSS_FIELD_VALIDATORS } from '../util/rules';
 
 const LIBMap = { MUI: { map: mui } };
 const response: Record<string, any> = {};
+
+// The schema `RuleExpression` type is structurally identical to the engine's
+// `RuleExpr`; this wrapper bridges the two without casting at every call site.
+const evalRule = (expr: any, values: Record<string, any>): boolean => evaluateRule(expr, values);
 
 export const FormData = (id?: string) => (id ? response[id] : response);
 
@@ -24,22 +28,61 @@ export const ClearFormData = (id?: string) => {
     }
 };
 
-const getAllMandatoryFields = (fields: FormField[]) =>
-    fields?.filter((field) =>
-        field?.rules?.validation?.some((validation: any) => validation.rule === 'mandatory'),
-    );
+const MANDATORY_RULES = ['mandatory', 'mandatoryselect'];
+
+/** True when this field is currently visible given the live values (a field with
+ *  no `visibleWhen` is always visible). Hidden fields are excluded from validation. */
+const isFieldVisible = (field: FormField, values: Record<string, any>) =>
+    !field?.visibleWhen || evalRule(field.visibleWhen, values);
+
+/** The effective validation list for a field, injecting a mandatory rule when a
+ *  `requiredWhen` condition currently holds. */
+const effectiveValidation = (field: FormField, values: Record<string, any>): any[] => {
+    const base = [...(field?.rules?.validation || [])];
+    const hasMandatory = base.some((v: any) => MANDATORY_RULES.includes(v.rule));
+    if (field?.requiredWhen && !hasMandatory && evalRule(field.requiredWhen, values)) {
+        base.push({ rule: 'mandatory', message: field.requiredMessage || 'This field is required' });
+    }
+    return base;
+};
 
 const getErrors = (fields: FormField[], guid: string) => {
-    const mandatoryFields = getAllMandatoryFields(fields);
-    return mandatoryFields?.reduce((acc: any[], field: FormField) => {
-        field?.rules?.validation?.forEach((rule: any) => {
-            const fieldId = field?.id || field?.props?.id;
-            if (!fieldId) return;
+    const values = response[guid] || {};
+    return fields?.reduce((acc: any[], field: FormField) => {
+        // Skip fields hidden by a conditional-visibility rule.
+        if (!isFieldVisible(field, values)) return acc;
 
-            const fieldValue = response[guid]?.[fieldId]?.toString();
-            const isClean = fieldValue && val[rule.rule as keyof typeof val](fieldValue, rule.value);
+        const validation = effectiveValidation(field, values);
+        if (validation.length === 0) return acc;
+
+        const fieldId = field?.id || field?.props?.id;
+        if (!fieldId) return acc;
+
+        const rawValue = values[fieldId];
+        const fieldValue = rawValue == null ? '' : rawValue.toString();
+
+        validation.forEach((rule: any) => {
+            // Cross-field validators compare against another field's value.
+            const crossFn = CROSS_FIELD_VALIDATORS[rule.rule];
+            if (crossFn) {
+                const otherRaw = values[rule.field ?? rule.value];
+                const otherValue = otherRaw == null ? '' : otherRaw.toString();
+                if (!crossFn(fieldValue, otherValue)) acc.push({ ...rule, id: fieldId });
+                return;
+            }
+
+            const validatorFn = val[rule.rule as keyof typeof val];
+            // Skip unknown rules instead of throwing "undefined is not a function".
+            if (typeof validatorFn !== 'function') return;
+
+            const isMandatoryRule = MANDATORY_RULES.includes(rule.rule);
+            // An optional field left empty is valid — only mandatory rules
+            // fail on an empty value. Every other rule runs once there's a value.
+            if (!fieldValue && !isMandatoryRule) return;
+
+            const isClean = fieldValue ? validatorFn(fieldValue, rule.value) : false;
             if (!isClean) {
-                acc.push({ ...rule, id: field.id });
+                acc.push({ ...rule, id: fieldId });
             }
         });
         return acc;
@@ -72,7 +115,30 @@ export interface FormGeneratorProps {
     onFieldDoubleClick?: (field: FormField) => void;
     /** On Field Context Menu (Internal/Builder) */
     onFieldContextMenu?: (event: React.MouseEvent, field: FormField) => void;
+    /**
+     * By default a form's stored data is removed from the shared store when the
+     * component unmounts, preventing the store from growing unbounded across
+     * mount/unmount cycles. Set to `true` to keep the data available via
+     * `FormData(guid)` after the form has unmounted.
+     */
+    persistOnUnmount?: boolean;
+    /** Persist form data to browser storage and restore it on mount (draft/auto-save). */
+    autoSave?: boolean;
+    /** Storage key for auto-save (defaults to `dynamic-mui:<guid>`). */
+    autoSaveKey?: string;
+    /** Which browser storage to use for auto-save (default 'local'). */
+    autoSaveStorage?: 'local' | 'session';
 }
+
+/** Resolve the chosen web storage, guarding SSR / disabled-storage environments. */
+const getStorage = (kind: 'local' | 'session'): Storage | null => {
+    try {
+        if (typeof window === 'undefined') return null;
+        return kind === 'session' ? window.sessionStorage : window.localStorage;
+    } catch {
+        return null;
+    }
+};
 
 const DEFAULT_PATCH = {};
 
@@ -89,9 +155,16 @@ export function FormGenerator({
     onFieldClick,
     onFieldDoubleClick,
     onFieldContextMenu,
+    persistOnUnmount = false,
+    autoSave = false,
+    autoSaveKey,
+    autoSaveStorage = 'local',
 }: FormGeneratorProps) {
+    const saveKey = autoSaveKey || `dynamic-mui:${guid}`;
     const [newPatch, setNewPatch] = useState(patch);
-    const [renderTrigger, setRenderTrigger] = useState(0);
+    // Bump to force a re-render when the shared store mutates (dynamic subforms,
+    // conditional UI). The counter value itself is never read.
+    const [, forceRender] = useReducer((n: number) => n + 1, 0);
     const config = LIBMap.MUI;
     const layout = useMemo(
         () => generateLayout(updatePatchData(data, newPatch, guid, response)),
@@ -106,17 +179,56 @@ export function FormGenerator({
         setNewPatch({ ...patch });
     }, [patch]);
 
+    // Free this form's slice of the shared store on unmount so the module-level
+    // `response` object doesn't leak entries across mount/unmount cycles.
+    // Opt out with `persistOnUnmount` when data must outlive the component.
+    useEffect(() => {
+        if (persistOnUnmount) return undefined;
+        return () => {
+            delete response[guid];
+        };
+    }, [guid, persistOnUnmount]);
+
+    // Auto-save: restore a saved draft into the store on mount.
+    useEffect(() => {
+        if (!autoSave) return;
+        const storage = getStorage(autoSaveStorage);
+        if (!storage) return;
+        try {
+            const saved = storage.getItem(saveKey);
+            if (saved) {
+                response[guid] = { ...response[guid], ...JSON.parse(saved) };
+                setNewPatch((prev) => ({ ...prev, ...JSON.parse(saved) }));
+            }
+        } catch {
+            /* ignore malformed drafts */
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [autoSave, saveKey, autoSaveStorage, guid]);
+
+    const persistDraft = useCallback(() => {
+        if (!autoSave) return;
+        const storage = getStorage(autoSaveStorage);
+        if (!storage) return;
+        try {
+            storage.setItem(saveKey, JSON.stringify(response[guid] || {}));
+        } catch {
+            /* storage full / unavailable — ignore */
+        }
+    }, [autoSave, autoSaveStorage, saveKey, guid]);
+
     const onUpdate = useCallback(({ id, value, option }: any) => {
         if (!response[guid]) response[guid] = {};
         response[guid][id] = value;
 
         // Trigger re-render to evaluate dynamic subforms and UI rules
-        setRenderTrigger((prev) => prev + 1);
+        forceRender();
+        persistDraft();
 
         if (typeof onChange === 'function') {
             onChange({ id, value, option });
         }
-    }, [guid, onChange]);
+    }, [guid, onChange, persistDraft]);
 
     const handleSubmit = useCallback((submitCallback: any, formData: any, formGuid: any) => {
         if (typeof submitCallback === 'function') {
@@ -136,9 +248,48 @@ export function FormGenerator({
         const cProps = field.props || {};
         const cLayout = field.layout || {};
         const fieldId = field?.id || cProps?.id;
-        // @ts-ignore
         const configObj = config.map[type] || {};
         const { options = {} } = configObj;
+
+        // Live values drive all reactive rules; recomputed on every forceRender.
+        const liveValues = response[guid] || {};
+
+        // 1. Conditional visibility — hidden fields render nothing at all.
+        if (field.visibleWhen && !evalRule(field.visibleWhen, liveValues)) {
+            return null;
+        }
+
+        // 2. Computed / formula field — derive the value, store it (so it submits),
+        //    and feed it into the control's props.
+        let effectiveProps = cProps;
+        if (field.formula && fieldId) {
+            const computed = computeFormula(field.formula, liveValues);
+            if (response[guid]) response[guid][fieldId] = computed;
+            effectiveProps = { ...effectiveProps, value: computed };
+        }
+
+        // 3. Enable/disable rule.
+        if (field.disabledWhen && evalRule(field.disabledWhen, liveValues)) {
+            effectiveProps = {
+                ...effectiveProps,
+                MuiAttributes: { ...(effectiveProps.MuiAttributes || {}), disabled: true },
+            };
+        }
+
+        // 4. Conditional required — inject a mandatory rule when the condition holds.
+        let effectiveRules = rules;
+        if (field.requiredWhen && evalRule(field.requiredWhen, liveValues)) {
+            const hasMandatory = rules?.validation?.some((v: any) => MANDATORY_RULES.includes(v.rule));
+            if (!hasMandatory) {
+                effectiveRules = {
+                    ...rules,
+                    validation: [
+                        ...(rules.validation || []),
+                        { rule: 'mandatory', message: field.requiredMessage || 'This field is required' },
+                    ],
+                };
+            }
+        }
 
         // Find if any subform condition matches the current value
         const currentValue = fieldId ? response[guid]?.[fieldId] : undefined;
@@ -152,8 +303,6 @@ export function FormGenerator({
         });
 
         return (
-            // @ts-ignore
-            // @ts-ignore
             <Grid
                 key={fieldId || `layout-comp-${index}`}
                 style={{
@@ -165,40 +314,16 @@ export function FormGenerator({
                 }}
                 {...cLayout}
                 className={`${className} ${visible ? 'show' : 'hidden'}`}
-                // onMouseEnter={(e) => {
-                //     if (onFieldClick || onFieldDoubleClick) {
-                //         e.currentTarget.style.backgroundColor = 'rgba(99, 102, 241, 0.04)'; // faint highlight
-                //         e.currentTarget.style.boxShadow = '0 0 0 1px #6366f1'; // focus border
-                //     }
-                // }}
-                // onMouseLeave={(e) => {
-                //     if (onFieldClick || onFieldDoubleClick) {
-                //         e.currentTarget.style.backgroundColor = 'transparent';
-                //         e.currentTarget.style.boxShadow = 'none';
-                //     }
-                // }}
-                onClick={(e) => {
-                    // Allow normal clicks for interaction
-                    // Only stop propagation if we really need to capture a "selection" click, 
-                    // but user said "no change in double click" and implied single click shouldn't select.
-                    // So we do nothing special here, letting the input handle the click.
-                    if (onFieldClick) {
-                        // e.stopPropagation(); // REMOVED to allow Select/Input focus
-                        // onFieldClick(field); // REMOVED as we only want double click
-                    }
-                }}
                 onDoubleClick={(e) => {
                     if (onFieldDoubleClick) {
-                        e.stopPropagation(); // Capture double click for "Edit"
-                        // @ts-ignore
+                        e.stopPropagation();
                         onFieldDoubleClick(field);
                     }
                 }}
                 onContextMenu={(e) => {
                     if (onFieldContextMenu) {
-                        e.preventDefault(); // CRITICAL: Stop browser menu
+                        e.preventDefault(); // stop the native browser context menu
                         e.stopPropagation();
-                        // @ts-ignore
                         onFieldContextMenu(e, field);
                     }
                 }}
@@ -208,8 +333,8 @@ export function FormGenerator({
                     map={configObj.map}
                     option={options.type || ''}
                     control={field}
-                    attributes={cProps}
-                    rules={rules}
+                    attributes={effectiveProps}
+                    rules={effectiveRules}
                     onChange={onUpdate}
                     onStepUpdate={onStepUpdate}
                     currentStep={activeStep}

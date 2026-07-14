@@ -44,6 +44,216 @@ export const TEMPLATES: Record<string, FormField[]> = {
             layout: { row: 1, xs: 12, sm: 12 },
         },
     ],
+    'chipselect': [
+        {
+            type: 'chipselect',
+            props: {
+                id: 'chipselect',
+                label: 'Choose your interests',
+                multiple: true,
+                options: [
+                    { value: 'design', label: 'Design', icon: 'palette' },
+                    { value: 'dev', label: 'Development', icon: 'code' },
+                    { value: 'marketing', label: 'Marketing', icon: 'campaign' },
+                    { value: 'sales', label: 'Sales', icon: 'trending_up' },
+                ],
+            },
+            layout: { row: 1, xs: 12, sm: 12 },
+        },
+    ],
+    'daterangepicker': [
+        {
+            type: 'daterangepicker',
+            props: { id: 'daterange', startLabel: 'Start', endLabel: 'End', format: 'MM/DD/YYYY' },
+            layout: { row: 1, xs: 12, sm: 12 },
+        },
+    ],
+    'rating': [
+        {
+            type: 'rating',
+            props: { id: 'rating', label: 'Rate your experience', MuiAttributes: { max: 5 } },
+            layout: { row: 1, xs: 12, sm: 12 },
+        },
+    ],
+    'slider': [
+        {
+            type: 'slider',
+            props: { id: 'slider', label: 'Amount', min: 0, max: 100, step: 1, value: 40 },
+            layout: { row: 1, xs: 12, sm: 12 },
+        },
+    ],
+    'tagsinput': [
+        {
+            type: 'tagsinput',
+            props: { id: 'tags', label: 'Tags', placeholder: 'Add a tag…', options: ['React', 'MUI', 'Node'], value: [] },
+            layout: { row: 1, xs: 12, sm: 12 },
+        },
+    ],
+    'togglebuttons': [
+        {
+            type: 'togglebuttons',
+            props: {
+                id: 'alignment',
+                label: 'Alignment',
+                options: [
+                    { value: 'left', label: 'Left' },
+                    { value: 'center', label: 'Center' },
+                    { value: 'right', label: 'Right' },
+                ],
+            },
+            layout: { row: 1, xs: 12, sm: 12 },
+        },
+    ],
+    'password': [
+        {
+            type: 'password',
+            props: { id: 'password', showStrength: true, MuiAttributes: { label: 'Password' } },
+            layout: { row: 1, xs: 12, sm: 12 },
+        },
+    ],
+    'otp': [
+        {
+            type: 'otp',
+            props: { id: 'otp', label: 'Verification code', length: 6 },
+            layout: { row: 1, xs: 12, sm: 12 },
+        },
+    ],
+    'phone': [
+        {
+            type: 'phone',
+            props: { id: 'phone', MuiAttributes: { label: 'Phone number' } },
+            layout: { row: 1, xs: 12, sm: 6 },
+        },
+    ],
+    'currency': [
+        {
+            type: 'currency',
+            props: { id: 'amount', prefix: '$', MuiAttributes: { label: 'Amount' } },
+            layout: { row: 1, xs: 12, sm: 6 },
+        },
+    ],
+    'fileupload': [
+        {
+            type: 'fileupload',
+            props: { id: 'files', label: 'Upload files', multiple: true, accept: 'image/*' },
+            layout: { row: 1, xs: 12, sm: 12 },
+        },
+    ],
+    'alert': [
+        {
+            type: 'alert',
+            props: { severity: 'info', title: 'Heads up', text: 'This is an informational message.' },
+            layout: { row: 1, xs: 12, sm: 12 },
+        },
+    ],
+    'computed': [
+        {
+            type: 'computed',
+            props: { id: 'total', formula: 'qty * price', prefix: '$ ', MuiAttributes: { label: 'Total' } },
+            layout: { row: 1, xs: 12, sm: 6 },
+        },
+    ],
+    'keyvalue': [
+        {
+            type: 'keyvalue',
+            props: { id: 'metadata', keyLabel: 'Key', valueLabel: 'Value', value: {} },
+            layout: { row: 1, xs: 12, sm: 12 },
+        },
+    ],
+    'numberstepper': [
+        {
+            type: 'numberstepper',
+            props: { id: 'quantity', label: 'Quantity', min: 0, max: 99, step: 1, value: 1 },
+            layout: { row: 1, xs: 12, sm: 6 },
+        },
+    ],
+    'matrix': [
+        {
+            type: 'matrix',
+            props: {
+                id: 'survey',
+                label: 'How satisfied are you?',
+                rows: [{ id: 'service', label: 'Service' }, { id: 'quality', label: 'Quality' }],
+                columns: [{ value: '1', label: 'Poor' }, { value: '2', label: 'OK' }, { value: '3', label: 'Great' }],
+            },
+            layout: { row: 1, xs: 12, sm: 12 },
+        },
+    ],
+    'consent': [
+        {
+            type: 'consent',
+            props: {
+                id: 'terms',
+                text: 'These are the terms and conditions. Please read them fully before agreeing. '.repeat(8),
+                label: 'I have read and agree to the terms',
+                requireScroll: true,
+            },
+            layout: { row: 1, xs: 12, sm: 12 },
+        },
+    ],
+    'colorpicker': [
+        {
+            type: 'colorpicker',
+            props: { id: 'color', label: 'Brand colour', value: '#6366f1', presets: ['#6366f1', '#ec4899', '#10b981', '#f59e0b'] },
+            layout: { row: 1, xs: 12, sm: 6 },
+        },
+    ],
+    'markdown': [
+        {
+            type: 'markdown',
+            props: { id: 'bio', label: 'Bio', rows: 6 },
+            layout: { row: 1, xs: 12, sm: 12 },
+        },
+    ],
+    'address': [
+        {
+            type: 'address',
+            props: { id: 'address' },
+            layout: { row: 1, xs: 12, sm: 12 },
+        },
+    ],
+    'cascadeselect': [
+        {
+            type: 'cascadeselect',
+            props: {
+                id: 'state',
+                label: 'State / Province',
+                parentValue: 'us',
+                optionsMap: {
+                    us: [{ value: 'ca', label: 'California' }, { value: 'ny', label: 'New York' }],
+                    in: [{ value: 'ka', label: 'Karnataka' }, { value: 'tn', label: 'Tamil Nadu' }],
+                },
+            },
+            layout: { row: 1, xs: 12, sm: 6 },
+        },
+    ],
+    'formwizard': [
+        {
+            type: 'formwizard',
+            props: {
+                id: 'wizard',
+                steps: [
+                    { label: 'Account', fields: [{ type: 'textfield', props: { id: 'email', MuiAttributes: { label: 'Email' } }, layout: { row: 1, xs: 12 } }] },
+                    { label: 'Profile', fields: [{ type: 'textfield', props: { id: 'name', MuiAttributes: { label: 'Name' } }, layout: { row: 1, xs: 12 } }] },
+                ],
+            },
+            layout: { row: 1, xs: 12, sm: 12 },
+        },
+    ],
+    'geo': [
+        {
+            type: 'geo',
+            props: { id: 'location', label: 'Location', value: { lat: '', lng: '' } },
+            layout: { row: 1, xs: 12, sm: 12 },
+        },
+    ],
+    'summary': [
+        {
+            type: 'summary',
+            props: { id: 'summary', title: 'Review', guid: 'builder-preview' },
+            layout: { row: 1, xs: 12, sm: 12 },
+        },
+    ],
     'datetime': [
         {
             type: 'datetime',
@@ -395,6 +605,30 @@ export const TOOLBOX_ITEMS = [
     { type: 'datatable', label: 'Data Table', icon: 'table_chart' },
     { type: 'divider', label: 'Divider', icon: 'horizontal_rule' },
     { type: 'chip', label: 'Chip', icon: 'label' },
+    { type: 'chipselect', label: 'Chip Select', icon: 'category' },
+    { type: 'daterangepicker', label: 'Date Range', icon: 'date_range' },
+    { type: 'rating', label: 'Rating', icon: 'star_rate' },
+    { type: 'slider', label: 'Slider', icon: 'tune' },
+    { type: 'tagsinput', label: 'Tags Input', icon: 'sell' },
+    { type: 'togglebuttons', label: 'Toggle Buttons', icon: 'view_week' },
+    { type: 'password', label: 'Password', icon: 'password' },
+    { type: 'otp', label: 'OTP / PIN', icon: 'pin' },
+    { type: 'phone', label: 'Phone', icon: 'phone' },
+    { type: 'currency', label: 'Currency', icon: 'attach_money' },
+    { type: 'fileupload', label: 'File Upload', icon: 'cloud_upload' },
+    { type: 'alert', label: 'Alert', icon: 'info' },
+    { type: 'computed', label: 'Computed', icon: 'functions' },
+    { type: 'keyvalue', label: 'Key-Value', icon: 'data_object' },
+    { type: 'numberstepper', label: 'Stepper (+/-)', icon: 'exposure' },
+    { type: 'matrix', label: 'Matrix', icon: 'grid_on' },
+    { type: 'consent', label: 'Consent', icon: 'gavel' },
+    { type: 'colorpicker', label: 'Color Picker', icon: 'palette' },
+    { type: 'markdown', label: 'Markdown', icon: 'notes' },
+    { type: 'address', label: 'Address', icon: 'home' },
+    { type: 'cascadeselect', label: 'Cascade Select', icon: 'account_tree' },
+    { type: 'formwizard', label: 'Form Wizard', icon: 'linear_scale' },
+    { type: 'geo', label: 'Geo / Map', icon: 'map' },
+    { type: 'summary', label: 'Summary', icon: 'fact_check' },
     { type: 'list', label: 'List', icon: 'format_list_bulleted' },
     // { type: 'stepper', label: 'Stepper', icon: 'linear_scale' }, // Complex to mock
     { type: 'chart-bar', label: 'Bar Chart', icon: 'bar_chart' },

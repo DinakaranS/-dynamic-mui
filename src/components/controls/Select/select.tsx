@@ -5,6 +5,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import { checkboxSX, getInputProps } from '../../../util/helper';
+import { premiumInputSx, mergeSx } from '../../../util/premiumStyles';
 import { ControlProps } from '../../../types';
 import useUpdateEffect from '../../../util/useUpdateEffect';
 
@@ -54,6 +55,7 @@ export default function Select({ attributes = {}, rules = {}, onChange }: Contro
         id = '',
         InputProps = {},
     } = attributes;
+    const { sx: boxSx, ...restBox } = MuiBoxAttributes;
     const [value, setValue] = React.useState(() =>
         attributes?.value
             ? getValue(options, attributes?.value, MuiAttributes.multiple, attributes?.separator)
@@ -203,7 +205,8 @@ export default function Select({ attributes = {}, rules = {}, onChange }: Contro
                 return (
                     <TextField
                         {...params}
-                        {...MuiBoxAttributes}
+                        {...restBox}
+                        sx={mergeSx(premiumInputSx as any, boxSx)}
                         required={isMandatory}
                         error={error}
                         helperText={helperText}

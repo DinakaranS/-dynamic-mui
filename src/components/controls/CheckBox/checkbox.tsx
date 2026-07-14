@@ -4,6 +4,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
 import useUpdateEffect from '../../../util/useUpdateEffect';
+import { premiumControlLabelSx, mergeSx } from '../../../util/premiumStyles';
 import { ControlProps } from '../../../types';
 
 /** Playground Component */
@@ -51,7 +52,7 @@ export default function CheckBox({ attributes = {}, rules = {}, onChange }: Cont
         if (onChange) onChange({ id, value: isChecked });
     };
 
-    const { label, ...otherFCLAttributes } = MuiFCLAttributes;
+    const { label, sx: fclSx, ...otherFCLAttributes } = MuiFCLAttributes;
     const finalLabel = isMandatory ? (
         <span>
             {label}
@@ -68,6 +69,7 @@ export default function CheckBox({ attributes = {}, rules = {}, onChange }: Cont
             <FormControlLabel
                 {...otherFCLAttributes}
                 label={finalLabel}
+                sx={mergeSx(premiumControlLabelSx as any, fclSx)}
                 control={
                     <MuiCheckBox
                         checked={checked}

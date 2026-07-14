@@ -2,6 +2,7 @@ import React from 'react';
 import { NumericFormat } from 'react-number-format';
 import TextField from '@mui/material/TextField';
 import Validation from '../../../util/validation';
+import { premiumInputSx, mergeSx } from '../../../util/premiumStyles';
 import { ControlProps } from '../../../types';
 
 interface CustomProps {
@@ -34,6 +35,7 @@ const NumericFormatCustom = React.forwardRef<HTMLElement, CustomProps>(
 
 export default function NumberField({ attributes = {}, rules = {}, onChange }: ControlProps) {
     const { MuiAttributes = {}, id = '' } = attributes;
+    const { sx: userSx, ...restMuiAttributes } = MuiAttributes;
     const [value, setValue] = React.useState(attributes.value || '');
     const [error, setError] = React.useState(false);
     const [helperText, setHelperText] = React.useState('');
@@ -91,7 +93,8 @@ export default function NumberField({ attributes = {}, rules = {}, onChange }: C
                 setError(!v.isValid);
                 setHelperText(v.message);
             }}
-            {...MuiAttributes}
+            {...restMuiAttributes}
+            sx={mergeSx(premiumInputSx as any, userSx)}
             name="numberformat"
             id={id}
             InputProps={{

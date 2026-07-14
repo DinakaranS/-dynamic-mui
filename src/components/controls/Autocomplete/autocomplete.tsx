@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
+import { premiumInputSx } from '../../../util/premiumStyles';
 import { ControlProps } from '../../../types';
 import useUpdateEffect from '../../../util/useUpdateEffect';
 
@@ -66,6 +67,7 @@ export default function AutoComplete({ attributes = {}, rules = {}, onChange }: 
             renderInput={(params) => (
                 <TextField
                     {...params}
+                    sx={premiumInputSx as any}
                     label={label}
                     required={isMandatory}
                     error={error}

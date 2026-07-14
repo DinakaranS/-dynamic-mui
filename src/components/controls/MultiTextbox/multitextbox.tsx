@@ -3,6 +3,7 @@ import { TextField, Button, Box, IconButton, Stack } from '@mui/material';
 import { Icon } from '@mui/material';
 import { ControlProps } from '../../../types';
 import useUpdateEffect from '../../../util/useUpdateEffect';
+import { premiumInputSx } from '../../../util/premiumStyles';
 
 export default function MultiTextbox({ attributes = {}, rules = {}, onChange }: ControlProps) {
     const { id = '' } = attributes;
@@ -80,6 +81,7 @@ export default function MultiTextbox({ attributes = {}, rules = {}, onChange }: 
                         value={item.value}
                         onChange={(e) => handleChange(index, e.target.value)}
                         size="small"
+                        sx={premiumInputSx as any}
                     />
                     {index === items.length - 1 ? (
                         <Button

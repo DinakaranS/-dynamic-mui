@@ -5,6 +5,7 @@ import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
 import { alpha, styled } from '@mui/material/styles';
 import useUpdateEffect from '../../../util/useUpdateEffect';
+import { premiumControlLabelSx, premiumSwitchSx, mergeSx } from '../../../util/premiumStyles';
 import { ControlProps } from '../../../types';
 
 interface StyledSwitchProps extends Omit<SwitchProps, 'color'> {
@@ -71,9 +72,9 @@ export default function Switch({ attributes = {}, rules = {}, onChange }: Contro
     const MSwitch = color ? ColorSwitch : MuiSwitch;
 
     // Extract defaultChecked to avoid passing it to a controlled component
-    const { defaultChecked, ...otherMuiAttributes } = MuiAttributes;
+    const { defaultChecked, sx: muiSx, ...otherMuiAttributes } = MuiAttributes;
 
-    const { label, ...otherFCLAttributes } = MuiFCLAttributes;
+    const { label, sx: fclSx, ...otherFCLAttributes } = MuiFCLAttributes;
     const finalLabel = isMandatory ? (
         <span>
             {label}
@@ -93,6 +94,7 @@ export default function Switch({ attributes = {}, rules = {}, onChange }: Contro
             <FormControlLabel
                 {...otherFCLAttributes}
                 label={finalLabel}
+                sx={mergeSx(premiumControlLabelSx as any, fclSx)}
                 control={
                     <MSwitch
                         checked={checked}
@@ -101,6 +103,7 @@ export default function Switch({ attributes = {}, rules = {}, onChange }: Contro
                         {...otherMuiAttributes}
                         // @ts-ignore
                         {...switchColorProp}
+                        sx={mergeSx(premiumSwitchSx as any, muiSx)}
                         inputProps={{ 'aria-label': 'controlled' }}
                     />
                 }

@@ -2,6 +2,8 @@ import { Paper, Typography, Box, TextField, Button, Divider, Icon, Switch, FormC
 import { FormField } from '../util/helper';
 import { useState, useEffect } from 'react';
 import { get, set, cloneDeep } from 'lodash';
+import { AITextAssist } from '../ai';
+import { useAI } from './AIContext';
 
 interface PropertiesEditorProps {
     field: FormField | null;
@@ -30,6 +32,7 @@ const getPropertyPath = (type: string, property: string): string => {
 };
 
 export const PropertiesEditor = ({ field, onUpdate, onDelete, allFields = [], onAllFieldsChange }: PropertiesEditorProps) => {
+    const { client } = useAI();
     const [mode, setMode] = useState<'individual' | 'form'>('individual');
     const [jsonError, setJsonError] = useState<string | null>(null);
     const [jsonValue, setJsonValue] = useState('');
@@ -253,14 +256,25 @@ export const PropertiesEditor = ({ field, onUpdate, onDelete, allFields = [], on
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                     <Typography variant="overline" color="text.secondary" sx={{ fontWeight: 700 }}>Quick Edit</Typography>
 
-                    <TextField
-                        label={['button', 'typography'].includes(fieldType || '') ? "Text" : "Label"}
-                        size="small"
-                        // @ts-ignore
-                        value={get(parsedField, getPropertyPath(fieldType || '', 'label')) || ''}
-                        onChange={(e) => handleQuickUpdate('label', e.target.value)}
-                        fullWidth
-                    />
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                        <TextField
+                            label={['button', 'typography'].includes(fieldType || '') ? "Text" : "Label"}
+                            size="small"
+                            // @ts-ignore
+                            value={get(parsedField, getPropertyPath(fieldType || '', 'label')) || ''}
+                            onChange={(e) => handleQuickUpdate('label', e.target.value)}
+                            fullWidth
+                        />
+                        {client && (
+                            <AITextAssist
+                                client={client}
+                                // @ts-ignore
+                                text={get(parsedField, getPropertyPath(fieldType || '', 'label')) || ''}
+                                onResult={(t) => handleQuickUpdate('label', t)}
+                                size="small"
+                            />
+                        )}
+                    </Box>
 
                     {/* Placeholder - Only relevant for inputs */}
                     {!['checkbox', 'switch', 'radio', 'button', 'typography', 'divider'].includes(fieldType || '') && (

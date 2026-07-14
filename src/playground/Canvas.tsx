@@ -1,8 +1,9 @@
 import { useDroppable } from '@dnd-kit/core';
 import { Box, Paper, Typography, Icon, Fade, Button, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
-import { FormGenerator, FormData } from '../index';
+import { FormGenerator, FormData, AIFill } from '../index';
 import { FormField } from '../util/helper';
 import { useState } from 'react';
+import { useAI, AIConfigFields } from './AIContext';
 
 interface CanvasProps {
     fields: FormField[];
@@ -15,8 +16,11 @@ export const Canvas = ({ fields, onSelectField, selectedId: _selectedId, onDelet
     const { setNodeRef, isOver } = useDroppable({
         id: 'canvas',
     });
+    const { client } = useAI();
     const [openData, setOpenData] = useState(false);
     const [jsonData, setJsonData] = useState('');
+    const [openFill, setOpenFill] = useState(false);
+    const [patch, setPatch] = useState<Record<string, any>>({});
 
     const handleViewData = () => {
         // @ts-ignore
@@ -51,6 +55,18 @@ export const Canvas = ({ fields, onSelectField, selectedId: _selectedId, onDelet
                     <Icon fontSize="small">devices</Icon> Canvas Preview
                 </Typography>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    {fields.length > 0 && (
+                        <Button
+                            variant="outlined"
+                            color="secondary"
+                            size="small"
+                            startIcon={<Icon>auto_fix_high</Icon>}
+                            onClick={() => setOpenFill(true)}
+                            sx={{ textTransform: 'none', fontWeight: 600, borderRadius: 2 }}
+                        >
+                            AI Fill
+                        </Button>
+                    )}
                     <Button
                         variant="contained"
                         color="primary"
@@ -142,6 +158,7 @@ export const Canvas = ({ fields, onSelectField, selectedId: _selectedId, onDelet
                     <FormGenerator
                         guid="builder-preview"
                         data={fields}
+                        patch={patch}
                         onSubmit={(data) => console.log('Preview Submit:', data)}
                         // @ts-ignore
                         formRef={null}
@@ -156,6 +173,27 @@ export const Canvas = ({ fields, onSelectField, selectedId: _selectedId, onDelet
                     />
                 )}
             </Paper>
+
+            <Dialog open={openFill} onClose={() => setOpenFill(false)} maxWidth="sm" fullWidth>
+                <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1, fontWeight: 700 }}>
+                    <Icon sx={{ color: 'secondary.main' }}>auto_fix_high</Icon> AI Fill — paste text to populate the preview
+                </DialogTitle>
+                <DialogContent dividers>
+                    {client ? (
+                        <AIFill
+                            client={client}
+                            schema={fields as any}
+                            onFill={(values) => { setPatch(values); setOpenFill(false); }}
+                            placeholder="Paste an email, note, or details and AI will fill matching fields…"
+                        />
+                    ) : (
+                        <AIConfigFields />
+                    )}
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setOpenFill(false)}>Close</Button>
+                </DialogActions>
+            </Dialog>
 
             <Dialog
                 open={openData}

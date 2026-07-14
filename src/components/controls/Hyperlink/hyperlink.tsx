@@ -1,5 +1,6 @@
 import { Box, Link, Typography } from '@mui/material';
 import { ControlProps } from '../../../types';
+import { mergeSx } from '../../../util/premiumStyles';
 
 export default function Hyperlink({ attributes = {}, rules = {} }: ControlProps) {
     const {
@@ -15,6 +16,8 @@ export default function Hyperlink({ attributes = {}, rules = {} }: ControlProps)
     const finalUrl = url || value || '#';
     const finalLabel = displayText || label || finalUrl;
 
+    const { sx: linkSx, ...restLink } = MuiAttributes.link || {};
+
     return (
         <Box sx={{ width: '100%' }} {...MuiAttributes.container}>
             {label && displayText && (
@@ -28,7 +31,16 @@ export default function Hyperlink({ attributes = {}, rules = {} }: ControlProps)
                 href={finalUrl as string}
                 target={target}
                 rel={target === '_blank' ? "noopener noreferrer" : undefined}
-                {...MuiAttributes.link}
+                {...restLink}
+                sx={mergeSx(
+                    {
+                        fontWeight: 600,
+                        textUnderlineOffset: '3px',
+                        transition: 'color .18s ease',
+                        '&:hover': { textDecoration: 'underline' },
+                    },
+                    linkSx,
+                )}
             >
                 {finalLabel}
             </Link>
