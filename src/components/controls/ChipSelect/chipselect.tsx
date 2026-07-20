@@ -54,7 +54,7 @@ const normalizeValue = (raw: any, multiple: boolean, separator: string): any => 
 };
 
 /** Premium selectable-chip control supporting single and multi select. */
-export default function ChipSelect({ attributes = {}, rules = {}, onChange }: ControlProps) {
+export default function ChipSelect({ attributes = {}, rules = {}, onChange, submitTick, messages }: ControlProps) {
     const {
         id = '',
         options = [],
@@ -89,12 +89,20 @@ export default function ChipSelect({ attributes = {}, rules = {}, onChange }: Co
             for (const rule of rules.validation) {
                 if (rule.rule === 'mandatory' || rule.rule === 'mandatoryselect') {
                     const isEmpty = multiple ? !Array.isArray(val) || val.length === 0 : val === '' || val == null;
-                    if (isEmpty) return { isValid: false, message: rule.message || 'Required' };
+                    if (isEmpty) return { isValid: false, message: rule.message || messages?.required || 'Required' };
                 }
             }
         }
         return { isValid: true, message: '' };
     };
+
+    useUpdateEffect(() => {
+        if (submitTick) {
+            const v = validate(selected);
+            setError(!v.isValid);
+            setHelperText(v.message);
+        }
+    }, [submitTick]);
 
     const emit = (nextSelected: any) => {
         const v = validate(nextSelected);
@@ -144,7 +152,7 @@ export default function ChipSelect({ attributes = {}, rules = {}, onChange }: Co
     };
 
     return (
-        <FormControl required={isMandatory} error={error} component="fieldset" variant="standard" fullWidth>
+        <FormControl id={id} required={isMandatory} error={error} component="fieldset" variant="standard" fullWidth>
             {label && (
                 <FormLabel
                     component="legend"

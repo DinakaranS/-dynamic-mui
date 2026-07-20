@@ -1,6 +1,6 @@
 import { useDroppable } from '@dnd-kit/core';
 import { Box, Paper, Typography, Icon, Fade, Button, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
-import { FormGenerator, FormData, AIFill } from '../index';
+import { FormGenerator, FormData, AIFill, AIForm } from '../index';
 import { FormField } from '../util/helper';
 import { useState } from 'react';
 import { useAI, AIConfigFields } from './AIContext';
@@ -20,6 +20,7 @@ export const Canvas = ({ fields, onSelectField, selectedId: _selectedId, onDelet
     const [openData, setOpenData] = useState(false);
     const [jsonData, setJsonData] = useState('');
     const [openFill, setOpenFill] = useState(false);
+    const [openAIForm, setOpenAIForm] = useState(false);
     const [patch, setPatch] = useState<Record<string, any>>({});
 
     const handleViewData = () => {
@@ -34,27 +35,38 @@ export const Canvas = ({ fields, onSelectField, selectedId: _selectedId, onDelet
             ref={setNodeRef}
             sx={{
                 flex: 1,
-                p: 5,
-                bgcolor: '#f1f5f9', // Slate-100
-                backgroundImage: 'radial-gradient(#cbd5e1 1px, transparent 1px)',
-                backgroundSize: '20px 20px',
+                p: { xs: 2.5, md: 5 },
+                bgcolor: '#eef1f8',
+                backgroundImage: 'radial-gradient(rgba(100,116,139,0.28) 1px, transparent 1px)',
+                backgroundSize: '22px 22px',
                 minHeight: '100%',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
                 overflowY: 'auto',
-                transition: 'background-color 0.2s',
+                position: 'relative',
+                transition: 'background-color 0.25s, box-shadow 0.25s',
                 ...(isOver && {
-                    bgcolor: 'rgba(99, 102, 241, 0.05)',
+                    bgcolor: 'rgba(99, 102, 241, 0.06)',
                     boxShadow: 'inset 0 0 0 2px #6366f1'
                 })
             }}
         >
-            <Box sx={{ maxWidth: 1024, width: '100%', mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Typography variant="h6" sx={{ fontWeight: 600, color: 'text.secondary', display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Icon fontSize="small">devices</Icon> Canvas Preview
-                </Typography>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Box sx={{ maxWidth: 1024, width: '100%', mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25 }}>
+                    <Box sx={{ width: 34, height: 34, borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: 'white', color: 'primary.main', boxShadow: '0 2px 8px -2px rgba(15,23,42,0.15)' }}>
+                        <Icon fontSize="small">devices</Icon>
+                    </Box>
+                    <Box sx={{ lineHeight: 1 }}>
+                        <Typography sx={{ fontWeight: 700, color: 'text.primary', fontSize: '1rem', lineHeight: 1.2 }}>
+                            Canvas Preview
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                            Live rendering of your form
+                        </Typography>
+                    </Box>
+                </Box>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25, flexWrap: 'wrap' }}>
                     {fields.length > 0 && (
                         <Button
                             variant="outlined"
@@ -65,6 +77,17 @@ export const Canvas = ({ fields, onSelectField, selectedId: _selectedId, onDelet
                             sx={{ textTransform: 'none', fontWeight: 600, borderRadius: 2 }}
                         >
                             AI Fill
+                        </Button>
+                    )}
+                    {fields.length > 0 && (
+                        <Button
+                            variant="outlined"
+                            size="small"
+                            startIcon={<Icon>smart_toy</Icon>}
+                            onClick={() => setOpenAIForm(true)}
+                            sx={{ textTransform: 'none', fontWeight: 600, borderRadius: 2 }}
+                        >
+                            AIForm demo
                         </Button>
                     )}
                     <Button
@@ -78,7 +101,10 @@ export const Canvas = ({ fields, onSelectField, selectedId: _selectedId, onDelet
                         View Data
                     </Button>
                     <Box sx={{
-                        px: 2,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 0.75,
+                        px: 1.5,
                         py: 0.5,
                         bgcolor: 'white',
                         borderRadius: 10,
@@ -88,9 +114,42 @@ export const Canvas = ({ fields, onSelectField, selectedId: _selectedId, onDelet
                         fontSize: '0.75rem',
                         fontWeight: 600
                     }}>
+                        <Icon sx={{ fontSize: 14 }}>desktop_windows</Icon>
                         1024px
                     </Box>
                 </Box>
+            </Box>
+
+            {/* Device frame */}
+            <Box
+                sx={{
+                    width: '100%',
+                    maxWidth: 1024,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1,
+                    px: 2,
+                    height: 38,
+                    bgcolor: '#ffffff',
+                    borderTopLeftRadius: 16,
+                    borderTopRightRadius: 16,
+                    borderBottom: '1px solid',
+                    borderColor: 'divider',
+                    boxShadow: '0 -1px 0 rgba(0,0,0,0.02)',
+                }}
+            >
+                <Box sx={{ display: 'flex', gap: 0.75 }}>
+                    {['#ff5f57', '#febc2e', '#28c840'].map((c) => (
+                        <Box key={c} sx={{ width: 11, height: 11, borderRadius: '50%', bgcolor: c }} />
+                    ))}
+                </Box>
+                <Box sx={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
+                    <Box sx={{ px: 2, py: 0.25, borderRadius: 6, bgcolor: '#f1f5f9', color: 'text.secondary', fontSize: '0.7rem', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                        <Icon sx={{ fontSize: 12 }}>lock</Icon>
+                        preview.localhost
+                    </Box>
+                </Box>
+                <Box sx={{ width: 33 }} />
             </Box>
 
             <Paper
@@ -98,11 +157,12 @@ export const Canvas = ({ fields, onSelectField, selectedId: _selectedId, onDelet
                 sx={{
                     width: '100%',
                     maxWidth: 1024,
-                    height: 'calc(100vh - 140px)', // Fixed height to trigger scroll
-                    minHeight: 600,
+                    height: 'calc(100vh - 178px)', // Fixed height to trigger scroll
+                    minHeight: 560,
                     bgcolor: 'white',
-                    borderRadius: 3,
-                    boxShadow: '0 25px 50px -12px rgb(0 0 0 / 0.15), 0 0 0 1px rgba(0,0,0,0.02)', // Deeper shadow + subtle border
+                    borderBottomLeftRadius: 16,
+                    borderBottomRightRadius: 16,
+                    boxShadow: '0 30px 60px -18px rgba(15,23,42,0.28), 0 0 0 1px rgba(15,23,42,0.03)',
                     position: 'relative',
                     overflowY: 'auto', // Enable vertical scrolling
                     overflowX: 'hidden',
@@ -132,24 +192,33 @@ export const Canvas = ({ fields, onSelectField, selectedId: _selectedId, onDelet
                             flexDirection: 'column',
                             justifyContent: 'center',
                             alignItems: 'center',
-                            height: 400,
+                            height: 420,
                             color: 'text.secondary',
                             border: '2px dashed',
-                            borderColor: 'divider',
-                            borderRadius: 3,
-                            bgcolor: 'background.default'
+                            borderColor: isOver ? 'primary.main' : 'divider',
+                            borderRadius: 4,
+                            bgcolor: isOver ? 'rgba(99,102,241,0.05)' : 'background.default',
+                            transition: 'all 0.25s',
                         }}>
                             <Box sx={{
-                                p: 3,
+                                width: 84,
+                                height: 84,
                                 borderRadius: '50%',
-                                bgcolor: 'white',
-                                mb: 2,
-                                boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                background: 'linear-gradient(135deg, rgba(99,102,241,0.14) 0%, rgba(236,72,153,0.14) 100%)',
+                                mb: 2.5,
+                                boxShadow: '0 10px 26px -10px rgba(99,102,241,0.5)',
+                                transform: isOver ? 'scale(1.08)' : 'scale(1)',
+                                transition: 'transform 0.25s',
                             }}>
-                                <Icon sx={{ fontSize: 40, color: 'primary.main' }}>add_circle_outline</Icon>
+                                <Icon sx={{ fontSize: 42, color: 'primary.main' }}>{isOver ? 'download' : 'add_circle_outline'}</Icon>
                             </Box>
-                            <Typography variant="h6" sx={{ fontWeight: 600 }}>Start Building</Typography>
-                            <Typography variant="body2" sx={{ mt: 1, maxWidth: 300, textAlign: 'center', color: 'text.secondary' }}>
+                            <Typography variant="h6" sx={{ fontWeight: 700, color: 'text.primary' }}>
+                                {isOver ? 'Drop to add' : 'Start Building'}
+                            </Typography>
+                            <Typography variant="body2" sx={{ mt: 1, maxWidth: 320, textAlign: 'center', color: 'text.secondary' }}>
                                 Drag components from the sidebar and drop them here to construct your form.
                             </Typography>
                         </Box>
@@ -173,6 +242,33 @@ export const Canvas = ({ fields, onSelectField, selectedId: _selectedId, onDelet
                     />
                 )}
             </Paper>
+
+            <Dialog open={openAIForm} onClose={() => setOpenAIForm(false)} maxWidth="md" fullWidth>
+                <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1, fontWeight: 700 }}>
+                    <Icon sx={{ color: 'primary.main' }}>smart_toy</Icon> &lt;AIForm&gt; — the drop-in consumer wrapper
+                </DialogTitle>
+                <DialogContent dividers>
+                    <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                        One component: renders your schema as a form plus a built-in AI toolbar
+                        (Generate / AI&nbsp;Fill / Review). This is what a consumer app writes in one line.
+                    </Typography>
+                    {client ? (
+                        <AIForm
+                            client={client}
+                            data={fields as any}
+                            guid="aiform-demo"
+                            enableGenerate
+                            enableFill
+                            enableReview
+                        />
+                    ) : (
+                        <AIConfigFields />
+                    )}
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setOpenAIForm(false)}>Close</Button>
+                </DialogActions>
+            </Dialog>
 
             <Dialog open={openFill} onClose={() => setOpenFill(false)} maxWidth="sm" fullWidth>
                 <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1, fontWeight: 700 }}>

@@ -1,12 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { TextField, Button, Box, IconButton, Stack } from '@mui/material';
 import { Icon } from '@mui/material';
 import { ControlProps } from '../../../types';
 import useUpdateEffect from '../../../util/useUpdateEffect';
 import { premiumInputSx } from '../../../util/premiumStyles';
 
-export default function MultiTextbox({ attributes = {}, rules = {}, onChange }: ControlProps) {
+export default function MultiTextbox({ attributes = {}, rules = {}, onChange, submitTick, messages }: ControlProps) {
     const { id = '' } = attributes;
+
+    const requiredMessage = messages?.required || 'Required';
+    // Ref to the first input so an invalid submit can move focus here.
+    const firstInputRef = useRef<HTMLInputElement>(null);
 
     // Internal state to track list of values
     const [items, setItems] = useState<{ key: string; value: string }[]>(() => {
@@ -21,6 +25,13 @@ export default function MultiTextbox({ attributes = {}, rules = {}, onChange }: 
     });
 
     const isMandatory = rules?.validation?.some((v: any) => v.rule === 'mandatory') || false;
+
+    // On submit, move focus to the first field when it is a required blank.
+    useUpdateEffect(() => {
+        if (submitTick && isMandatory && !items[0]?.value) {
+            firstInputRef.current?.focus();
+        }
+    }, [submitTick]);
 
     useUpdateEffect(() => {
         if (attributes.value && typeof attributes.value === 'object') {
@@ -74,9 +85,11 @@ export default function MultiTextbox({ attributes = {}, rules = {}, onChange }: 
                 <Box key={index} sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
                     <TextField
                         fullWidth
+                        id={index === 0 ? id : `${id}_${item.key}`}
+                        inputRef={index === 0 ? firstInputRef : undefined}
                         required={isMandatory}
                         error={isMandatory && !item.value}
-                        helperText={isMandatory && !item.value ? 'Required' : ''}
+                        helperText={isMandatory && !item.value ? requiredMessage : ''}
                         label={`Value ${item.key}`}
                         value={item.value}
                         onChange={(e) => handleChange(index, e.target.value)}

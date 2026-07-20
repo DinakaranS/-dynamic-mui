@@ -47,7 +47,7 @@ const getValue = (options: any[] = [], defaultValue: any = '', isMultiple = fals
     }
 };
 
-export default function Select({ attributes = {}, rules = {}, onChange }: ControlProps) {
+export default function Select({ attributes = {}, rules = {}, onChange, submitTick, messages }: ControlProps) {
     const {
         MuiAttributes = {},
         options = [],
@@ -85,7 +85,7 @@ export default function Select({ attributes = {}, rules = {}, onChange }: Contro
                     const isEmpty = !val || (Array.isArray(val) && val.length === 0);
                     if (isEmpty) {
                         isValid = false;
-                        msg = rule.message || 'Required';
+                        msg = rule.message || messages?.required || 'Required';
                         break;
                     }
                 }
@@ -94,6 +94,14 @@ export default function Select({ attributes = {}, rules = {}, onChange }: Contro
         }
         return { isValid, message: msg };
     };
+
+    useUpdateEffect(() => {
+        if (submitTick) {
+            const v = validate(value);
+            setError(!v.isValid);
+            setHelperText(v.message);
+        }
+    }, [submitTick]);
 
     const getMuiAttributes = () => {
         // ... (existing logic)
@@ -206,6 +214,7 @@ export default function Select({ attributes = {}, rules = {}, onChange }: Contro
                     <TextField
                         {...params}
                         {...restBox}
+                        id={id}
                         sx={mergeSx(premiumInputSx as any, boxSx)}
                         required={isMandatory}
                         error={error}

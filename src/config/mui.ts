@@ -175,6 +175,26 @@ const mui: MuiConfigMap = {
         type: 'GeoField',
         map: 'GeoField',
     },
+    richtext: {
+        type: 'RichTextEditor',
+        map: 'RichTextEditor',
+    },
+    nps: {
+        type: 'NpsScale',
+        map: 'NpsScale',
+    },
+    editabletable: {
+        type: 'EditableTable',
+        map: 'EditableTable',
+    },
+    intlphone: {
+        type: 'IntlPhone',
+        map: 'IntlPhone',
+    },
+    asyncautocomplete: {
+        type: 'AsyncAutocomplete',
+        map: 'AsyncAutocomplete',
+    },
     list: {
         type: 'List',
         map: 'List',

@@ -144,12 +144,24 @@ export const updatePatchData = (
             const newField = cloneDeep(field);
             const id = newField?.id || newField?.props?.id;
 
-            if (id && response[guid] && !isEmptyCustom(response[guid][id])) {
-                const defaultValue = ['switch', 'checkbox'].includes(newField?.type || '') ? false : '';
-                newField.props = {
-                    ...newField.props,
-                    value: response[guid][id] === undefined ? defaultValue : response[guid][id],
-                };
+            if (id && response[guid]) {
+                // Seed the store from a value declared directly in the schema
+                // (props.value) when the store has nothing for this field yet.
+                // Without this, a schema-provided initial value is *displayed* by
+                // the control but never lands in the response, so submit/FormData
+                // report it as empty until the user edits the field. `patch` and
+                // prior user edits already in the store take precedence.
+                const schemaValue = newField?.props?.value;
+                if (isEmptyCustom(response[guid][id]) && !isEmptyCustom(schemaValue)) {
+                    response[guid][id] = schemaValue;
+                }
+
+                if (!isEmptyCustom(response[guid][id])) {
+                    newField.props = {
+                        ...newField.props,
+                        value: response[guid][id],
+                    };
+                }
             }
             return newField;
         });

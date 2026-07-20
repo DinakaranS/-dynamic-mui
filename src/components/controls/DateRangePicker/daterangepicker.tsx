@@ -2,6 +2,7 @@ import React from 'react';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import Stack from '@mui/material/Stack';
+import { useTheme } from '@mui/material/styles';
 import dayjs from 'dayjs';
 import useUpdateEffect from '../../../util/useUpdateEffect';
 import { ControlProps } from '../../../types';
@@ -37,6 +38,15 @@ export default function DateRangePicker({ attributes = {}, rules = {}, onChange 
         startLabel = 'Start',
         endLabel = 'End',
     } = attributes;
+
+    // Inherit the theme's MuiTextField size/variant so the pickers line up with
+    // the plain text fields (MuiPickersTextField ignores those defaultProps).
+    const theme = useTheme();
+    const tfDefaults = (theme.components?.MuiTextField?.defaultProps || {}) as { size?: 'small' | 'medium'; variant?: 'outlined' | 'filled' | 'standard' };
+    const tfInherit = {
+        ...(tfDefaults.size ? { size: tfDefaults.size } : {}),
+        ...(tfDefaults.variant ? { variant: tfDefaults.variant } : {}),
+    };
 
     const [range, setRange] = React.useState<Range>(() => parseValue(attributes.value));
 
@@ -81,6 +91,7 @@ export default function DateRangePicker({ attributes = {}, rules = {}, onChange 
                         textField: {
                             required: isMandatory,
                             fullWidth: true,
+                            ...tfInherit,
                             sx: premiumInputSx as any,
                         },
                     }}
@@ -95,6 +106,7 @@ export default function DateRangePicker({ attributes = {}, rules = {}, onChange 
                         textField: {
                             required: isMandatory,
                             fullWidth: true,
+                            ...tfInherit,
                             error: hasOrderError,
                             helperText: hasOrderError ? 'End date must be on or after the start date' : undefined,
                             sx: premiumInputSx as any,

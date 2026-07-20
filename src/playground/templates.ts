@@ -254,6 +254,50 @@ export const TEMPLATES: Record<string, FormField[]> = {
             layout: { row: 1, xs: 12, sm: 12 },
         },
     ],
+    'richtext': [
+        {
+            type: 'richtext',
+            props: { id: 'richtext', label: 'Description', value: '<p>Write something…</p>' },
+            layout: { row: 1, xs: 12, sm: 12 },
+        },
+    ],
+    'nps': [
+        {
+            type: 'nps',
+            props: { id: 'nps', label: 'How likely are you to recommend us?', min: 0, max: 10 },
+            layout: { row: 1, xs: 12, sm: 12 },
+        },
+    ],
+    'editabletable': [
+        {
+            type: 'editabletable',
+            props: {
+                id: 'lineitems',
+                label: 'Line items',
+                columns: [
+                    { key: 'item', label: 'Item', type: 'text' },
+                    { key: 'qty', label: 'Qty', type: 'number' },
+                    { key: 'price', label: 'Price', type: 'number' },
+                ],
+                value: [{ item: 'Widget', qty: 2, price: 9.99 }],
+            },
+            layout: { row: 1, xs: 12, sm: 12 },
+        },
+    ],
+    'intlphone': [
+        {
+            type: 'intlphone',
+            props: { id: 'phone', label: 'Phone', defaultCountry: 'US' },
+            layout: { row: 1, xs: 12, sm: 12 },
+        },
+    ],
+    'asyncautocomplete': [
+        {
+            type: 'asyncautocomplete',
+            props: { id: 'lookup', label: 'Search', placeholder: 'Type to search…', minChars: 1 },
+            layout: { row: 1, xs: 12, sm: 12 },
+        },
+    ],
     'datetime': [
         {
             type: 'datetime',
@@ -264,6 +308,34 @@ export const TEMPLATES: Record<string, FormField[]> = {
                     variant: 'standard',
                     fullWidth: true,
                     sx: { width: '100%' },
+                },
+            },
+            layout: { row: 1, xs: 12, sm: 12 },
+        },
+    ],
+    'datetimepicker': [
+        {
+            type: 'datetimepicker',
+            props: {
+                id: 'datetimepicker',
+                MuiAttributes: { fullWidth: true, sx: { width: '100%' } },
+            },
+            layout: { row: 1, xs: 12, sm: 12 },
+        },
+    ],
+    'mixchart': [
+        {
+            type: 'mixchart',
+            props: {
+                id: 'mixchart',
+                MuiChartContainerAttributes: {
+                    width: 500,
+                    height: 300,
+                    series: [
+                        { type: 'bar', data: [2, 5, 3, 8, 4], label: 'Sales' },
+                        { type: 'line', data: [3, 4, 2, 6, 5], label: 'Trend' },
+                    ],
+                    xAxis: [{ scaleType: 'band', data: ['Jan', 'Feb', 'Mar', 'Apr', 'May'], id: 'x' }],
                 },
             },
             layout: { row: 1, xs: 12, sm: 12 },
@@ -423,11 +495,12 @@ export const TEMPLATES: Record<string, FormField[]> = {
             layout: { xs: 12, sm: 12 }
         }
     ],
-    'chart-bar': [
+    'bar': [
         {
-            type: 'chart-bar',
+            type: 'bar',
             props: {
-                MuiAttributes: {
+                id: 'bar',
+                MuiChartAttributes: {
                     xAxis: [{ scaleType: 'band', data: ['A', 'B', 'C'] }],
                     series: [{ data: [4, 3, 5] }],
                     width: 500,
@@ -437,11 +510,12 @@ export const TEMPLATES: Record<string, FormField[]> = {
             layout: { xs: 12, sm: 12 }
         }
     ],
-    'chart-line': [
+    'line': [
         {
-            type: 'chart-line',
+            type: 'line',
             props: {
-                MuiAttributes: {
+                id: 'line',
+                MuiChartAttributes: {
                     xAxis: [{ data: [1, 2, 3, 5, 8, 10] }],
                     series: [{ data: [2, 5.5, 2, 8.5, 1.5, 5] }],
                     width: 500,
@@ -467,11 +541,12 @@ export const TEMPLATES: Record<string, FormField[]> = {
             layout: { row: 1, xs: 12, sm: 12 },
         }
     ],
-    'chart-pie': [
+    'pie': [
         {
-            type: 'chart-pie',
+            type: 'pie',
             props: {
-                MuiAttributes: {
+                id: 'pie',
+                MuiChartAttributes: {
                     series: [
                         {
                             data: [
@@ -595,7 +670,7 @@ export const TOOLBOX_ITEMS = [
     { type: 'radio', label: 'Radio', icon: 'radio_button_checked' },
     { type: 'datetime', label: 'Date Time', icon: 'calendar_today' },
     { type: 'timepicker', label: 'Time Picker', icon: 'access_time' },
-    { type: 'numberfield', label: 'Number Field', icon: 'onetwothree' }, // Custom or generic icon
+    { type: 'numberfield', label: 'Number Field', icon: 'numbers' },
     { type: 'multitextbox', label: 'Multi Textbox', icon: 'playlist_add' },
     { type: 'lineitemlist', label: 'Line Item List', icon: 'receipt_long' },
     { type: 'formrepeater', label: 'Form Repeater', icon: 'dynamic_form' },
@@ -629,11 +704,18 @@ export const TOOLBOX_ITEMS = [
     { type: 'formwizard', label: 'Form Wizard', icon: 'linear_scale' },
     { type: 'geo', label: 'Geo / Map', icon: 'map' },
     { type: 'summary', label: 'Summary', icon: 'fact_check' },
+    { type: 'richtext', label: 'Rich Text', icon: 'format_color_text' },
+    { type: 'nps', label: 'NPS Scale', icon: 'sentiment_satisfied' },
+    { type: 'editabletable', label: 'Editable Table', icon: 'grid_on' },
+    { type: 'intlphone', label: 'Intl Phone', icon: 'flag' },
+    { type: 'asyncautocomplete', label: 'Async Search', icon: 'manage_search' },
     { type: 'list', label: 'List', icon: 'format_list_bulleted' },
     // { type: 'stepper', label: 'Stepper', icon: 'linear_scale' }, // Complex to mock
-    { type: 'chart-bar', label: 'Bar Chart', icon: 'bar_chart' },
-    { type: 'chart-line', label: 'Line Chart', icon: 'show_chart' },
-    { type: 'chart-pie', label: 'Pie Chart', icon: 'pie_chart' },
+    { type: 'bar', label: 'Bar Chart', icon: 'bar_chart' },
+    { type: 'line', label: 'Line Chart', icon: 'show_chart' },
+    { type: 'pie', label: 'Pie Chart', icon: 'pie_chart' },
+    { type: 'mixchart', label: 'Mixed Chart', icon: 'stacked_line_chart' },
+    { type: 'datetimepicker', label: 'Date + Time', icon: 'event' },
     { type: 'group', label: 'Group', icon: 'crop_square' },
     { type: 'accordion', label: 'Accordion', icon: 'expand_more' },
     { type: 'tabs', label: 'Tabs', icon: 'tab' },

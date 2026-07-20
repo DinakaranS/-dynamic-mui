@@ -4,10 +4,11 @@ import numeral from 'numeral';
 import MuiTextField from '@mui/material/TextField';
 import { getInputProps } from '../../../util/helper';
 import Validation from '../../../util/validation';
+import useUpdateEffect from '../../../util/useUpdateEffect';
 import { premiumInputSx, mergeSx } from '../../../util/premiumStyles';
 import { ControlProps } from '../../../types';
 
-export default function TextField({ attributes = {}, rules = {}, onChange }: ControlProps) {
+export default function TextField({ attributes = {}, rules = {}, onChange, submitTick, messages }: ControlProps) {
     const { MuiAttributes = {}, InputProps = {}, format = '', id = '' } = attributes;
 
     const [textData, setTextData] = React.useState({
@@ -34,12 +35,22 @@ export default function TextField({ attributes = {}, rules = {}, onChange }: Con
                 // Unknown rule names are ignored rather than throwing.
                 isValid = typeof validatorFn === 'function' ? validatorFn(value, data.value) : true;
                 if (!isValid) {
-                    return { isValid: false, message: data.message };
+                    const fallback = data.rule === 'mandatory' ? (messages?.required || 'This field is required') : '';
+                    return { isValid: false, message: data.message || fallback };
                 }
             }
         }
         return { isValid: true, message: '' };
     };
+
+    // Re-run own validation against the current value on submit so an
+    // untouched invalid field surfaces its error.
+    useUpdateEffect(() => {
+        if (submitTick) {
+            const v = validate(textData.value);
+            setTextData(prev => ({ ...prev, helperText: v.message, error: !v.isValid }));
+        }
+    }, [submitTick]);
 
     const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { value } = e.target;
@@ -112,6 +123,7 @@ export default function TextField({ attributes = {}, rules = {}, onChange }: Con
         <MuiTextField
             fullWidth
             {...restAttrs}
+            id={id}
             sx={mergeSx(premiumInputSx as any, userSx)}
             required={isMandatory}
             inputProps={!isV6 ? finalInputProps : undefined}

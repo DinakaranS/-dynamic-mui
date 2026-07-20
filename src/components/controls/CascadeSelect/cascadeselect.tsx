@@ -56,16 +56,16 @@ export default function CascadeSelect({ attributes = {}, rules = {}, onChange }:
     }, [attributes?.value]);
 
     // Parent changed: recompute options and clear a now-invalid selection.
+    // (Side effects like onChange must NOT live inside a setState updater — React
+    // double-invokes updaters under StrictMode, which would emit onChange twice.)
     useUpdateEffect(() => {
         const next = resolveOptions(optionsMap, parentValue, options);
         setResolved(next);
-        setValue((current: any) => {
-            if (current !== '' && current != null && !next.some((o) => o.value === current)) {
-                onChange?.({ id, value: '', option: null } as any);
-                return '';
-            }
-            return current;
-        });
+        if (value !== '' && value != null && !next.some((o) => o.value === value)) {
+            setValue('');
+            onChange?.({ id, value: '', option: null } as any);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [parentValue, optionsMap, options]);
 
     const handleChange = useCallback(

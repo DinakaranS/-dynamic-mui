@@ -10,7 +10,7 @@ export const slug = (s: string): string =>
         .replace(/^_+|_+$/g, '') || 'field';
 
 // Semantic aliases the model may emit → { control type, extra rule/props }.
-const TYPE_ALIASES: Record<string, { type: string; rule?: string; inputType?: string }> = {
+const TYPE_ALIASES: Record<string, { type: string; rule?: string; inputType?: string; multiple?: boolean }> = {
     text: { type: 'textfield' },
     string: { type: 'textfield' },
     textarea: { type: 'multitextbox' },
@@ -28,7 +28,7 @@ const TYPE_ALIASES: Record<string, { type: string; rule?: string; inputType?: st
     daterange: { type: 'daterangepicker' },
     dropdown: { type: 'select' },
     select: { type: 'select' },
-    multiselect: { type: 'select' },
+    multiselect: { type: 'select', multiple: true },
     radio: { type: 'radio' },
     checkbox: { type: 'checkbox' },
     boolean: { type: 'switch' },
@@ -69,7 +69,9 @@ export function simpleFieldsToFormFields(fields: SimpleField[]): FormField[] {
         if (f.placeholder) MuiAttributes.placeholder = f.placeholder;
         if (f.helperText) MuiAttributes.helperText = f.helperText;
         if (alias.inputType) MuiAttributes.type = alias.inputType;
-        if (f.multiple && type === 'select') MuiAttributes.multiple = true;
+        // `multiselect` alias implies multiple even without an explicit flag.
+        const isMulti = !!(f.multiple || alias.multiple);
+        if (isMulti && type === 'select') MuiAttributes.multiple = true;
 
         const props: Record<string, any> = { id, MuiAttributes };
 
@@ -77,14 +79,15 @@ export function simpleFieldsToFormFields(fields: SimpleField[]): FormField[] {
         if (f.options && f.options.length) {
             if (OPTION_AS_OBJECTS.has(type)) {
                 props.options = f.options.map((o) => ({ value: slug(o), label: o }));
-                if (type === 'chipselect' || type === 'togglebuttons') {
-                    props.label = f.label;
-                    if (f.multiple) props.multiple = true;
-                }
             } else if (type === 'radio') {
                 props.MuiFCLabels = f.options;
                 props.MuiFLabel = f.label;
             }
+        }
+        // Chip/toggle carry their own label + multiple flag regardless of options.
+        if (type === 'chipselect' || type === 'togglebuttons') {
+            props.label = f.label;
+            if (isMulti) props.multiple = true;
         }
 
         if (type === 'computed' && f.formula) props.formula = f.formula;
@@ -126,7 +129,7 @@ export function fieldsForExtraction(schema: FormField[]): ExtractionField[] {
         if (!id) return;
 
         let options: string[] | undefined;
-        if (Array.isArray(props.options)) {
+        if (Array.isArray(props.options) && props.options.length) {
             options = props.options.map((o: any) => (typeof o === 'string' ? o : String(o?.value ?? o?.label ?? '')));
         } else if (Array.isArray(props.MuiFCLabels)) {
             options = props.MuiFCLabels.map((o: any) => (typeof o === 'string' ? o : String(o?.value ?? o?.label ?? '')));

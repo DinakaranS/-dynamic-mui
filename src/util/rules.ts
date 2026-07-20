@@ -51,7 +51,8 @@ const compare = (actual: any, op: Operator, expected: any): boolean => {
         case 'lt': return asNumber(actual) < asNumber(expected);
         case 'lte': return asNumber(actual) <= asNumber(expected);
         case 'in': return Array.isArray(expected) && expected.map(String).includes(String(actual));
-        case 'nin': return Array.isArray(expected) && !expected.map(String).includes(String(actual));
+        // `nin` is the negation of `in`: with no list to be "in", it's vacuously true.
+        case 'nin': return !(Array.isArray(expected) && expected.map(String).includes(String(actual)));
         case 'contains':
             if (Array.isArray(actual)) return actual.map(String).includes(String(expected));
             return String(actual ?? '').includes(String(expected));

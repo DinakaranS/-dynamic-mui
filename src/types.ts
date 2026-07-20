@@ -75,6 +75,14 @@ export interface FormField {
     requiredMessage?: string;
     /** Arithmetic formula (e.g. "qty * price") computed from other field values. */
     formula?: string;
+    /**
+     * Dynamic options: the id of another field whose value selects this field's
+     * options from `optionsMap`. Keeps ONE control whose options change (e.g. a
+     * single State select driven by Country) instead of duplicating fields.
+     */
+    dependsOn?: string;
+    /** Map of `dependsOn` value → options for this field. */
+    optionsMap?: Record<string, any[]>;
     [key: string]: any;
 }
 
@@ -94,4 +102,9 @@ export interface ControlProps {
     rules?: FieldRules;
     patch?: Record<string, any>;
     onChange?: (args: ControlChangeProps) => void;
+    /** Incremented by FormGenerator on each submit attempt — controls re-run their
+     *  validation and display the error (so untouched invalid fields turn red). */
+    submitTick?: number;
+    /** Localizable built-in messages (e.g. `{ required: '…' }`). */
+    messages?: { required?: string; [key: string]: any };
 }

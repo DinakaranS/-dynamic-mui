@@ -15,10 +15,14 @@ const Validation: ValidationUtils = {
         return validator.equals(value, comparison);
     },
     mandatory(value: string) {
-        return !validator.isEmpty(value);
+        // Coerce non-strings (e.g. boolean false / numbers) so validator.isEmpty
+        // never throws, and treat whitespace-only as empty.
+        const str = value == null ? '' : String(value);
+        return !validator.isEmpty(str, { ignore_whitespace: true });
     },
     mandatoryselect(value: string) {
-        return value.length > 0;
+        // Guard null/undefined and non-array/string values instead of throwing.
+        return (value?.length ?? 0) > 0;
     },
     mobile(value: string, locale?: validator.MobilePhoneLocale) {
         return validator.isMobilePhone(value, locale);
@@ -96,7 +100,9 @@ const Validation: ValidationUtils = {
         return validator.isAlpha(value, locale);
     },
     negative(value: string) {
-        return (numeral(value).value() || 0) > -1;
+        // Non-numeric input is invalid (previously `null || 0` let junk pass as valid).
+        const n = numeral(value).value();
+        return n != null && n > -1;
     },
 };
 

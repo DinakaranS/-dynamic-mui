@@ -24,7 +24,10 @@ export const mergeSx = (
 
 /** Text-like inputs: TextField, NumberField, MultiTextbox, Select, pickers. */
 export const premiumInputSx = (theme: Theme): SxProps<Theme> => ({
-    '& .MuiOutlinedInput-root': {
+    // Cover both the plain outlined input AND the MUI X pickers' outlined input
+    // (`.MuiPickersOutlinedInput-root`, used since x-date-pickers v7's accessible
+    // sectioned field) so a date picker matches the text fields around it exactly.
+    '& .MuiOutlinedInput-root, & .MuiPickersOutlinedInput-root': {
         borderRadius: `${PREMIUM_RADIUS}px`,
         backgroundColor: theme.palette.background.paper,
         transition: `box-shadow .2s ${PREMIUM_EASING}, border-color .2s ${PREMIUM_EASING}`,

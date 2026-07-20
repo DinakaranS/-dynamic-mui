@@ -8,7 +8,7 @@ import { premiumControlLabelSx, mergeSx } from '../../../util/premiumStyles';
 import { ControlProps } from '../../../types';
 
 /** Playground Component */
-export default function CheckBox({ attributes = {}, rules = {}, onChange }: ControlProps) {
+export default function CheckBox({ attributes = {}, rules = {}, onChange, submitTick, messages }: ControlProps) {
     const { MuiAttributes = {}, MuiFCLAttributes = {}, id = '' } = attributes;
 
     const [checked, setChecked] = React.useState<boolean>(
@@ -32,7 +32,7 @@ export default function CheckBox({ attributes = {}, rules = {}, onChange }: Cont
                     // Start unchecked?
                     if (!isChecked) {
                         isValid = false;
-                        msg = rule.message || 'Required';
+                        msg = rule.message || messages?.required || 'Required';
                         break;
                     }
                 }
@@ -40,6 +40,14 @@ export default function CheckBox({ attributes = {}, rules = {}, onChange }: Cont
         }
         return { isValid, message: msg };
     };
+
+    useUpdateEffect(() => {
+        if (submitTick) {
+            const v = validate(checked);
+            setError(!v.isValid);
+            setHelperText(v.message);
+        }
+    }, [submitTick]);
 
     const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
         const isChecked = event.target.checked;
@@ -72,6 +80,7 @@ export default function CheckBox({ attributes = {}, rules = {}, onChange }: Cont
                 sx={mergeSx(premiumControlLabelSx as any, fclSx)}
                 control={
                     <MuiCheckBox
+                        id={id}
                         checked={checked}
                         onChange={handleChange}
                         required={isMandatory}

@@ -43,6 +43,11 @@ import FormWizard from './FormWizard/formwizard';
 // eslint-disable-next-line import/no-cycle
 import SummaryField from './SummaryField/summaryfield';
 import GeoField from './GeoField/geofield';
+import RichTextEditor from './RichTextEditor/richtexteditor';
+import NpsScale from './NpsScale/npsscale';
+import EditableTable from './EditableTable/editabletable';
+import IntlPhone from './IntlPhone/intlphone';
+import AsyncAutocomplete from './AsyncAutocomplete/asyncautocomplete';
 import List from './List/list';
 import NumberField from './NumberField/numberfield';
 import MultiTextbox from './MultiTextbox/multitextbox';
@@ -100,6 +105,11 @@ const Controls = {
     FormWizard,
     SummaryField,
     GeoField,
+    RichTextEditor,
+    NpsScale,
+    EditableTable,
+    IntlPhone,
+    AsyncAutocomplete,
     List,
     NumberField,
     MultiTextbox,

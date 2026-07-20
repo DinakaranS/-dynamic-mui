@@ -5,6 +5,34 @@ import { get, set, cloneDeep } from 'lodash';
 import { AITextAssist } from '../ai';
 import { useAI } from './AIContext';
 
+// Shared panel styling tokens for a cohesive, premium look
+const PANEL_SX = {
+    width: 350,
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100%',
+    borderLeft: '1px solid',
+    borderColor: 'divider',
+    bgcolor: 'background.paper',
+} as const;
+
+const HEADER_SX = {
+    p: 2,
+    background: 'linear-gradient(180deg, #f8f9fc 0%, #ffffff 100%)',
+    borderBottom: '1px solid',
+    borderColor: 'divider',
+} as const;
+
+const ACTION_BAR_SX = {
+    p: 2,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 1,
+    borderTop: '1px solid',
+    borderColor: 'divider',
+    background: 'linear-gradient(0deg, #f8f9fc 0%, #ffffff 100%)',
+} as const;
+
 interface PropertiesEditorProps {
     field: FormField | null;
     onUpdate: (field: FormField) => void;
@@ -140,8 +168,8 @@ export const PropertiesEditor = ({ field, onUpdate, onDelete, allFields = [], on
     // Render Form Mode
     if (mode === 'form') {
         return (
-            <Paper elevation={2} sx={{ width: 350, display: 'flex', flexDirection: 'column', height: '100%', borderLeft: '1px solid rgba(0,0,0,0.12)', bgcolor: 'white' }}>
-                <Box sx={{ p: 2, bgcolor: '#f8f9fa', borderBottom: '1px solid rgba(0,0,0,0.08)' }}>
+            <Paper elevation={0} sx={PANEL_SX}>
+                <Box sx={HEADER_SX}>
                     <ToggleButtonGroup
                         value={mode}
                         exclusive
@@ -149,14 +177,20 @@ export const PropertiesEditor = ({ field, onUpdate, onDelete, allFields = [], on
                         aria-label="editor mode"
                         fullWidth
                         size="small"
-                        sx={{ mb: 1 }}
+                        sx={{ mb: 1.5 }}
                     >
                         <ToggleButton value="individual">Individual</ToggleButton>
                         <ToggleButton value="form">Form JSON</ToggleButton>
                     </ToggleButtonGroup>
-                    <Typography variant="caption" color="text.secondary">
-                        Edit the entire form schema
-                    </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Box sx={{ width: 30, height: 30, borderRadius: 1.5, display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: 'rgba(99,102,241,0.12)', color: 'primary.main' }}>
+                            <Icon fontSize="small">data_object</Icon>
+                        </Box>
+                        <Box>
+                            <Typography variant="subtitle2" sx={{ fontWeight: 700, lineHeight: 1.2 }}>Form Schema</Typography>
+                            <Typography variant="caption" color="text.secondary">Edit the entire form as JSON</Typography>
+                        </Box>
+                    </Box>
                 </Box>
                 <Box sx={{ p: 2, flex: 1, display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
                     <TextField
@@ -175,8 +209,7 @@ export const PropertiesEditor = ({ field, onUpdate, onDelete, allFields = [], on
                         placeholder="Paste form JSON here..."
                     />
                 </Box>
-                <Divider />
-                <Box sx={{ p: 2, bgcolor: '#f8f9fa' }}>
+                <Box sx={ACTION_BAR_SX}>
                     <Button
                         variant="contained"
                         color="primary"
@@ -195,8 +228,8 @@ export const PropertiesEditor = ({ field, onUpdate, onDelete, allFields = [], on
     // Render Individual Mode (Empty State)
     if (!field) {
         return (
-            <Paper elevation={2} sx={{ width: 350, height: '100%', borderLeft: '1px solid rgba(0,0,0,0.12)', bgcolor: 'white', display: 'flex', flexDirection: 'column' }}>
-                <Box sx={{ p: 2, bgcolor: '#f8f9fa', borderBottom: '1px solid rgba(0,0,0,0.08)' }}>
+            <Paper elevation={0} sx={PANEL_SX}>
+                <Box sx={HEADER_SX}>
                     <ToggleButtonGroup
                         value={mode}
                         exclusive
@@ -209,9 +242,23 @@ export const PropertiesEditor = ({ field, onUpdate, onDelete, allFields = [], on
                         <ToggleButton value="form">Form JSON</ToggleButton>
                     </ToggleButtonGroup>
                 </Box>
-                <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', opacity: 0.6 }}>
-                    <Icon sx={{ fontSize: 40, mb: 1 }}>touch_app</Icon>
-                    <Typography variant="body1">Double-click a component<br />to edit properties</Typography>
+                <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', p: 4, textAlign: 'center' }}>
+                    <Box sx={{
+                        width: 72,
+                        height: 72,
+                        borderRadius: '50%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        background: 'linear-gradient(135deg, rgba(99,102,241,0.12) 0%, rgba(236,72,153,0.12) 100%)',
+                        mb: 2,
+                    }}>
+                        <Icon sx={{ fontSize: 36, color: 'primary.main' }}>tune</Icon>
+                    </Box>
+                    <Typography variant="subtitle1" sx={{ fontWeight: 700, color: 'text.primary' }}>No component selected</Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5, maxWidth: 240 }}>
+                        Double-click a component in the canvas to edit its properties here.
+                    </Typography>
                 </Box>
             </Paper>
         );
@@ -227,8 +274,8 @@ export const PropertiesEditor = ({ field, onUpdate, onDelete, allFields = [], on
     const fieldType = field.type;
 
     return (
-        <Paper elevation={2} sx={{ width: 350, display: 'flex', flexDirection: 'column', height: '100%', borderLeft: '1px solid rgba(0,0,0,0.12)', bgcolor: 'white' }}>
-            <Box sx={{ p: 2, bgcolor: '#f8f9fa', borderBottom: '1px solid rgba(0,0,0,0.08)' }}>
+        <Paper elevation={0} sx={PANEL_SX}>
+            <Box sx={HEADER_SX}>
                 <ToggleButtonGroup
                     value={mode}
                     exclusive
@@ -242,19 +289,28 @@ export const PropertiesEditor = ({ field, onUpdate, onDelete, allFields = [], on
                     <ToggleButton value="form">Form JSON</ToggleButton>
                 </ToggleButtonGroup>
 
-                <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-                    {field.type} Properties
-                </Typography>
-                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>
-                    ID: {fieldId}
-                </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Box sx={{ width: 34, height: 34, borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: 'rgba(99,102,241,0.12)', color: 'primary.main', flexShrink: 0 }}>
+                        <Icon fontSize="small">tune</Icon>
+                    </Box>
+                    <Box sx={{ minWidth: 0 }}>
+                        <Typography variant="subtitle1" sx={{ fontWeight: 700, lineHeight: 1.2, textTransform: 'capitalize' }}>
+                            {field.type} Properties
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', fontFamily: 'monospace', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {fieldId}
+                        </Typography>
+                    </Box>
+                </Box>
             </Box>
 
             <Box sx={{ p: 2, flex: 1, display: 'flex', flexDirection: 'column', gap: 2, overflowY: 'auto' }}>
 
                 {/* Visual Editor */}
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                    <Typography variant="overline" color="text.secondary" sx={{ fontWeight: 700 }}>Quick Edit</Typography>
+                    <Typography variant="overline" color="text.secondary" sx={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: 0.75 }}>
+                        <Icon sx={{ fontSize: 15, color: 'primary.main' }}>bolt</Icon> Quick Edit
+                    </Typography>
 
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                         <TextField
@@ -314,7 +370,9 @@ export const PropertiesEditor = ({ field, onUpdate, onDelete, allFields = [], on
 
                 <Divider />
 
-                <Typography variant="overline" color="text.secondary" sx={{ fontWeight: 700 }}>Advanced JSON</Typography>
+                <Typography variant="overline" color="text.secondary" sx={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: 0.75 }}>
+                    <Icon sx={{ fontSize: 15, color: 'secondary.main' }}>data_object</Icon> Advanced JSON
+                </Typography>
                 <TextField
                     multiline
                     minRows={10}
@@ -331,9 +389,7 @@ export const PropertiesEditor = ({ field, onUpdate, onDelete, allFields = [], on
                 />
             </Box>
 
-            <Divider />
-
-            <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', gap: 1, bgcolor: '#f8f9fa' }}>
+            <Box sx={ACTION_BAR_SX}>
                 <Button
                     variant="contained"
                     color="primary"

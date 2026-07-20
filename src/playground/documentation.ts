@@ -74,6 +74,29 @@ export const COMPONENT_DOCS: Record<string, { title: string; description: string
             format: 'Date format string'
         }
     },
+    datetimepicker: {
+        title: 'Date + Time',
+        description: 'A combined date-and-time picker (MUI DateTimePicker).',
+        usage: 'Use when a single field must capture both a date and a time.',
+        props: {
+            id: 'Unique field identifier',
+            value: 'Initial value (parsed by day.js)',
+            'MuiAttributes.format': 'Display format, e.g. "MM/DD/YYYY hh:mm A"',
+            'MuiAttributes.disablePast': 'Prevent selecting past date-times'
+        }
+    },
+    mixchart: {
+        title: 'Mixed Chart',
+        description: 'A combined bar + line chart on shared axes (MUI X Charts, lazy-loaded).',
+        usage: 'Use to compare a measure (bars) against a trend (line) over the same categories.',
+        props: {
+            id: 'Unique field identifier',
+            'MuiChartContainerAttributes.series': 'Array of { type: "bar" | "line", data, label }',
+            'MuiChartContainerAttributes.xAxis': 'Axis config, e.g. [{ scaleType: "band", data: [...] }]',
+            'MuiChartContainerAttributes.width': 'Chart width',
+            'MuiChartContainerAttributes.height': 'Chart height'
+        }
+    },
     daterangepicker: {
         title: 'Date Range Picker',
         description: 'A start + end date pair (built from two free MUI DatePickers — no Pro dependency). Validates that end is on or after start.',
@@ -343,6 +366,65 @@ export const COMPONENT_DOCS: Record<string, { title: string; description: string
             title: 'Panel title (default "Summary")',
             labels: 'Optional { fieldId: "Nice Label" } map',
             hideEmpty: 'Hide rows with empty values'
+        }
+    },
+    richtext: {
+        title: 'Rich Text Editor',
+        description: 'A lightweight WYSIWYG editor (bold/italic/underline, lists, links). Returns an HTML string.',
+        usage: 'Use for formatted descriptions, notes, or email bodies.',
+        props: {
+            id: 'Unique field identifier',
+            value: 'Initial HTML content',
+            label: 'Field label',
+            minHeight: 'Editor min height in px (default 160)'
+        }
+    },
+    nps: {
+        title: 'NPS Scale',
+        description: 'A 0–N rating scale (buttons) with low/high anchor labels. Common for Net Promoter Score.',
+        usage: 'Use for satisfaction/likelihood surveys.',
+        props: {
+            id: 'Unique field identifier',
+            value: 'Selected number',
+            min: 'Lowest value (default 0)',
+            max: 'Highest value (default 10)',
+            lowLabel: 'Caption under the low end',
+            highLabel: 'Caption under the high end'
+        }
+    },
+    editabletable: {
+        title: 'Editable Table',
+        description: 'An inline-editable table — users add/edit/delete rows. Returns an array of row objects.',
+        usage: 'Use to collect tabular data (line items, participants, custom rows).',
+        props: {
+            id: 'Unique field identifier',
+            columns: 'Array of { key, label, type: "text" | "number" }',
+            value: 'Array of row objects',
+            addLabel: 'Text on the add-row button (default "Add row")'
+        }
+    },
+    intlphone: {
+        title: 'International Phone',
+        description: 'A country dial-code selector (flag + code) beside a formatted phone number input.',
+        usage: 'Use for international phone entry.',
+        props: {
+            id: 'Unique field identifier',
+            value: 'Initial value (e.g. "+1 …")',
+            defaultCountry: 'ISO code of the initial country (default "US")'
+        }
+    },
+    asyncautocomplete: {
+        title: 'Async Autocomplete',
+        description: 'An autocomplete that loads options asynchronously as the user types (server-side search), debounced.',
+        usage: 'Use for large or remote datasets (user lookup, product search).',
+        props: {
+            id: 'Unique field identifier',
+            loadOptions: '(query) => Promise<options[]> — preferred fetch function',
+            optionsUrl: 'URL to GET ?q=<query> returning a JSON array (alternative to loadOptions)',
+            minChars: 'Min characters before searching (default 1)',
+            debounceMs: 'Debounce delay in ms (default 300)',
+            labelKey: 'Option label field (default "label")',
+            valueKey: 'Option value field (default "value")'
         }
     },
     button: {

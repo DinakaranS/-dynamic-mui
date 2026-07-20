@@ -28,7 +28,7 @@ const strengthColor = (score: number): 'error' | 'warning' | 'info' | 'success' 
     return 'success';
 };
 
-export default function PasswordField({ attributes = {}, rules = {}, onChange }: ControlProps) {
+export default function PasswordField({ attributes = {}, rules = {}, onChange, submitTick, messages }: ControlProps) {
     const { MuiAttributes = {}, id = '', showStrength = false } = attributes;
 
     const [value, setValue] = React.useState<string>(
@@ -55,12 +55,25 @@ export default function PasswordField({ attributes = {}, rules = {}, onChange }:
                 const validatorFn = Validation[data.rule];
                 const isValid = typeof validatorFn === 'function' ? validatorFn(val, data.value) : true;
                 if (!isValid) {
-                    return { isValid: false, message: data.message || '' };
+                    const fallback = (data.rule === 'mandatory' || data.rule === 'mandatoryselect')
+                        ? (messages?.required || 'This field is required')
+                        : '';
+                    return { isValid: false, message: data.message || fallback };
                 }
             }
         }
         return { isValid: true, message: '' };
     };
+
+    // Re-run own validation against the current value on submit so an
+    // untouched invalid field surfaces its error.
+    useUpdateEffect(() => {
+        if (submitTick) {
+            const v = validate(value);
+            setError(!v.isValid);
+            setHelperText(v.message);
+        }
+    }, [submitTick]);
 
     const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
         const next = e.target.value;
@@ -87,6 +100,7 @@ export default function PasswordField({ attributes = {}, rules = {}, onChange }:
             <MuiTextField
                 fullWidth
                 {...restAttrs}
+                id={id}
                 type={showPassword ? 'text' : 'password'}
                 sx={mergeSx(premiumInputSx as any, userSx)}
                 required={isMandatory}

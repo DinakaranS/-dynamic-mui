@@ -6,11 +6,12 @@ import Box from '@mui/material/Box';
 import { Icon } from '@mui/material';
 import { getInputProps } from '../../../util/helper';
 import Validation from '../../../util/validation';
+import useUpdateEffect from '../../../util/useUpdateEffect';
 import { ControlProps } from '../../../types';
 
 type ButtonDisplay = 'text' | 'icon' | 'both';
 
-export default function LocationField({ attributes = {}, rules = {}, onChange }: ControlProps) {
+export default function LocationField({ attributes = {}, rules = {}, onChange, submitTick, messages }: ControlProps) {
     const {
         id = '',
         MuiAttributes = {},
@@ -45,12 +46,22 @@ export default function LocationField({ attributes = {}, rules = {}, onChange }:
                 const validatorFn = Validation[data.rule];
                 const isValid = typeof validatorFn === 'function' ? validatorFn(value, data.value) : true;
                 if (!isValid) {
-                    return { isValid: false, message: data.message };
+                    const fallback = data.rule === 'mandatory' ? (messages?.required || 'This field is required') : '';
+                    return { isValid: false, message: data.message || fallback };
                 }
             }
         }
         return { isValid: true, message: '' };
     };
+
+    // Re-run own validation against the current value on submit so an
+    // untouched invalid field surfaces its error.
+    useUpdateEffect(() => {
+        if (submitTick) {
+            const v = validate(textData.value);
+            setTextData(prev => ({ ...prev, helperText: v.message, error: !v.isValid }));
+        }
+    }, [submitTick]);
 
     const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { value } = e.target;
@@ -126,6 +137,7 @@ export default function LocationField({ attributes = {}, rules = {}, onChange }:
                 <MuiTextField
                     fullWidth
                     {...baseAttrs}
+                    id={id}
                     required={isMandatory}
                     inputProps={!isV6 ? finalInputProps : undefined}
                     slotProps={isV6 ? finalSlotProps : undefined}

@@ -2,6 +2,7 @@ import React from 'react';
 import { NumericFormat } from 'react-number-format';
 import TextField from '@mui/material/TextField';
 import Validation from '../../../util/validation';
+import useUpdateEffect from '../../../util/useUpdateEffect';
 import { premiumInputSx, mergeSx } from '../../../util/premiumStyles';
 import { ControlProps } from '../../../types';
 
@@ -33,7 +34,7 @@ const NumericFormatCustom = React.forwardRef<HTMLElement, CustomProps>(
     },
 );
 
-export default function NumberField({ attributes = {}, rules = {}, onChange }: ControlProps) {
+export default function NumberField({ attributes = {}, rules = {}, onChange, submitTick, messages }: ControlProps) {
     const { MuiAttributes = {}, id = '' } = attributes;
     const { sx: userSx, ...restMuiAttributes } = MuiAttributes;
     const [value, setValue] = React.useState(attributes.value || '');
@@ -50,7 +51,7 @@ export default function NumberField({ attributes = {}, rules = {}, onChange }: C
                 if (rule.rule === 'mandatory') {
                     if (!val) {
                         isValid = false;
-                        msg = rule.message || 'Required';
+                        msg = rule.message || messages?.required || 'Required';
                         break;
                     }
                 }
@@ -66,6 +67,16 @@ export default function NumberField({ attributes = {}, rules = {}, onChange }: C
         }
         return { isValid, message: msg };
     };
+
+    // Re-run own validation against the current value on submit so an
+    // untouched invalid field surfaces its error.
+    useUpdateEffect(() => {
+        if (submitTick) {
+            const v = validate(value);
+            setError(!v.isValid);
+            setHelperText(v.message);
+        }
+    }, [submitTick]);
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const val = event.target.value;
