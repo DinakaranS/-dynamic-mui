@@ -56,17 +56,20 @@ export default function Select({ attributes = {}, rules = {}, onChange, submitTi
         InputProps = {},
     } = attributes;
     const { sx: boxSx, ...restBox } = MuiBoxAttributes;
+    // Never resolve to `undefined` (e.g. a patched value not yet present in
+    // `options` while they load async) — that flips Autocomplete to uncontrolled.
+    const empty = MuiAttributes.multiple ? [] : null;
     const [value, setValue] = React.useState(() =>
         attributes?.value
-            ? getValue(options, attributes?.value, MuiAttributes.multiple, attributes?.separator)
-            : MuiAttributes.multiple ? [] : null,
+            ? (getValue(options, attributes?.value, MuiAttributes.multiple, attributes?.separator) ?? empty)
+            : empty,
     );
 
     useUpdateEffect(() => {
         setValue(
             attributes?.value
-                ? getValue(options, attributes?.value, MuiAttributes.multiple, attributes?.separator)
-                : MuiAttributes.multiple ? [] : null
+                ? (getValue(options, attributes?.value, MuiAttributes.multiple, attributes?.separator) ?? empty)
+                : empty
         );
     }, [attributes?.value, options]);
 
@@ -104,20 +107,24 @@ export default function Select({ attributes = {}, rules = {}, onChange, submitTi
     }, [submitTick]);
 
     const getMuiAttributes = () => {
-        // ... (existing logic)
+        // Return a NEW object for the multi-select case — never mutate the
+        // prop-derived `MuiAttributes` in place (impure render + lint error).
         if (MuiAttributes.multiple) {
-            MuiAttributes.renderOption = (props: React.HTMLAttributes<HTMLLIElement>, option: any = {}, { selected }: any) => (
-                <li {...props}>
-                    <Checkbox
-                        icon={icon}
-                        checkedIcon={checkedIcon}
-                        style={{ marginRight: 8 }}
-                        checked={selected}
-                        sx={checkboxSX(option.color || '')}
-                    />
-                    {option.title || option.label || option.value}
-                </li>
-            );
+            return {
+                ...MuiAttributes,
+                renderOption: (props: React.HTMLAttributes<HTMLLIElement>, option: any = {}, { selected }: any) => (
+                    <li {...props}>
+                        <Checkbox
+                            icon={icon}
+                            checkedIcon={checkedIcon}
+                            style={{ marginRight: 8 }}
+                            checked={selected}
+                            sx={checkboxSX(option.color || '')}
+                        />
+                        {option.title || option.label || option.value}
+                    </li>
+                ),
+            };
         }
         return MuiAttributes;
     };

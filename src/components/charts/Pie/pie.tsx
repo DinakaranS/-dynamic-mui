@@ -19,7 +19,7 @@ export default function Pie({ attributes = {} }: ControlProps) {
                 </Box>
             }
         >
-            <PieChart key={id} {...MuiChartAttributes} />
+            <PieChart key={id} height={300} {...MuiChartAttributes} />
         </Suspense>
     );
 }

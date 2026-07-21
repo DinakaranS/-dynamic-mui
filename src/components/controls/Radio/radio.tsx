@@ -33,7 +33,8 @@ export default function Radio({ attributes = {}, rules = {}, onChange, submitTic
     }, []);
 
     useUpdateEffect(() => {
-        setValue(attributes.value);
+        // `?? ''` keeps the RadioGroup controlled when the value is cleared.
+        setValue(attributes.value ?? '');
     }, [attributes.value]);
 
     const isMandatory = rules?.validation?.some((v: any) => v.rule === 'mandatory') || false;

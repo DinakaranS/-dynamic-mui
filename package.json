@@ -1,6 +1,6 @@
 {
   "name": "dynamic-mui",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "author": "Dinakaran S",
   "user": "dinakarans",
   "repository": {
@@ -11,33 +11,52 @@
   "bugs": {
     "url": "https://github.com/DinakaranS/-dynamic-mui/issues"
   },
-  "main": "./dist/dynamic-mui.cjs.js",
-  "module": "./dist/dynamic-mui.es.js",
+  "main": "./dist/dynamic-mui.cjs",
+  "module": "./dist/dynamic-mui.mjs",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/dynamic-mui.es.js",
-      "require": "./dist/dynamic-mui.cjs.js"
+      "import": "./dist/dynamic-mui.mjs",
+      "require": "./dist/dynamic-mui.cjs"
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "!dist/playground"
   ],
   "peerDependencies": {
+    "@aws-sdk/client-s3": "^3.0.0",
+    "@aws-sdk/credential-providers": "^3.0.0",
     "@emotion/react": "^11.0.0",
     "@emotion/styled": "^11.0.0",
     "@mui/icons-material": "^5.0.0 || ^6.0.0 || ^7.0.0",
     "@mui/material": "^5.0.0 || ^6.0.0 || ^7.0.0",
-    "@mui/x-charts": "^6.0.0 || ^7.0.0",
-    "@mui/x-data-grid": "^6.0.0 || ^7.0.0",
-    "@mui/x-date-pickers": "^6.0.0 || ^7.0.0",
+    "@mui/x-charts": "^6.0.0 || ^7.0.0 || ^8.0.0",
+    "@mui/x-data-grid": "^6.0.0 || ^7.0.0 || ^8.0.0",
+    "@mui/x-date-pickers": "^6.0.0 || ^7.0.0 || ^8.0.0",
+    "pdfmake": "^0.2.0 || ^0.3.0",
     "react": "^18.0.0 || ^19.0.0",
     "react-dom": "^18.0.0 || ^19.0.0"
   },
+  "peerDependenciesMeta": {
+    "@aws-sdk/client-s3": {
+      "optional": true
+    },
+    "@aws-sdk/credential-providers": {
+      "optional": true
+    },
+    "@mui/x-charts": {
+      "optional": true
+    },
+    "@mui/x-data-grid": {
+      "optional": true
+    },
+    "pdfmake": {
+      "optional": true
+    }
+  },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.996.0",
-    "@aws-sdk/credential-providers": "^3.996.0",
     "@dnd-kit/core": "^6.3.1",
     "dayjs": "^1.11.19",
     "lodash": "^4.17.23",
@@ -69,6 +88,8 @@
     ]
   },
   "devDependencies": {
+    "@aws-sdk/client-s3": "^3.996.0",
+    "@aws-sdk/credential-providers": "^3.996.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@eslint/js": "^10.0.1",
@@ -80,8 +101,10 @@
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
+    "@types/jest-axe": "^3.5.9",
     "@types/lodash": "^4.17.24",
     "@types/numeral": "^2.0.5",
+    "@types/pdfmake": "^0.3.3",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@types/validator": "^13.15.10",
@@ -92,7 +115,9 @@
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.3.0",
+    "jest-axe": "^10.0.0",
     "jsdom": "^28.1.0",
+    "pdfmake": "^0.3.11",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "typescript": "^5.9.3",

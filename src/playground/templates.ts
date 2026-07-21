@@ -232,8 +232,11 @@ export const TEMPLATES: Record<string, FormField[]> = {
             type: 'formwizard',
             props: {
                 id: 'wizard',
+                // Block "Next" until the current step is valid (try clicking Next
+                // with Email empty — the field turns red and you can't advance).
+                validateSteps: true,
                 steps: [
-                    { label: 'Account', fields: [{ type: 'textfield', props: { id: 'email', MuiAttributes: { label: 'Email' } }, layout: { row: 1, xs: 12 } }] },
+                    { label: 'Account', fields: [{ type: 'textfield', props: { id: 'email', MuiAttributes: { label: 'Email (required)' } }, rules: { validation: [{ rule: 'mandatory', message: 'Email is required' }] }, layout: { row: 1, xs: 12 } }] },
                     { label: 'Profile', fields: [{ type: 'textfield', props: { id: 'name', MuiAttributes: { label: 'Name' } }, layout: { row: 1, xs: 12 } }] },
                 ],
             },

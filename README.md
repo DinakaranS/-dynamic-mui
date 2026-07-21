@@ -94,7 +94,71 @@ api.current?.validate();           // boolean — runs validation, shows errors
 api.current?.getErrors();          // array of { id, rule, message }
 api.current?.reset();              // clear values
 api.current?.submit();             // trigger the submit flow
+
+// Dirty tracking
+api.current?.isDirty();            // changed since it loaded?
+api.current?.getInitialValues();   // the starting snapshot
+api.current?.resetToInitial();     // undo all edits
+api.current?.markPristine();       // adopt current values as the new baseline (after save)
+
+// Print & PDF (see below)
+api.current?.print({ title: 'Report' });
+await api.current?.exportPdf({ title: 'Report', filename: 'report.pdf' });
 ```
+
+Set `warnOnUnsavedChanges` to prompt the user before they leave the page while
+the form is dirty.
+
+---
+
+## Review, read-only, print & PDF
+
+```tsx
+// Read-only: full layout, every control disabled
+<FormGenerator guid="f" data={schema} patch={values} readOnly />
+
+// Review: a clean label → value summary instead of inputs
+<FormGenerator guid="f" data={schema} patch={values} reviewMode />
+```
+
+The review summary resolves option labels (not raw values), Yes/No for booleans,
+joins multi-values, skips hidden and display-only fields, and follows matching
+subforms — ideal for a "confirm before submit" step.
+
+`print()` opens the browser dialog for that same summary (users can Save as PDF)
+— **no dependencies**. `exportPdf()` downloads a real PDF and needs the optional
+`pdfmake` package (lazy-loaded, never bundled into the core):
+
+```bash
+npm i pdfmake   # only if you use exportPdf()
+```
+
+---
+
+## Submit bar
+
+Render a visible (optionally sticky) submit button, fully configurable:
+
+```tsx
+<FormGenerator
+  guid="wo" data={schema}
+  stickySubmit                       // pins to the bottom of the scroll area
+  cancelLabel="Cancel" onCancel={...}
+  submitButton={{
+    label: 'Dispatch work order',
+    color: 'success',                // MUI palette name or any CSS color
+    gradient: ['#f59e0b', '#ef4444'],// optional gradient fill (overrides color)
+    icon: 'engineering',             // leading Material icon; also `endIcon`
+    variant: 'contained',            // contained | outlined | text
+    loadingLabel: 'Dispatching…',
+  }}
+  onSubmit={async (values, errors) => { if (!errors.length) await save(values); }}
+/>
+```
+
+If `onSubmit` returns a Promise, the button shows a **spinner automatically**
+until it settles (or drive it yourself with `submitButton.loading`).
+`submitLabel="Save"` is a shortcut for `submitButton={{ label: 'Save' }}`.
 
 ---
 
@@ -190,15 +254,88 @@ const schema = defineForm([
 
 ---
 
-## Internationalisation
+## Extensibility & DX
+
+- **Custom controls** — register your own field types; they get the same
+  `ControlProps` as built-ins and participate fully in the engine:
+  ```ts
+  import { registerControl } from 'dynamic-mui';
+  registerControl('color-swatch', ({ attributes, onChange }) => /* your component */);
+  // then: { type: 'color-swatch', props: { id: 'brand' } }
+  ```
+- **Zod / Yup validation** — validate the whole form against an existing schema
+  (`zod`/`yup` are never bundled — the resolvers duck-type the object you pass):
+  ```ts
+  import { zodResolver } from 'dynamic-mui';
+  <FormGenerator data={fields} resolver={zodResolver(z.object({ email: z.string().email() }))} />
+  ```
+- **Async / remote validation** — per-field server checks (debounced, race-safe,
+  gates submit): `asyncValidators={{ username: async (v) => taken(v) ? 'Taken' : null }}`.
+- **Typed values** — `FormApi<T>`, `FormData<T>(guid)`, `useForm<T>(guid)` give
+  autocompleted, type-checked values.
+
+### Headless engine — `useFormEngine`
+
+The whole dynamic engine (rules, validation, dynamic options, subforms) with **no
+UI** — render your own components:
 
 ```tsx
-<FormGenerator
-  guid="fr"
-  data={schema}
-  messages={{ required: 'Champ obligatoire', errorSummary: '{n} champ(s) à corriger' }}
-/>
+import { useFormEngine, zodResolver } from 'dynamic-mui';
+
+function MyForm() {
+  const form = useFormEngine(schema, { resolver: zodResolver(mySchema) });
+  return (
+    <form onSubmit={(e) => { e.preventDefault(); form.submit(save); }}>
+      {form.visibleFields.map((f) => (
+        <MyInput key={f.id} value={f.value} required={f.required}
+          disabled={f.disabled} options={f.options} error={f.error}
+          onChange={(v) => form.setValue(f.id, v)} />
+      ))}
+    </form>
+  );
+}
 ```
+
+Exposes `values`, `errors`, `fields`/`visibleFields`, `setValue`/`setValues`,
+`validate()`, `submit(onValid)`, `isValid`, `isDirty`, `reset()`, `getFieldState(id)`.
+
+### Schema linter — `validateSchema`
+
+Catch config mistakes before runtime (great in a test or build step):
+
+```ts
+import { validateSchema } from 'dynamic-mui';
+
+const issues = validateSchema(mySchema); // SchemaIssue[]; [] = clean
+// flags duplicate ids, dependsOn → missing field, orphan optionsMap,
+// rule/cross-field references to unknown fields, subform conditions
+// that aren't real options, …
+if (issues.some((i) => i.level === 'error')) throw new Error('Bad form schema');
+```
+
+---
+
+## Internationalisation
+
+Override the built-in strings:
+
+```tsx
+<FormGenerator guid="fr" data={schema}
+  messages={{ required: 'Champ obligatoire', errorSummary: '{n} champ(s) à corriger' }} />
+```
+
+Or plug in **any** i18n system with a `translate` function — it localizes every
+user-facing string (labels, placeholders, helper text, option labels, validation
+messages, typography, submit/cancel labels), keeping the schema in one language:
+
+```tsx
+// works with i18next, react-intl, or a plain dictionary
+const t = (s) => dictionary[s] ?? s;
+
+<FormGenerator guid="form" data={schema} translate={t} />
+```
+
+Switching the language re-renders the form translated while preserving values.
 
 ---
 

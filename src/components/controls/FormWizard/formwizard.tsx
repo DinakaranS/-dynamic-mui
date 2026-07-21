@@ -1,10 +1,10 @@
 // eslint-disable-next-line import/no-cycle
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useRef } from 'react';
 import { Box, Button, Stepper, Step, StepLabel } from '@mui/material';
 import { v4 as uuidv4 } from 'uuid';
 import { ControlProps } from '../../../types';
 // eslint-disable-next-line import/no-cycle
-import { FormGenerator } from '../../FormGenerator';
+import { FormGenerator, FormApi } from '../../FormGenerator';
 import { FormField } from '../../../util/helper';
 import { mergeSx, PREMIUM_RADIUS, PREMIUM_EASING } from '../../../util/premiumStyles';
 
@@ -20,10 +20,15 @@ export default function FormWizard({ attributes = {}, onChange }: ControlProps) 
         steps = [] as WizardStep[],
         patch = {},
         finishLabel = 'Finish',
+        // Opt-in: block Next / Finish until the current step passes validation
+        // (invalid fields are highlighted). Defaults to the old free navigation.
+        validateSteps = false,
         MuiAttributes = {},
     } = attributes as any;
 
     const [active, setActive] = useState(0);
+    // Handle to the CURRENT step's form so we can validate it before advancing.
+    const stepApiRef = useRef<FormApi | null>(null);
 
     /** Stable base guid for the wizard; per-step guids derived from it. */
     const rootGuid = useMemo(() => baseGuid || `${id}-${uuidv4()}`, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -40,13 +45,18 @@ export default function FormWizard({ attributes = {}, onChange }: ControlProps) 
     }, []);
 
     const handleNext = useCallback(() => {
+        // Gate on the current step's validity when enabled. `validate()` also
+        // turns invalid fields red, so the user sees exactly what to fix.
+        if (validateSteps && stepApiRef.current && !stepApiRef.current.validate()) {
+            return;
+        }
         if (active >= lastIndex) {
             // Finishing the last step: signal completion.
             onChange?.({ id, value: 'complete', option: active });
             return;
         }
         setActive((prev) => Math.min(prev + 1, lastIndex));
-    }, [active, lastIndex, id, onChange]);
+    }, [active, lastIndex, id, onChange, validateSteps]);
 
     const btnSx = ((theme: any) => ({
         borderRadius: `${PREMIUM_RADIUS + 8}px`,
@@ -88,6 +98,7 @@ export default function FormWizard({ attributes = {}, onChange }: ControlProps) 
                         data={stepList[active].fields ?? []}
                         patch={patch}
                         persistOnUnmount
+                        apiRef={stepApiRef}
                         onChange={(args) => {
                             // Bubble inner field changes up to the parent.
                             onChange?.(args);

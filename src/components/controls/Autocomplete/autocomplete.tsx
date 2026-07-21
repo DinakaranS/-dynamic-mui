@@ -17,7 +17,9 @@ export default function AutoComplete({ attributes = {}, rules = {}, onChange }: 
     }, []);
 
     useUpdateEffect(() => {
-        setValue(attributes.value);
+        // `?? null` keeps MUI Autocomplete controlled when the value is cleared
+        // externally (undefined would flip it to uncontrolled).
+        setValue(attributes.value ?? null);
     }, [attributes.value]);
 
     const validate = (val: any) => {

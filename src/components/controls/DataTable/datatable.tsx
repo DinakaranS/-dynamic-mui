@@ -18,7 +18,9 @@ export default function DataTable({ attributes = {} }: ControlProps) {
                     </Box>
                 }
             >
-                <DataGrid {...MuiAttributes} />
+                {/* rows/columns defaults first so a sparse config can't crash the grid
+                    (@mui/x-data-grid has no default for `columns`). */}
+                <DataGrid rows={[]} columns={[]} {...MuiAttributes} />
             </Suspense>
         </div>
     );

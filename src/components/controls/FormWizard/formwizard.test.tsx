@@ -70,4 +70,35 @@ describe('FormWizard', () => {
         render(<FormWizard attributes={{ id: 'wiz', guid: 'g5', steps } as any} />);
         expect(screen.getByRole('button', { name: 'Back' })).toHaveProperty('disabled', true);
     });
+
+    it('with validateSteps, blocks Next until the current step is valid', () => {
+        const gatedSteps = [
+            {
+                label: 'First Step',
+                fields: [
+                    {
+                        type: 'textfield',
+                        props: { id: 'a', MuiAttributes: { label: 'Required Field' } },
+                        rules: { validation: [{ rule: 'mandatory', message: 'Required' }] },
+                        layout: { row: 1, xs: 12 },
+                    },
+                ],
+            },
+            steps[1],
+        ];
+        render(<FormWizard attributes={{ id: 'wiz', guid: 'g6', steps: gatedSteps, validateSteps: true } as any} />);
+
+        // Empty required field → Next is blocked, still on step one.
+        // (Regex matcher: a required field's label carries an asterisk.)
+        fireEvent.click(screen.getByRole('button', { name: 'Next' }));
+        expect(screen.getByLabelText(/Required Field/)).toBeTruthy();
+        expect(screen.queryByLabelText('Step Two Field')).toBeNull();
+
+        // Fill it → Next now advances.
+        const input = screen.getByLabelText(/Required Field/);
+        fireEvent.change(input, { target: { value: 'ok' } });
+        fireEvent.blur(input);
+        fireEvent.click(screen.getByRole('button', { name: 'Next' }));
+        expect(screen.getByLabelText('Step Two Field')).toBeTruthy();
+    });
 });

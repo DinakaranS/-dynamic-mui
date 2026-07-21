@@ -95,10 +95,14 @@ const DraggableItem = ({ item, colors, onAdd, query }: { item: any; colors: [str
                     '& .dm-tile': {
                         transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
                     },
+                    // NOTE: don't `transform` the tile on hover. It's the hover
+                    // target itself, so moving it can slip it out from under the
+                    // cursor at a viewport edge → hover flip-flops → continuous
+                    // jitter (worsened by the tooltip). A shadow gives the same
+                    // "lift" feel without changing the hit box.
                     '&:hover': {
                         borderColor: `${from}66`,
-                        transform: 'translateY(-3px)',
-                        boxShadow: '0 12px 24px -14px rgba(15,23,42,0.22)',
+                        boxShadow: '0 12px 24px -14px rgba(15,23,42,0.28)',
                     },
                     // On hover, the neutral tile gently picks up the category colour.
                     '&:hover .dm-tile': {

@@ -70,6 +70,47 @@ export const DEMO_RECIPES: DemoRecipe[] = [
         ],
     },
     {
+        id: 'select-drives-both',
+        title: 'One select → options + subform',
+        description: 'A SINGLE select drives two things at once: it swaps another select’s options (`dependsOn` + `optionsMap`) AND shows/hides a matching subform (`subforms`). Pick a Category and watch the Item options change while the extra fields appear — switch it and both react (invalid Item clears, subform swaps).',
+        icon: 'call_split',
+        data: [
+            {
+                type: 'select',
+                props: { id: 'category', options: [{ value: 'fruit', label: 'Fruit' }, { value: 'tool', label: 'Power tool' }], MuiBoxAttributes: { label: 'Category' } },
+                // (1) show/hide a subform based on THIS field's value
+                subforms: [
+                    {
+                        conditionValue: 'fruit',
+                        data: [
+                            { type: 'select', props: { id: 'ripeness', options: [{ value: 'ripe', label: 'Ripe' }, { value: 'unripe', label: 'Unripe' }], MuiBoxAttributes: { label: 'Ripeness' } }, layout: { row: 1, xs: 6 } },
+                            { type: 'switch', props: { id: 'organic', MuiFCLAttributes: { label: 'Organic' } }, layout: { row: 1, xs: 6 } },
+                        ],
+                    },
+                    {
+                        conditionValue: 'tool',
+                        data: [
+                            { type: 'numberfield', props: { id: 'voltage', MuiAttributes: { label: 'Voltage (V)' } }, layout: { row: 1, xs: 6 } },
+                            { type: 'switch', props: { id: 'cordless', MuiFCLAttributes: { label: 'Cordless' } }, layout: { row: 1, xs: 6 } },
+                        ],
+                    },
+                ],
+                layout: { row: 1, xs: 12 },
+            },
+            {
+                // (2) another select whose OPTIONS depend on `category`
+                type: 'select',
+                props: { id: 'item', MuiBoxAttributes: { label: 'Item' } },
+                dependsOn: 'category',
+                optionsMap: {
+                    fruit: [{ value: 'apple', label: 'Apple' }, { value: 'banana', label: 'Banana' }, { value: 'mango', label: 'Mango' }],
+                    tool: [{ value: 'drill', label: 'Drill' }, { value: 'saw', label: 'Circular saw' }, { value: 'sander', label: 'Sander' }],
+                },
+                layout: { row: 2, xs: 12 },
+            },
+        ],
+    },
+    {
         id: 'required-when',
         title: 'Conditional required (requiredWhen)',
         description: 'Choosing a contact method makes only that field mandatory. Pick Email, then click Validate.',

@@ -1,7 +1,89 @@
 # Changelog
 
-All notable changes to **dynamic-mui** are documented here. This project follows
-[Semantic Versioning](https://semver.org/).
+All notable changes to **dynamic-mui** are documented here.
+
+## [2.3.0] - 2026-07-21
+
+A large, fully **backward-compatible** release: extensibility, a headless engine,
+i18n, UX/output features, a big production-hardening pass, and a much smaller
+package. Every existing form, schema, prop and control keeps working unchanged —
+all additions are new optional props/exports.
+
+### Added — Extensibility & DX
+
+- **Custom controls** — `registerControl(type, Component)` (+ `registerControls`,
+  `unregisterControl`, …). Your component gets the same `ControlProps` as
+  built-ins and participates fully in the engine; a registered type overrides the
+  built-in of the same name.
+- **Zod / Yup validation** — `resolver={zodResolver(schema)}` / `yupResolver`.
+  Validates the whole form; errors merge with per-field rules. `zod`/`yup` are
+  never imported/bundled (the resolvers duck-type the schema object you pass).
+- **Async / remote validation** — `asyncValidators={{ id: fn }}` runs debounced,
+  race-safe server checks with a pending/valid/invalid indicator; gates submit.
+- **Typed values** — `FormApi<T>`, `FormData<T>(guid)`, `useForm<T>(guid)` are
+  generic for autocompleted, type-checked values.
+- **Headless engine** — `useFormEngine(schema)` drives the whole dynamic engine
+  (rules/validation/dynamic options/subforms) with **no UI**; render your own
+  components off `visibleFields` + `setValue`.
+- **Schema linter** — `validateSchema(schema)` returns `SchemaIssue[]` (duplicate
+  ids, `dependsOn`→missing field, orphan `optionsMap`, rule refs to unknown
+  fields, subform conditions that aren't real options).
+- **Internationalisation** — a `translate` prop localizes every user-facing
+  string (labels, placeholders, helper text, option labels, validation messages,
+  typography, submit/cancel labels): `translate={(s) => dictionary[s] ?? s}`.
+
+### Added — UX & output
+
+- **Read-only & review mode** — `readOnly`; `reviewMode` renders a clean
+  label → value summary (resolves option labels, Yes/No, multi-values; skips
+  hidden/display-only; follows matching subforms).
+- **Print & PDF** — `apiRef.print({ title })` (dependency-free) and
+  `apiRef.exportPdf({ title, filename })` via the optional lazy `pdfmake` peer.
+- **Dirty tracking & unsaved guard** — `apiRef.isDirty()`, `getInitialValues()`,
+  `resetToInitial()`, `markPristine()`, and a `warnOnUnsavedChanges` prop.
+- **Configurable submit bar** — `submitButton` (`label`, `color`/`gradient`,
+  `icon`/`endIcon`, `variant`, `loading`/`loadingLabel`, `fullWidth`, `sx`),
+  `stickySubmit`, `cancelLabel`/`onCancel`; auto-loader on an async `onSubmit`.
+- **Wizard step validation** — `validateSteps` on `formwizard` gates Next/Finish.
+
+### Changed — packaging & performance (smaller, leaner)
+
+- **MUI X and the AWS SDK are no longer bundled** — externalized and declared as
+  peers (`@mui/x-charts`, `@mui/x-data-grid`, `@aws-sdk/*` are OPTIONAL peers).
+  Peer ranges now include MUI X **v8**. Packed size dropped from ~3.2 MB to
+  ~0.3 MB.
+- **Controls are code-split** — heavy/less-common controls (charts, data grid,
+  signature, rich text, editors, …) lazy-load on demand and stay out of the
+  initial bundle; common primitives remain eager (no flicker).
+- **ESM/CJS entries** are now `.mjs`/`.cjs` (no `MODULE_TYPELESS` warning; works
+  on older Node). Internal `.d.ts` (test/theme/main) are no longer published.
+- `lodash` imported per-method for better tree-shaking.
+
+### Fixed — production-hardening pass (adversarial review)
+
+- **Validators are crash-safe** — every rule coerces non-string input and can no
+  longer throw (a `numeric`/`email`/… rule against a number/boolean/undefined no
+  longer crashes the render). All 60 control types verified to render on minimal
+  props without crashing.
+- **DataTable** no longer crashes with sparse props (defaults `rows`/`columns`).
+- **Controlled/uncontrolled fixes** — Select/Autocomplete/Radio never resolve to
+  `undefined`; NumberField now syncs an external value change.
+- **FormRepeater** groups beyond 20 no longer share one store id (data collision).
+- **Subforms** — each branch has its own store and remounts on switch, so a
+  previous branch's values no longer re-appear in the UI while the store is empty.
+- `reset()`/`resetToInitial()` remount controls; review → edit preserves typed
+  data; async-validation timers and async-submit loaders are cleaned up on
+  unmount; a restored auto-save draft is no longer falsely "dirty".
+- `exportPdf` lazy `pdfmake` import resolves under bundlers; `uploadToS3` guards a
+  bad data URL and gives a clear "install @aws-sdk" message; the AI client guards
+  a non-JSON proxy response; `eq`/`neq` no longer collapse distinct objects; the
+  Builder palette tiles no longer jitter at a viewport edge.
+
+### Quality
+
+- Accessibility tests (`jest-axe`) on the core controls + RTL; a 60-control
+  crash-safety sweep; the headless engine, resolvers, schema linter, i18n, async
+  validation, and dirty-tracking each covered by tests.
 
 ## [2.2.0] - 2026-07-20
 

@@ -41,6 +41,12 @@ export default function NumberField({ attributes = {}, rules = {}, onChange, sub
     const [error, setError] = React.useState(false);
     const [helperText, setHelperText] = React.useState('');
 
+    // Keep in sync with an external/async patch to `attributes.value` (like the
+    // other input controls) — otherwise a value set after mount is ignored.
+    useUpdateEffect(() => {
+        setValue(attributes.value ?? '');
+    }, [attributes.value]);
+
     const validate = (val: any) => {
         let isValid = true;
         let msg = '';

@@ -81,10 +81,13 @@ export default function CheckBox({ attributes = {}, rules = {}, onChange, submit
                 control={
                     <MuiCheckBox
                         id={id}
+                        // Spread consumer attrs FIRST, then the managed controlled
+                        // props win. `checked`/`defaultChecked` are dropped so a
+                        // stray one can't fight our state (controlled+uncontrolled warning).
+                        {...(() => { const m = { ...MuiAttributes }; delete m.checked; delete m.defaultChecked; return m; })()}
                         checked={checked}
                         onChange={handleChange}
                         required={isMandatory}
-                        {...MuiAttributes}
                         inputProps={{ 'aria-label': 'controlled' }}
                     />
                 }

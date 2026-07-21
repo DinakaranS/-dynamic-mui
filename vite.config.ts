@@ -9,23 +9,45 @@ export default defineConfig({
     dts({
       insertTypesEntry: true,
       tsconfigPath: './tsconfig.json',
+      // Don't emit .d.ts for playground / tests / theme / entry — they're not
+      // part of the published API and would otherwise leak into the tarball.
+      exclude: [
+        'src/playground/**',
+        'src/theme/**',
+        'src/main.tsx',
+        'src/vite-env.d.ts',
+        'src/**/*.test.*',
+        'src/test/**',
+      ],
     }),
   ],
   build: {
     lib: {
       entry: resolve(__dirname, 'src/index.ts'),
       name: 'DynamicMui',
-      fileName: (format) => `dynamic-mui.${format}.js`,
+      // `.mjs`/`.cjs` so the format is unambiguous to Node (a `.js` ESM file in a
+      // package with no "type":"module" triggers a reparse warning / fails on old Node).
+      fileName: (format) => `dynamic-mui.${format === 'es' ? 'mjs' : 'cjs'}`,
       formats: ['es', 'cjs'],
     },
     rollupOptions: {
+      // Everything below is a peer or optional dependency the consuming app
+      // already provides — so keep it OUT of our bundle (regexes also catch
+      // deep imports like `@mui/material/styles`). This is what keeps the
+      // published package small; heavy libs are never compiled in.
       external: [
-        'react',
-        'react-dom',
-        '@mui/material',
-        '@mui/icons-material',
-        '@emotion/react',
-        '@emotion/styled',
+        /^react($|\/)/,
+        /^react-dom($|\/)/,
+        /^@mui\/material($|\/)/,
+        /^@mui\/icons-material($|\/)/,
+        /^@mui\/x-charts($|\/)/,
+        /^@mui\/x-data-grid($|\/)/,
+        /^@mui\/x-date-pickers($|\/)/,
+        /^@emotion\/react($|\/)/,
+        /^@emotion\/styled($|\/)/,
+        // Optional peers, lazy-loaded only when their feature is used.
+        /^@aws-sdk\//,
+        /^pdfmake($|\/)/,
       ],
       output: {
         globals: {

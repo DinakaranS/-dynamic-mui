@@ -42,10 +42,18 @@ const asNumber = (v: any): number => {
     return Number.isFinite(n) ? n : NaN;
 };
 
+// Loosely equal only for primitives — string-coercing objects/arrays would
+// collapse everything to "[object Object]" and match unrelated values.
+const looseEq = (a: any, b: any): boolean => {
+    if (a === b) return true;
+    const prim = (v: any) => v == null || (typeof v !== 'object' && typeof v !== 'function');
+    return prim(a) && prim(b) && String(a) === String(b);
+};
+
 const compare = (actual: any, op: Operator, expected: any): boolean => {
     switch (op) {
-        case 'eq': return actual === expected || String(actual) === String(expected);
-        case 'neq': return !(actual === expected || String(actual) === String(expected));
+        case 'eq': return looseEq(actual, expected);
+        case 'neq': return !looseEq(actual, expected);
         case 'gt': return asNumber(actual) > asNumber(expected);
         case 'gte': return asNumber(actual) >= asNumber(expected);
         case 'lt': return asNumber(actual) < asNumber(expected);

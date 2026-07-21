@@ -19,7 +19,7 @@ export default function Bar({ attributes = {} }: ControlProps) {
                 </Box>
             }
         >
-            <BarChart key={id} {...MuiChartAttributes} />
+            <BarChart key={id} height={300} {...MuiChartAttributes} />
         </Suspense>
     );
 }

@@ -4,9 +4,12 @@
  * @returns
  */
 function dataURLtoBlob(dataurl: string) {
-    const arr = dataurl.split(',');
-    // @ts-ignore
-    const mime = arr[0].match(/:(.*?);/)[1];
+    const arr = (dataurl || '').split(',');
+    const m = arr[0]?.match(/:(.*?);/);
+    if (arr.length < 2 || !m) {
+        throw new Error('uploadToS3: expected a base64 data URL (e.g. "data:image/png;base64,…").');
+    }
+    const mime = m[1];
     const bstr = atob(arr[1]);
     let n = bstr.length;
     const u8arr = new Uint8Array(n);
@@ -38,10 +41,18 @@ export async function uploadToS3(dataUrl: string, fileName: string, bucket: stri
     try {
         // Loaded on demand so the (heavy) AWS SDK is only pulled into the bundle
         // when an app actually uploads — not for every consumer of this library.
-        const [{ S3Client, PutObjectCommand }, { fromCognitoIdentityPool }] = await Promise.all([
-            import('@aws-sdk/client-s3'),
-            import('@aws-sdk/credential-providers'),
-        ]);
+        // It's an OPTIONAL peer, so surface a clear install message if it's absent.
+        let clientS3: any; let credProviders: any;
+        try {
+            [clientS3, credProviders] = await Promise.all([
+                import('@aws-sdk/client-s3'),
+                import('@aws-sdk/credential-providers'),
+            ]);
+        } catch {
+            throw new Error('uploadToS3 needs the optional AWS SDK. Install it with: npm i @aws-sdk/client-s3 @aws-sdk/credential-providers');
+        }
+        const { S3Client, PutObjectCommand } = clientS3;
+        const { fromCognitoIdentityPool } = credProviders;
 
         const s3Client = new S3Client({
             region: region,

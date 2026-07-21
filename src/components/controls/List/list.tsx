@@ -9,7 +9,7 @@ export default function List({ attributes = {} }: ControlProps) {
 
     return (
         <MuiList {...restList} sx={mergeSx(premiumSurfaceSx as any, listSx)}>
-            {items.map((item: any, index: number) => (
+            {(Array.isArray(items) ? items : []).map((item: any, index: number) => (
                 <ListItem key={index} {...item.MuiListItemAttributes}>
                     {item.icon && (
                         <ListItemIcon>

@@ -18,7 +18,7 @@ export default function Line({ attributes = {} }: ControlProps) {
                 </Box>
             }
         >
-            <LineChart key={id} {...MuiChartAttributes} />
+            <LineChart key={id} height={300} {...MuiChartAttributes} />
         </Suspense>
     );
 }

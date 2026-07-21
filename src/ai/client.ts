@@ -76,7 +76,13 @@ export function createAIClient(config: AIClientConfig): AIClient {
         if (!res.ok) {
             throw new Error(`AI request failed: ${res.status} ${res.statusText}`);
         }
-        const data = await res.json();
+        let data: any;
+        try {
+            data = await res.json();
+        } catch {
+            // A proxy/gateway that returns a non-JSON 200 (HTML error page, empty body).
+            throw new Error('AI proxy returned a non-JSON response. Check that your relay endpoint forwards the provider JSON.');
+        }
         // Accept either a raw OpenAI response or a { content } / { result } proxy shape.
         const content =
             data?.choices?.[0]?.message?.content ??

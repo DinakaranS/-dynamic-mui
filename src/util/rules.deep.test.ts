@@ -68,8 +68,12 @@ describe('evaluateRule: eq/neq coercion', () => {
         expect(evaluateRule({ field: 'a', op: 'neq', value: 6 }, { a: '5' })).toBe(true);
     });
 
-    it('eq on objects uses "[object Object]" string form', () => {
-        expect(evaluateRule({ field: 'a', op: 'eq', value: {} }, { a: {} })).toBe(true);
+    it('eq does NOT collapse distinct objects to "[object Object]"', () => {
+        // Two different object references must not be treated as loosely-equal.
+        expect(evaluateRule({ field: 'a', op: 'eq', value: {} }, { a: {} })).toBe(false);
+        // The same reference is still equal.
+        const shared = { x: 1 };
+        expect(evaluateRule({ field: 'a', op: 'eq', value: shared }, { a: shared })).toBe(true);
     });
 });
 
