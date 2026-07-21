@@ -18,6 +18,8 @@ export { useFormEngine } from './util/useFormEngine';
 export type { FormEngine, FieldState, UseFormEngineOptions } from './util/useFormEngine';
 export { validateSchema } from './util/validateSchema';
 export type { SchemaIssue } from './util/validateSchema';
+export { configureMuiX, getMuiX, resetMuiX } from './util/muiX';
+export type { MuiXOverrides } from './util/muiX';
 export * from './types';
 
 // AI: form generation, paste-to-fill, field assist, schema review.

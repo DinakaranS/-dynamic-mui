@@ -9,6 +9,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import isEmpty from 'lodash/isEmpty';
 import { v4 as uuidv4 } from 'uuid';
 import { Icon, InputAdornment } from '@mui/material';
+import { getMuiX } from './muiX';
 import {
     DatePicker,
     MobileDatePicker,
@@ -223,6 +224,9 @@ export const updatePatchData = (
 };
 
 export const DateComponent = (name: string): any => {
+    // A Pro picker configured via configureMuiX({ [name]: … }) wins.
+    const override = getMuiX(name);
+    if (override) return override;
     if (name === 'MobileDatePicker') return MobileDatePicker;
     if (name === 'DesktopDatePicker') return DesktopDatePicker;
     // if (name === 'DateRangePicker') return DateRangePicker;

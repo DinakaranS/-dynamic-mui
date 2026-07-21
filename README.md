@@ -358,6 +358,28 @@ Controls render under **your** MUI theme. Date/time pickers automatically match
 the size and variant of your text fields, so a picker lines up with the fields
 beside it.
 
+### MUI X: Community, Pro & Premium
+
+By default the charts / data grid / date-picker controls use the free **MUI X
+Community** components. If your app uses MUI X **Pro** or **Premium**, inject
+those once at startup and the matching controls will use them (so you get the
+pro/premium features and never mix tiers). Anything you don't override falls back
+to Community:
+
+```ts
+import { configureMuiX } from 'dynamic-mui';
+import { DataGridPremium } from '@mui/x-data-grid-premium';
+import { BarChartPro } from '@mui/x-charts-pro';
+
+configureMuiX({
+  DataGrid: DataGridPremium,   // the `datatable` control renders the Premium grid
+  BarChart: BarChartPro,       // the `bar` chart renders the Pro chart
+  // LineChart, PieChart, DatePicker, DateTimePicker, TimePicker, … also supported
+});
+```
+
+Nothing to configure for Community — it's the default.
+
 ---
 
 ## AI module (optional)

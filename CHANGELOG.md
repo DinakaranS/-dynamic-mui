@@ -2,6 +2,17 @@
 
 All notable changes to **dynamic-mui** are documented here.
 
+## [2.4.0] - 2026-07-21
+
+### Added
+
+- **MUI X Community / Pro / Premium support** — `configureMuiX({ ... })` lets you
+  inject your tier's components (e.g. `DataGridPro`/`DataGridPremium`, `BarChartPro`,
+  pro pickers) so the `datatable`, chart, and date-picker controls render them.
+  Anything not overridden falls back to the free Community version — so
+  dynamic-mui now works cleanly whether an app uses Community, Pro, or Premium.
+  Exported: `configureMuiX`, `getMuiX`, `resetMuiX`, and the `MuiXOverrides` type.
+
 ## [2.3.1] - 2026-07-21
 
 ### Fixed
