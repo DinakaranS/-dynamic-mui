@@ -3,7 +3,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import Stack from '@mui/material/Stack';
 import { useTheme } from '@mui/material/styles';
-import dayjs from 'dayjs';
+import dayjs from '../../../util/dayjsSetup';
 import useUpdateEffect from '../../../util/useUpdateEffect';
 import { ControlProps } from '../../../types';
 import { premiumInputSx } from '../../../util/premiumStyles';

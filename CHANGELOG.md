@@ -2,6 +2,19 @@
 
 All notable changes to **dynamic-mui** are documented here.
 
+## [2.3.1] - 2026-07-21
+
+### Fixed
+
+- **Date/time pickers crashed with `value.isUTC is not a function`** when the
+  consumer's `@mui/x-date-pickers` was a different `dayjs` instance than the one
+  bundled by this library. `dayjs` is now an externalized **peer** (shared with
+  the picker adapter) and the pickers load the `utc`/`timezone` plugins, so the
+  adapter's timezone helpers work. Consumers using date controls should have
+  `dayjs` installed (they already do transitively via `@mui/x-date-pickers`).
+- The generic control error-boundary message no longer blames charts/data-grids
+  for every field failure — it now reads "This field couldn't be displayed…".
+
 ## [2.3.0] - 2026-07-21
 
 A large, fully **backward-compatible** release: extensibility, a headless engine,

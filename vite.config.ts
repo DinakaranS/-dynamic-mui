@@ -45,6 +45,10 @@ export default defineConfig({
         /^@mui\/x-date-pickers($|\/)/,
         /^@emotion\/react($|\/)/,
         /^@emotion\/styled($|\/)/,
+        // `dayjs` must be shared with the consumer's `@mui/x-date-pickers` so the
+        // picker adapter's utc/timezone plugins apply to the same instance
+        // (bundling a 2nd copy causes "value.isUTC is not a function").
+        /^dayjs($|\/)/,
         // Optional peers, lazy-loaded only when their feature is used.
         /^@aws-sdk\//,
         /^pdfmake($|\/)/,

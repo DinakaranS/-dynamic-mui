@@ -2,7 +2,7 @@ import React from 'react';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { useTheme } from '@mui/material/styles';
-import dayjs from 'dayjs';
+import dayjs from '../../../util/dayjsSetup';
 import { DateComponent } from '../../../util/helper';
 import useUpdateEffect from '../../../util/useUpdateEffect';
 import { ControlProps } from '../../../types';

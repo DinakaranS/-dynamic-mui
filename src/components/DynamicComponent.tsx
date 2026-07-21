@@ -33,8 +33,8 @@ class ControlBoundary extends React.Component<{ children: React.ReactNode }, { f
         if (this.state.failed) {
             return (
                 <div style={{ padding: '8px 12px', fontSize: 13, color: '#b45309', background: '#fffbeb', border: '1px solid #fde68a', borderRadius: 8 }}>
-                    This field couldn’t be loaded. Charts and data grids need their optional peer
-                    installed (<code>@mui/x-charts</code> / <code>@mui/x-data-grid</code>).
+                    This field couldn’t be displayed. If it’s a chart or data grid, install its
+                    optional peer (<code>@mui/x-charts</code> / <code>@mui/x-data-grid</code>).
                 </div>
             );
         }
