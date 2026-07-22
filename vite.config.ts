@@ -23,11 +23,18 @@ export default defineConfig({
   ],
   build: {
     lib: {
-      entry: resolve(__dirname, 'src/index.ts'),
-      name: 'DynamicMui',
+      // Two entry points: the main package and the optional AI module. The AI
+      // module is a separate entry so it's tree-shakeable and reachable via the
+      // `dynamic-mui/ai` subpath (see package.json "exports"). Shared code is
+      // code-split into chunks that both entries import.
+      entry: {
+        'dynamic-mui': resolve(__dirname, 'src/index.ts'),
+        'ai/index': resolve(__dirname, 'src/ai/index.ts'),
+      },
       // `.mjs`/`.cjs` so the format is unambiguous to Node (a `.js` ESM file in a
       // package with no "type":"module" triggers a reparse warning / fails on old Node).
-      fileName: (format) => `dynamic-mui.${format === 'es' ? 'mjs' : 'cjs'}`,
+      // Keyed by entry name → dist/dynamic-mui.mjs and dist/ai/index.mjs.
+      fileName: (format, entryName) => `${entryName}.${format === 'es' ? 'mjs' : 'cjs'}`,
       formats: ['es', 'cjs'],
     },
     rollupOptions: {

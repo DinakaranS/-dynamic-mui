@@ -2,6 +2,16 @@
 
 All notable changes to **dynamic-mui** are documented here.
 
+## [2.4.1] - 2026-07-22
+
+### Added
+
+- **`dynamic-mui/ai` subpath export** — the AI module is now built as its own
+  entry (`dist/ai/index.{mjs,cjs,d.ts}`) and reachable via
+  `import { AIFormGenerator, createAIClient, … } from 'dynamic-mui/ai'`, so it
+  tree-shakes independently of the core package. Shared code is code-split into
+  chunks imported by both entries.
+
 ## [2.4.0] - 2026-07-21
 
 ### Added
