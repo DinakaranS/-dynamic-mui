@@ -166,13 +166,14 @@ export default function ChipSelect({ attributes = {}, rules = {}, onChange, subm
 
             <Stack
                 direction="row"
-                flexWrap="wrap"
                 useFlexGap
                 spacing={1}
                 role={multiple ? 'group' : 'radiogroup'}
                 aria-label={label || id || 'chip-select'}
                 {...MuiStackAttributes}
-            >
+                sx={[{
+                    flexWrap: "wrap"
+                }, ...(Array.isArray(MuiStackAttributes.sx) ? MuiStackAttributes.sx : [MuiStackAttributes.sx])]}>
                 {opts.map((option) => {
                     const active = isSelected(option.value);
                     const bg = customBg(option);

@@ -34,7 +34,9 @@ export const ClearFormData = (id?: string) => {
 /** Convenience accessor for a form's stored values (imperative; pairs with `guid`).
  *  Pass a values type for autocomplete: `useForm<MyValues>(guid)`. */
 export const useForm = <T = Record<string, any>>(guid: string) => ({
-    getValues: (): T => ({ ...(response[guid] || {}) }) as T,
+    getValues: (): T => (({
+        ...(response[guid] || {})
+    }) as T),
     clear: () => ClearFormData(guid),
 });
 
@@ -974,7 +976,9 @@ export function FormGenerator({
                         {asyncStatus[fieldId].status === 'pending' && (
                             <>
                                 <CircularProgress size={13} thickness={5} />
-                                <Typography variant="caption" color="text.secondary">Checking…</Typography>
+                                <Typography variant="caption" sx={{
+                                    color: "text.secondary"
+                                }}>Checking…</Typography>
                             </>
                         )}
                         {asyncStatus[fieldId].status === 'valid' && (
@@ -1022,7 +1026,9 @@ export function FormGenerator({
         return (
             <Box className="dmui-review" sx={{ width: '100%' }}>
                 {rows.length === 0 ? (
-                    <Typography variant="body2" color="text.secondary">No values entered.</Typography>
+                    <Typography variant="body2" sx={{
+                        color: "text.secondary"
+                    }}>No values entered.</Typography>
                 ) : (
                     rows.map((r, i) => (
                         <Box

@@ -129,7 +129,9 @@ export default function AIVisionImport({
                 </Button>
 
                 {error ? <Alert severity="error">{error}</Alert> : null}
-                <Typography variant="caption" color="text.secondary">
+                <Typography variant="caption" sx={{
+                    color: "text.secondary"
+                }}>
                     Image is sent to your AI proxy for one-time processing.
                 </Typography>
             </Stack>

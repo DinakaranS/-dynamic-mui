@@ -114,7 +114,13 @@ const DemoCard = ({ type, grad, onAddField }: DemoCardProps) => {
             </Box>
 
             {doc?.description && (
-                <Typography variant="body2" color="text.secondary" sx={{ px: 1.6, pt: 1.4 }}>{doc.description}</Typography>
+                <Typography
+                    variant="body2"
+                    sx={{
+                        color: "text.secondary",
+                        px: 1.6,
+                        pt: 1.4
+                    }}>{doc.description}</Typography>
             )}
 
             {/* PREVIEW */}
@@ -180,7 +186,9 @@ const DemoCard = ({ type, grad, onAddField }: DemoCardProps) => {
                             </TableBody>
                         </Table>
                     ) : (
-                        <Typography variant="body2" color="text.secondary">No props documented for this component.</Typography>
+                        <Typography variant="body2" sx={{
+                            color: "text.secondary"
+                        }}>No props documented for this component.</Typography>
                     )}
                 </Box>
             )}
@@ -252,7 +260,13 @@ const RecipeCard = ({ recipe, onAddFields, grad = PATTERN_GRAD, features = false
                 <Tooltip title="Add to builder"><IconButton size="small" onClick={() => onAddFields(recipe.data)}><Icon fontSize="small">add_circle</Icon></IconButton></Tooltip>
                 <Tooltip title="Config"><IconButton size="small" onClick={() => setShowConfig((v) => !v)}><Icon fontSize="small">{showConfig ? 'expand_less' : 'code'}</Icon></IconButton></Tooltip>
             </Box>
-            <Typography variant="body2" color="text.secondary" sx={{ px: 1.6, pt: 1.4 }}>{recipe.description}</Typography>
+            <Typography
+                variant="body2"
+                sx={{
+                    color: "text.secondary",
+                    px: 1.6,
+                    pt: 1.4
+                }}>{recipe.description}</Typography>
             <Box sx={{ p: 1.6, flex: 1 }}>
                 <Box sx={{ p: 1.6, borderRadius: 2, bgcolor: review ? '#f8fafc' : '#fafbff', border: '1px dashed', borderColor: 'divider', ...(features && !review ? { maxHeight: 460, overflowY: 'auto' } : {}) }}>
                     {features && review && (
@@ -302,7 +316,13 @@ const DemoInfoCard = ({ title, icon, grad, desc, code, children }: { title: stri
                 <Typography sx={{ fontWeight: 700, fontSize: '0.95rem', flex: 1 }}>{title}</Typography>
                 <Tooltip title="Show code"><IconButton size="small" onClick={() => setShowCode((v) => !v)}><Icon fontSize="small">{showCode ? 'expand_less' : 'code'}</Icon></IconButton></Tooltip>
             </Box>
-            <Typography variant="body2" color="text.secondary" sx={{ px: 1.6, pt: 1.4 }}>{desc}</Typography>
+            <Typography
+                variant="body2"
+                sx={{
+                    color: "text.secondary",
+                    px: 1.6,
+                    pt: 1.4
+                }}>{desc}</Typography>
             <Box sx={{ p: 1.6, flex: 1 }}>
                 <Box sx={{ p: 1.6, borderRadius: 2, bgcolor: '#fafbff', border: '1px dashed', borderColor: 'divider' }}>{children}</Box>
             </Box>
@@ -686,7 +706,9 @@ const AIPage = ({ onAddFields }: { onAddFields: (fields: FormField[]) => void })
                                 <Icon fontSize="small">{f.icon}</Icon>
                             </Box>
                             <Typography sx={{ fontWeight: 700, fontSize: '0.92rem', mb: 0.5 }}>{f.title}</Typography>
-                            <Typography variant="body2" color="text.secondary">{f.desc}</Typography>
+                            <Typography variant="body2" sx={{
+                                color: "text.secondary"
+                            }}>{f.desc}</Typography>
                         </Paper>
                     ))}
                 </Box>
@@ -721,7 +743,9 @@ const ComponentsPage = ({ onAddField }: { onAddField: (field: FormField) => void
             <TextField
                 size="small" placeholder="Search components…" value={search} onChange={(e) => setSearch(e.target.value)}
                 sx={{ minWidth: 260, mb: 2.5, bgcolor: 'background.paper', borderRadius: 2 }}
-                InputProps={{ startAdornment: <InputAdornment position="start"><Icon fontSize="small" sx={{ color: 'text.disabled' }}>search</Icon></InputAdornment> }}
+                slotProps={{
+                    input: { startAdornment: <InputAdornment position="start"><Icon fontSize="small" sx={{ color: 'text.disabled' }}>search</Icon></InputAdornment> }
+                }}
             />
             {sections.map(({ category, meta, types }) => {
                 const open = search.trim() ? true : !collapsed[category];
@@ -797,7 +821,12 @@ export const DemoGallery = ({ onAddField, onAddFields }: { onAddField: (field: F
             <Box sx={{ flex: 1, minHeight: 0, overflowY: 'auto', overflowX: 'hidden', p: { xs: 2, md: 4 } }}>
                 {tab === 'forms' && (
                     <Box sx={{ maxWidth: 1400, mx: 'auto' }}>
-                        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                        <Typography
+                            variant="body2"
+                            sx={{
+                                color: "text.secondary",
+                                mb: 2
+                            }}>
                             Complete water-utility field forms. Each card has a toolbar: 👁 Review · 🖨 Print/PDF · 📄 Download PDF · ↩ Undo, and a sticky configured <b>Submit</b> bar with validation.
                         </Typography>
                         <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', lg: 'repeat(2, minmax(0, 1fr))' }, gap: 2.5 }}>
@@ -808,7 +837,12 @@ export const DemoGallery = ({ onAddField, onAddFields }: { onAddField: (field: F
                 {tab === 'components' && <ComponentsPage onAddField={onAddField} />}
                 {tab === 'patterns' && (
                     <Box sx={{ maxWidth: 1400, mx: 'auto' }}>
-                        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                        <Typography
+                            variant="body2"
+                            sx={{
+                                color: "text.secondary",
+                                mb: 2
+                            }}>
                             Real multi-field examples of the dynamic engine — live formulas, dependent selects, conditional visibility, required/disabled rules, and cross-field validation.
                         </Typography>
                         <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, minmax(0, 1fr))', lg: 'repeat(3, minmax(0, 1fr))' }, gap: 2.5 }}>

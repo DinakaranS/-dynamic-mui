@@ -87,13 +87,14 @@ export default function CascadeSelect({ attributes = {}, rules = {}, onChange }:
             required={isMandatory}
             value={value ?? ''}
             onChange={handleChange}
-            SelectProps={{
-                displayEmpty: true,
-                inputProps: { 'aria-label': label || 'cascade-select' },
-            }}
             {...MuiAttributes}
             sx={mergeSx(premiumInputSx as any, MuiAttributes?.sx)}
-        >
+            slotProps={{
+                select: {
+                    displayEmpty: true,
+                    inputProps: { 'aria-label': label || 'cascade-select' },
+                }
+            }}>
             {placeholder ? (
                 <MenuItem value="">
                     <em>{placeholder}</em>

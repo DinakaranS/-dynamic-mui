@@ -89,31 +89,46 @@ export default function TextField({ attributes = {}, rules = {}, onChange, submi
             'numeric',
     };
 
-    const isV6 = !!MuiAttributes?.slotProps;
-
     const baseAttrs = { ...MuiAttributes };
 
-    let finalInputProps;
-    let finalSlotProps;
+    // Adornments configured through this library's own `InputProps` schema key
+    // (the `$` prefix, icons, text) — these target the Input COMPONENT.
+    const ourAdornments = getInputProps(InputProps);
 
-    if (isV6) {
-        const existingSlotInput = (MuiAttributes.slotProps && MuiAttributes.slotProps.input) || {};
-        finalSlotProps = {
-            ...(MuiAttributes.slotProps || {}),
-            input: {
-                ...existingSlotInput,
-                ...ourInputProps,
-            },
-        };
-        delete baseAttrs.slotProps;
-    } else {
-        const existingInputProps = MuiAttributes.inputProps || {};
-        finalInputProps = {
-            ...existingInputProps,
-            ...ourInputProps,
-        };
-        delete baseAttrs.inputProps;
-    }
+    // Everything the caller may have supplied under either spelling, plus our
+    // own html-input attributes. These target the raw <input> ELEMENT.
+    const callerHtmlInput = MuiAttributes.inputProps || MuiAttributes.slotProps?.htmlInput || {};
+    const finalHtmlInput = { ...callerHtmlInput, ...ourInputProps };
+
+    const callerInput = MuiAttributes.InputProps || MuiAttributes.slotProps?.input || {};
+    const finalInput = { ...callerInput, ...ourAdornments };
+
+    // Emit BOTH spellings, and let whichever MUI major is installed pick the
+    // one it understands:
+    //   v5      reads InputProps / inputProps and ignores slotProps
+    //   v6, v7  read slotProps in preference, both are accepted
+    //   v9      reads slotProps ONLY — the legacy props were removed and are
+    //           silently ignored, which is why they cannot be relied on alone
+    //
+    // The previous code branched on `!!MuiAttributes.slotProps`, i.e. on
+    // whether the CALLER happened to pass slotProps — not on the MUI version.
+    // On v9 that meant the legacy branch produced props MUI drops on the floor,
+    // and `InputProps` was passed unconditionally, so every configured
+    // adornment silently disappeared. TypeScript could not catch it because
+    // `MuiAttributes` is `any`, and spreading an `any` into JSX turns off
+    // excess-property checking.
+    //
+    // v9 also splits the slots: `input` is the Input component (adornments),
+    // `htmlInput` is the underlying <input> (inputMode, aria-*, min/max/step).
+    const finalSlotProps = {
+        ...(MuiAttributes.slotProps || {}),
+        input: finalInput,
+        htmlInput: finalHtmlInput,
+    };
+
+    delete baseAttrs.slotProps;
+    delete baseAttrs.inputProps;
+    delete baseAttrs.InputProps;
 
     const isMandatory = rules?.validation?.some((v: any) => v.rule === 'mandatory') || false;
 
@@ -126,9 +141,12 @@ export default function TextField({ attributes = {}, rules = {}, onChange, submi
             id={id}
             sx={mergeSx(premiumInputSx as any, userSx)}
             required={isMandatory}
-            inputProps={!isV6 ? finalInputProps : undefined}
-            slotProps={isV6 ? finalSlotProps : undefined}
-            InputProps={getInputProps(InputProps)}
+            slotProps={finalSlotProps}
+            // Legacy spellings for MUI v5, which predates slotProps. v6/v7
+            // accept both and prefer slotProps; v9 removed them and ignores
+            // them. Harmless everywhere, and the only thing keeping v5 working.
+            inputProps={finalHtmlInput}
+            InputProps={finalInput}
             onChange={handleOnChange}
             onBlur={handleOnBlur}
             onFocus={handleOnFocus}

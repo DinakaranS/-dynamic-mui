@@ -9,14 +9,14 @@ import { ControlProps } from '../../../types';
 // rather than imported at module top-level.
 const MixChartInner = React.lazy(async () => {
     const [
-        { ChartContainer },
+        { ChartsContainer },
         { LinePlot },
         { BarPlot },
         { ChartsXAxis },
         { ChartsYAxis },
         { axisClasses },
     ] = await Promise.all([
-        import('@mui/x-charts/ChartContainer'),
+        import('@mui/x-charts/ChartsContainer'),
         import('@mui/x-charts/LineChart'),
         import('@mui/x-charts/BarChart'),
         import('@mui/x-charts/ChartsXAxis'),
@@ -35,7 +35,7 @@ const MixChartInner = React.lazy(async () => {
         MuiChartYAxisAttributes?: Record<string, unknown>;
         MuiChartSX?: Record<string, unknown>;
     }) => (
-        <ChartContainer
+        <ChartsContainer
             sx={{
                 [`.${axisClasses.left} .${axisClasses.label}`]: {
                     transform: 'translate(-25px, 0)',
@@ -51,7 +51,7 @@ const MixChartInner = React.lazy(async () => {
             <LinePlot />
             <ChartsXAxis {...MuiChartXAxisAttributes} />
             <ChartsYAxis {...MuiChartYAxisAttributes} />
-        </ChartContainer>
+        </ChartsContainer>
     );
 
     return { default: Inner };

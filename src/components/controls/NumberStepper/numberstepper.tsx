@@ -97,9 +97,13 @@ export default function NumberStepper({ attributes = {}, rules = {}, onChange }:
             )}
             <Stack
                 direction="row"
-                alignItems="center"
                 sx={mergeSx(
                     (theme: any) => ({
+                        // `alignItems` was a Stack system prop before v9. Folded
+                        // into the base style object rather than left in an sx
+                        // array — mergeSx already returns SxProps, and SxProps
+                        // arrays cannot be nested inside another sx array.
+                        alignItems: 'center',
                         display: 'inline-flex',
                         width: 'fit-content',
                         borderRadius: '10px',
@@ -116,8 +120,7 @@ export default function NumberStepper({ attributes = {}, rules = {}, onChange }:
                         },
                     }),
                     userSx,
-                )}
-            >
+                )}>
                 <IconButton
                     aria-label="decrement"
                     onClick={handleDecrement}

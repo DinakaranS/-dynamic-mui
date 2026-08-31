@@ -112,13 +112,15 @@ export default function EditableTable({ attributes = {}, onChange }: ControlProp
                                             onChange={(e) =>
                                                 handleCellChange(index, col.key, e.target.value)
                                             }
-                                            inputProps={{
-                                                'aria-label': `${col.label} row ${index + 1}`,
-                                            }}
                                             size="small"
                                             variant="standard"
                                             fullWidth
                                             sx={mergeSx(premiumInputSx as any, userSx)}
+                                            slotProps={{
+                                                htmlInput: {
+                                                    'aria-label': `${col.label} row ${index + 1}`,
+                                                }
+                                            }}
                                         />
                                     </TableCell>
                                 ))}

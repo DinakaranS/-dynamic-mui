@@ -91,6 +91,24 @@ export const theme = createTheme({
             defaultProps: {
                 disableElevation: true,
             },
+            // MUI v9 removed the composite `<variant><Color>` style keys
+            // (containedPrimary, outlinedSecondary, ...). Colour-specific
+            // styling now goes through `variants`, which matches on props.
+            variants: [
+                {
+                    props: { variant: 'contained' as const, color: 'primary' as const },
+                    style: {
+                        background: GRADIENTS.primary,
+                        boxShadow: `0 6px 16px -4px ${alpha(PRIMARY_MAIN, 0.5)}`,
+                        '&:hover': {
+                            background: GRADIENTS.primary,
+                            filter: 'brightness(1.05)',
+                            boxShadow: `0 10px 22px -6px ${alpha(PRIMARY_MAIN, 0.6)}`,
+                            transform: 'translateY(-1px)',
+                        },
+                    },
+                },
+            ],
             styleOverrides: {
                 root: {
                     borderRadius: 10,
@@ -98,16 +116,6 @@ export const theme = createTheme({
                     fontWeight: 600,
                     paddingInline: 16,
                     transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-                },
-                containedPrimary: {
-                    background: GRADIENTS.primary,
-                    boxShadow: `0 6px 16px -4px ${alpha(PRIMARY_MAIN, 0.5)}`,
-                    '&:hover': {
-                        background: GRADIENTS.primary,
-                        filter: 'brightness(1.05)',
-                        boxShadow: `0 10px 22px -6px ${alpha(PRIMARY_MAIN, 0.6)}`,
-                        transform: 'translateY(-1px)',
-                    },
                 },
                 outlined: {
                     borderColor: alpha('#0f172a', 0.12),

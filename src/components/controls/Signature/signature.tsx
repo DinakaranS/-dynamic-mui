@@ -162,7 +162,9 @@ export default function Signature({ attributes = {}, rules = {}, onChange }: Con
                     {savedUrl ? 'Saved' : 'Save'}
                 </Button>
                 {userSaved && savedUrl && (
-                    <Typography variant="caption" color="success.main">
+                    <Typography variant="caption" sx={{
+                        color: "success.main"
+                    }}>
                         Signature Saved!
                     </Typography>
                 )}

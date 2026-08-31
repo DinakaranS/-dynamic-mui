@@ -82,7 +82,9 @@ export const AIPanel = ({ open, onClose, currentFields, onApply }: AIPanelProps)
                                             onApply={(f) => apply(f as FormField[])}
                                         />
                                     ) : (
-                                        <Typography variant="body2" color="text.secondary">
+                                        <Typography variant="body2" sx={{
+                                            color: "text.secondary"
+                                        }}>
                                             Add some fields first, then review them.
                                         </Typography>
                                     )}

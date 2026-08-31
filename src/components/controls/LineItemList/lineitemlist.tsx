@@ -200,9 +200,10 @@ export default function LineItemList({ attributes = {}, rules = {}, onChange }: 
                         helperText={isMandatory && !item.description ? 'Required' : ''}
                         value={item.description}
                         onChange={(e) => handleDescriptionChange(index, e.target.value)}
-                        InputProps={{ readOnly }}
                         {...descriptionProps}
-                    />
+                        slotProps={{
+                            input: { readOnly }
+                        }} />
 
                     {/* Fee amount textbox */}
                     <TextField
@@ -213,14 +214,16 @@ export default function LineItemList({ attributes = {}, rules = {}, onChange }: 
                         required={isMandatory}
                         value={item.fee}
                         onChange={(e) => handleFeeChange(index, e.target.value)}
-                        InputProps={{
-                            readOnly,
-                            startAdornment: <InputAdornment position="start">$</InputAdornment>,
-                        }}
-                        inputProps={{ min: 0, step: 0.01 }}
                         onWheel={(e) => (e.target as HTMLElement).blur()}
                         {...feeProps}
-                    />
+                        slotProps={{
+                            input: {
+                                readOnly,
+                                startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                            },
+
+                            htmlInput: { min: 0, step: 0.01 }
+                        }} />
 
                     {/* Add / Remove buttons — hidden when read-only or showActions is false */}
                     {showActionButtons && (

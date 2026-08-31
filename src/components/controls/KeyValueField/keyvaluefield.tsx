@@ -100,7 +100,9 @@ export default function KeyValueField({ attributes = {}, rules = {}, onChange }:
                         key={index}
                         direction="row"
                         spacing={1}
-                        alignItems="center"
+                        sx={{
+                            alignItems: "center"
+                        }}
                     >
                         <TextField
                             {...restMuiAttributes}

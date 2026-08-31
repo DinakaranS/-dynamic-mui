@@ -61,7 +61,13 @@ export default function ColorPicker({ attributes = {}, rules = {}, onChange }: C
     return (
         <FormControl required={isMandatory} component="fieldset" fullWidth>
             {label && <FormLabel component="legend">{label}</FormLabel>}
-            <Stack direction="row" spacing={1.5} alignItems="center" sx={{ mt: label ? 1 : 0 }}>
+            <Stack
+                direction="row"
+                spacing={1.5}
+                sx={{
+                    alignItems: "center",
+                    mt: label ? 1 : 0
+                }}>
                 <Box sx={{ ...swatchBase, backgroundColor: value }}>
                     <input
                         type="color"
@@ -87,8 +93,10 @@ export default function ColorPicker({ attributes = {}, rules = {}, onChange }: C
                     onChange={handleHexInput}
                     size="small"
                     label="Hex"
-                    inputProps={{ 'aria-label': 'hex value' }}
                     sx={mergeSx(premiumInputSx as any, mergeSx({ maxWidth: 160 } as any, muiSx))}
+                    slotProps={{
+                        htmlInput: { 'aria-label': 'hex value' }
+                    }}
                 />
             </Stack>
             {Array.isArray(presets) && presets.length > 0 && (

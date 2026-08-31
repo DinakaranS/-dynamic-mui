@@ -188,7 +188,9 @@ export const PropertiesEditor = ({ field, onUpdate, onDelete, allFields = [], on
                         </Box>
                         <Box>
                             <Typography variant="subtitle2" sx={{ fontWeight: 700, lineHeight: 1.2 }}>Form Schema</Typography>
-                            <Typography variant="caption" color="text.secondary">Edit the entire form as JSON</Typography>
+                            <Typography variant="caption" sx={{
+                                color: "text.secondary"
+                            }}>Edit the entire form as JSON</Typography>
                         </Box>
                     </Box>
                 </Box>
@@ -203,10 +205,12 @@ export const PropertiesEditor = ({ field, onUpdate, onDelete, allFields = [], on
                         helperText={jsonError}
                         fullWidth
                         variant="outlined"
-                        InputProps={{
-                            style: { fontFamily: 'Consolas, Monaco, monospace', fontSize: 12 }
-                        }}
                         placeholder="Paste form JSON here..."
+                        slotProps={{
+                            input: {
+                                style: { fontFamily: 'Consolas, Monaco, monospace', fontSize: 12 }
+                            }
+                        }}
                     />
                 </Box>
                 <Box sx={ACTION_BAR_SX}>
@@ -256,7 +260,13 @@ export const PropertiesEditor = ({ field, onUpdate, onDelete, allFields = [], on
                         <Icon sx={{ fontSize: 36, color: 'primary.main' }}>tune</Icon>
                     </Box>
                     <Typography variant="subtitle1" sx={{ fontWeight: 700, color: 'text.primary' }}>No component selected</Typography>
-                    <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5, maxWidth: 240 }}>
+                    <Typography
+                        variant="body2"
+                        sx={{
+                            color: "text.secondary",
+                            mt: 0.5,
+                            maxWidth: 240
+                        }}>
                         Double-click a component in the canvas to edit its properties here.
                     </Typography>
                 </Box>
@@ -297,7 +307,16 @@ export const PropertiesEditor = ({ field, onUpdate, onDelete, allFields = [], on
                         <Typography variant="subtitle1" sx={{ fontWeight: 700, lineHeight: 1.2, textTransform: 'capitalize' }}>
                             {field.type} Properties
                         </Typography>
-                        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', fontFamily: 'monospace', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        <Typography
+                            variant="caption"
+                            sx={{
+                                color: "text.secondary",
+                                display: 'block',
+                                fontFamily: 'monospace',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap'
+                            }}>
                             {fieldId}
                         </Typography>
                     </Box>
@@ -308,7 +327,15 @@ export const PropertiesEditor = ({ field, onUpdate, onDelete, allFields = [], on
 
                 {/* Visual Editor */}
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                    <Typography variant="overline" color="text.secondary" sx={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: 0.75 }}>
+                    <Typography
+                        variant="overline"
+                        sx={{
+                            color: "text.secondary",
+                            fontWeight: 700,
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 0.75
+                        }}>
                         <Icon sx={{ fontSize: 15, color: 'primary.main' }}>bolt</Icon> Quick Edit
                     </Typography>
 
@@ -370,7 +397,15 @@ export const PropertiesEditor = ({ field, onUpdate, onDelete, allFields = [], on
 
                 <Divider />
 
-                <Typography variant="overline" color="text.secondary" sx={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: 0.75 }}>
+                <Typography
+                    variant="overline"
+                    sx={{
+                        color: "text.secondary",
+                        fontWeight: 700,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 0.75
+                    }}>
                     <Icon sx={{ fontSize: 15, color: 'secondary.main' }}>data_object</Icon> Advanced JSON
                 </Typography>
                 <TextField
@@ -383,8 +418,10 @@ export const PropertiesEditor = ({ field, onUpdate, onDelete, allFields = [], on
                     helperText={jsonError}
                     fullWidth
                     variant="outlined"
-                    InputProps={{
-                        style: { fontFamily: 'Consolas, Monaco, monospace', fontSize: 12 }
+                    slotProps={{
+                        input: {
+                            style: { fontFamily: 'Consolas, Monaco, monospace', fontSize: 12 }
+                        }
                     }}
                 />
             </Box>

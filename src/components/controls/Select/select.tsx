@@ -201,18 +201,18 @@ export default function Select({ attributes = {}, rules = {}, onChange, submitTi
                 // Ensure custom adornments are incorporated without overriding other essential props
                 const customInputProps = getInputProps(InputProps);
                 const mergedInputProps = {
-                    ...params.InputProps,
+                    ...params.slotProps.input,
                     ...customInputProps,
                     startAdornment: (
                         <>
                             {customInputProps?.startAdornment}
-                            {params.InputProps.startAdornment}
+                            {params.slotProps.input.startAdornment}
                         </>
                     ),
                     endAdornment: (
                         <>
                             {customInputProps?.endAdornment}
-                            {params.InputProps.endAdornment}
+                            {params.slotProps.input.endAdornment}
                         </>
                     ),
                 };
@@ -227,10 +227,12 @@ export default function Select({ attributes = {}, rules = {}, onChange, submitTi
                         error={error}
                         helperText={helperText}
                         slotProps={{
+                            ...params.slotProps,
+
                             input: {
                                 ...mergedInputProps,
                                 autoComplete: 'new-password',
-                            },
+                            }
                         }}
                     />
                 );

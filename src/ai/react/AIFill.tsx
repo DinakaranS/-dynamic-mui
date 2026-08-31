@@ -73,9 +73,11 @@ export const AIFill: React.FC<AIFillProps> = ({
                 minRows={4}
                 fullWidth
                 disabled={loading}
-                inputProps={{ 'aria-label': label }}
                 sx={{
                     '& .MuiOutlinedInput-root': { borderRadius: 2 },
+                }}
+                slotProps={{
+                    htmlInput: { 'aria-label': label }
                 }}
             />
 
@@ -85,7 +87,9 @@ export const AIFill: React.FC<AIFillProps> = ({
                 </Alert>
             )}
 
-            <Stack direction="row" justifyContent="flex-end">
+            <Stack direction="row" sx={{
+                justifyContent: "flex-end"
+            }}>
                 <Button
                     variant="contained"
                     onClick={handleAutofill}

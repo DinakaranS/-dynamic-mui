@@ -88,7 +88,9 @@ export default function CheckBox({ attributes = {}, rules = {}, onChange, submit
                         checked={checked}
                         onChange={handleChange}
                         required={isMandatory}
-                        inputProps={{ 'aria-label': 'controlled' }}
+                        slotProps={{
+                            input: { 'aria-label': 'controlled' }
+                        }}
                     />
                 }
             />

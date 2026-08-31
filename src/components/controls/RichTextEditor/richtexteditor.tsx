@@ -32,7 +32,9 @@ const TOOLBAR_ACTIONS: ToolbarAction[] = [
     { command: 'underline', label: 'Underline', icon: <FormatUnderlined fontSize="small" /> },
     { command: 'insertUnorderedList', label: 'Bulleted list', icon: <FormatListBulleted fontSize="small" /> },
     { command: 'insertOrderedList', label: 'Numbered list', icon: <FormatListNumbered fontSize="small" /> },
-    { command: 'createLink', label: 'Insert link', icon: <LinkIcon fontSize="small" />, prompt: true },
+    { command: 'createLink', label: 'Insert link', icon: <LinkIcon sx={{
+        fontSize: "small"
+    }} />, prompt: true },
     { command: 'removeFormat', label: 'Clear formatting', icon: <FormatClear fontSize="small" /> },
 ];
 

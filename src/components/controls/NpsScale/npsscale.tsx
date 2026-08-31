@@ -115,10 +115,14 @@ export default function NpsScale({ attributes = {}, rules = {}, onChange, submit
                 })}
             </Box>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 0.75 }}>
-                <Typography variant="caption" color="text.secondary">
+                <Typography variant="caption" sx={{
+                    color: "text.secondary"
+                }}>
                     {lowLabel}
                 </Typography>
-                <Typography variant="caption" color="text.secondary">
+                <Typography variant="caption" sx={{
+                    color: "text.secondary"
+                }}>
                     {highLabel}
                 </Typography>
             </Box>

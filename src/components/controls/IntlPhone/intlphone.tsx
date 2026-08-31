@@ -125,7 +125,9 @@ export default function IntlPhone({ attributes = {}, rules = {}, onChange }: Con
                     {label}
                 </FormLabel>
             )}
-            <Stack direction="row" spacing={1} alignItems="flex-start">
+            <Stack direction="row" spacing={1} sx={{
+                alignItems: "flex-start"
+            }}>
                 <TextField
                     select
                     value={code}
@@ -133,17 +135,19 @@ export default function IntlPhone({ attributes = {}, rules = {}, onChange }: Con
                     size="small"
                     label="Country"
                     aria-label="Country dial code"
-                    SelectProps={{
-                        renderValue: (val: any) => {
-                            const c = COUNTRIES.find((x) => x.code === val) || COUNTRIES[0];
-                            return `${c.flag} ${c.dial}`;
-                        },
-                    }}
                     sx={mergeSx(premiumInputSx as any, {
                         minWidth: 120,
                         flexShrink: 0,
                         ...(userSx as object),
                     })}
+                    slotProps={{
+                        select: {
+                            renderValue: (val: any) => {
+                                const c = COUNTRIES.find((x) => x.code === val) || COUNTRIES[0];
+                                return `${c.flag} ${c.dial}`;
+                            },
+                        }
+                    }}
                 >
                     {COUNTRIES.map((c) => (
                         <MenuItem key={c.code} value={c.code}>

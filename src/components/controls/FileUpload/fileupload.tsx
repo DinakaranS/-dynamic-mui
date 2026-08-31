@@ -165,14 +165,22 @@ export default function FileUpload({ attributes = {}, rules = {}, onChange }: Co
                     Drag &amp; drop {multiple ? 'files' : 'a file'} here, or click to browse
                 </Typography>
                 {accept && (
-                    <Typography variant="caption" color="text.secondary">
+                    <Typography variant="caption" sx={{
+                        color: "text.secondary"
+                    }}>
                         Accepted: {accept}
                     </Typography>
                 )}
             </Box>
 
             {error && (
-                <Typography variant="caption" color="error.main" sx={{ display: 'block', mt: 1 }}>
+                <Typography
+                    variant="caption"
+                    sx={{
+                        color: "error.main",
+                        display: 'block',
+                        mt: 1
+                    }}>
                     {error}
                 </Typography>
             )}

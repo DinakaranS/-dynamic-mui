@@ -100,7 +100,9 @@ export default function ConsentField({ attributes = {}, rules = {}, onChange }: 
                         disabled={disabled}
                         onChange={handleChange}
                         required={isMandatory}
-                        inputProps={{ 'aria-label': 'consent-agree' }}
+                        slotProps={{
+                            input: { 'aria-label': 'consent-agree' }
+                        }}
                     />
                 }
             />

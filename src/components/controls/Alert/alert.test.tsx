@@ -22,6 +22,11 @@ describe('Alert Control', () => {
     it('applies the given severity', () => {
         render(<Alert attributes={{ severity: 'warning', text: 'Careful' }} />);
         const alert = screen.getByRole('alert');
-        expect(alert.className).toContain('MuiAlert-standardWarning');
+        // MUI v9 split the composite variant+colour class:
+        //   v5-v7 -> "MuiAlert-standardWarning"
+        //   v9    -> "MuiAlert-standard" + "MuiAlert-colorWarning"
+        // This package peers on both, so accept either spelling rather than
+        // pinning the assertion to one major.
+        expect(alert.className).toMatch(/MuiAlert-(standardWarning|colorWarning)/);
     });
 });

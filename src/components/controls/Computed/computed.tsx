@@ -30,9 +30,11 @@ export default function Computed({ attributes = {} }: ControlProps) {
             variant="outlined"
             {...restMui}
             value={display === '' ? '' : `${prefix}${display}${suffix}`}
-            InputProps={{ readOnly: true, ...(restMui.InputProps || {}) }}
             aria-readonly
             sx={mergeSx(premiumInputSx as any, userSx)}
+            slotProps={{
+                input: { readOnly: true, ...(restMui.InputProps || {}) }
+            }}
         />
     );
 }

@@ -68,10 +68,13 @@ export default function TagsInput({ attributes = {}, rules = {}, onChange }: Con
             value={tags}
             onChange={handleChange}
             onBlur={() => setTouched(true)}
-            renderTags={(value: readonly string[], getTagProps) =>
+            renderValue={(value: readonly string[], getItemProps) =>
                 value.map((tag: string, index: number) => {
-                    const tagProps = getTagProps({ index });
-                    return <Chip label={tag} {...tagProps} key={tagProps.key} sx={premiumChipSx as any} />;
+                    // MUI v9's getItemProps no longer returns `key` — it hands
+                    // back className/disabled/data-item-index/tabIndex/onDelete
+                    // only, so the key has to come from the caller.
+                    const tagProps = getItemProps({ index });
+                    return <Chip label={tag} {...tagProps} key={`${tag}-${index}`} sx={premiumChipSx as any} />;
                 })
             }
             renderInput={(params) => (

@@ -114,9 +114,11 @@ export default function NumberField({ attributes = {}, rules = {}, onChange, sub
             sx={mergeSx(premiumInputSx as any, userSx)}
             name="numberformat"
             id={id}
-            InputProps={{
-                inputComponent: NumericFormatCustom as any,
-                ...MuiAttributes.InputProps
+            slotProps={{
+                input: {
+                    inputComponent: NumericFormatCustom as any,
+                    ...MuiAttributes.InputProps
+                }
             }}
         />
     );

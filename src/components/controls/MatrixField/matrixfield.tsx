@@ -155,8 +155,10 @@ export default function MatrixField({ attributes = {}, rules = {}, onChange }: C
                                                 onChange={(e) =>
                                                     handleMultiple(row.id, col.value, e.target.checked)
                                                 }
-                                                inputProps={{
-                                                    'aria-label': `${row.label} ${col.label}`,
+                                                slotProps={{
+                                                    input: {
+                                                        'aria-label': `${row.label} ${col.label}`,
+                                                    }
                                                 }}
                                             />
                                         ) : (
@@ -164,8 +166,10 @@ export default function MatrixField({ attributes = {}, rules = {}, onChange }: C
                                                 name={`matrix-${id}-${row.id}`}
                                                 checked={isSelected(row.id, col.value)}
                                                 onChange={() => handleSingle(row.id, col.value)}
-                                                inputProps={{
-                                                    'aria-label': `${row.label} ${col.label}`,
+                                                slotProps={{
+                                                    input: {
+                                                        'aria-label': `${row.label} ${col.label}`,
+                                                    }
                                                 }}
                                             />
                                         )}

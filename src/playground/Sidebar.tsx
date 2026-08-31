@@ -199,23 +199,25 @@ export const Sidebar = ({ onAdd }: { onAdd?: (type: string) => void }) => {
                         placeholder="Search components…"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        InputProps={{
-                            startAdornment: (
-                                <InputAdornment position="start">
-                                    <Icon fontSize="small" sx={{ color: 'text.disabled' }}>search</Icon>
-                                </InputAdornment>
-                            ),
-                            endAdornment: search ? (
-                                <InputAdornment position="end">
-                                    <Icon
-                                        fontSize="small"
-                                        sx={{ color: 'text.disabled', cursor: 'pointer', '&:hover': { color: 'text.primary' } }}
-                                        onClick={() => setSearch('')}
-                                    >
-                                        close
-                                    </Icon>
-                                </InputAdornment>
-                            ) : undefined,
+                        slotProps={{
+                            input: {
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <Icon fontSize="small" sx={{ color: 'text.disabled' }}>search</Icon>
+                                    </InputAdornment>
+                                ),
+                                endAdornment: search ? (
+                                    <InputAdornment position="end">
+                                        <Icon
+                                            fontSize="small"
+                                            sx={{ color: 'text.disabled', cursor: 'pointer', '&:hover': { color: 'text.primary' } }}
+                                            onClick={() => setSearch('')}
+                                        >
+                                            close
+                                        </Icon>
+                                    </InputAdornment>
+                                ) : undefined,
+                            }
                         }}
                     />
                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mt: 1.25 }}>
@@ -351,7 +353,9 @@ export const Sidebar = ({ onAdd }: { onAdd?: (type: string) => void }) => {
                                         </ListItemIcon>
                                         <ListItemText
                                             primary={item.label}
-                                            primaryTypographyProps={{ fontSize: '0.875rem', fontWeight: 500 }}
+                                            slotProps={{
+                                                primary: { sx: { fontSize: '0.875rem', fontWeight: 500 } },
+                                            }}
                                         />
                                         <Icon fontSize="small" sx={{ color: 'text.disabled', fontSize: 16 }}>chevron_right</Icon>
                                     </ListItemButton>
@@ -381,19 +385,34 @@ export const Sidebar = ({ onAdd }: { onAdd?: (type: string) => void }) => {
                     <Box sx={{ width: 30, height: 30, borderRadius: 1.5, display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: 'rgba(99,102,241,0.12)', color: 'primary.main' }}>
                         <Icon fontSize="small">{item?.icon || 'widgets'}</Icon>
                     </Box>
-                    <Typography variant="subtitle1" fontWeight={700}>
+                    <Typography variant="subtitle1" sx={{
+                        fontWeight: 700
+                    }}>
                         {item?.label || selectedDoc}
                     </Typography>
                 </Box>
 
                 {doc ? (
                     <Box sx={{ p: 3 }}>
-                        <Typography variant="body2" color="text.secondary" paragraph>
+                        <Typography
+                            variant="body2"
+                            sx={{
+                                color: "text.secondary",
+                                marginBottom: "16px"
+                            }}>
                             {doc.description}
                         </Typography>
 
                         <Box sx={{ mb: 3 }}>
-                            <Typography variant="caption" fontWeight={700} color="primary" sx={{ display: 'block', mb: 1, letterSpacing: '0.5px' }}>
+                            <Typography
+                                variant="caption"
+                                color="primary"
+                                sx={{
+                                    fontWeight: 700,
+                                    display: 'block',
+                                    mb: 1,
+                                    letterSpacing: '0.5px'
+                                }}>
                                 USAGE
                             </Typography>
                             <Paper elevation={0} sx={{ p: 2, bgcolor: '#f1f5f9', borderRadius: 2, border: '1px solid', borderColor: 'divider' }}>
@@ -403,7 +422,15 @@ export const Sidebar = ({ onAdd }: { onAdd?: (type: string) => void }) => {
                             </Paper>
                         </Box>
 
-                        <Typography variant="caption" fontWeight={700} color="primary" sx={{ display: 'block', mb: 1, letterSpacing: '0.5px' }}>
+                        <Typography
+                            variant="caption"
+                            color="primary"
+                            sx={{
+                                fontWeight: 700,
+                                display: 'block',
+                                mb: 1,
+                                letterSpacing: '0.5px'
+                            }}>
                             PROPERTIES
                         </Typography>
                         <TableContainer component={Paper} elevation={0} variant="outlined" sx={{ borderRadius: 2 }}>

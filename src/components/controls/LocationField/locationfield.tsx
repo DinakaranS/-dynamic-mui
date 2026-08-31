@@ -105,25 +105,28 @@ export default function LocationField({ attributes = {}, rules = {}, onChange, s
 
     const isMandatory = rules?.validation?.some((v: any) => v.rule === 'mandatory') || false;
 
-    // Handle MUI v5 vs v6 inputProps/slotProps
-    const isV6 = !!MuiAttributes?.slotProps;
+    // Input props across MUI majors. Same approach as TextField: emit both
+    // spellings and let the installed major take the one it understands.
+    // v5 reads InputProps/inputProps; v6 and v7 accept both and prefer
+    // slotProps; v9 removed the legacy props and reads slotProps only.
+    // The old `isV6` flag tested whether the CALLER passed slotProps, not the
+    // MUI version, so on v9 the adornments were silently dropped.
     const baseAttrs = { ...MuiAttributes };
 
-    let finalInputProps;
-    let finalSlotProps;
+    const finalHtmlInput = MuiAttributes.inputProps || MuiAttributes.slotProps?.htmlInput || {};
+    const finalInput = {
+        ...(MuiAttributes.InputProps || MuiAttributes.slotProps?.input || {}),
+        ...getInputProps(InputProps),
+    };
+    const finalSlotProps = {
+        ...(MuiAttributes.slotProps || {}),
+        input: finalInput,
+        htmlInput: finalHtmlInput,
+    };
 
-    if (isV6) {
-        const existingSlotInput = (MuiAttributes.slotProps && MuiAttributes.slotProps.input) || {};
-        finalSlotProps = {
-            ...(MuiAttributes.slotProps || {}),
-            input: { ...existingSlotInput },
-        };
-        delete baseAttrs.slotProps;
-    } else {
-        const existingInputProps = MuiAttributes.inputProps || {};
-        finalInputProps = { ...existingInputProps };
-        delete baseAttrs.inputProps;
-    }
+    delete baseAttrs.slotProps;
+    delete baseAttrs.inputProps;
+    delete baseAttrs.InputProps;
 
     // Determine field height based on variant + size for button alignment
     const variant = MuiAttributes.variant || 'outlined';
@@ -139,9 +142,9 @@ export default function LocationField({ attributes = {}, rules = {}, onChange, s
                     {...baseAttrs}
                     id={id}
                     required={isMandatory}
-                    inputProps={!isV6 ? finalInputProps : undefined}
-                    slotProps={isV6 ? finalSlotProps : undefined}
-                    InputProps={getInputProps(InputProps)}
+                    slotProps={finalSlotProps}
+                    inputProps={finalHtmlInput}
+                    InputProps={finalInput}
                     onChange={handleOnChange}
                     onBlur={handleOnBlur}
                     value={textData.value}

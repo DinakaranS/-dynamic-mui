@@ -115,8 +115,10 @@ export default function AddressField({ attributes = {}, rules = {}, onChange }: 
                     required={isMandatory}
                     value={address.street1 || ''}
                     onChange={handleField('street1')}
-                    inputProps={{ 'aria-label': fieldLabels.street1 }}
                     sx={inputSx}
+                    slotProps={{
+                        htmlInput: { 'aria-label': fieldLabels.street1 }
+                    }}
                 />
             </Grid>
             <Grid size={{ xs: 12 }}>
@@ -125,8 +127,10 @@ export default function AddressField({ attributes = {}, rules = {}, onChange }: 
                     label={fieldLabels.street2}
                     value={address.street2 || ''}
                     onChange={handleField('street2')}
-                    inputProps={{ 'aria-label': fieldLabels.street2 }}
                     sx={inputSx}
+                    slotProps={{
+                        htmlInput: { 'aria-label': fieldLabels.street2 }
+                    }}
                 />
             </Grid>
             <Grid size={{ xs: 12, sm: 6, md: 5 }}>
@@ -136,8 +140,10 @@ export default function AddressField({ attributes = {}, rules = {}, onChange }: 
                     required={isMandatory}
                     value={address.city || ''}
                     onChange={handleField('city')}
-                    inputProps={{ 'aria-label': fieldLabels.city }}
                     sx={inputSx}
+                    slotProps={{
+                        htmlInput: { 'aria-label': fieldLabels.city }
+                    }}
                 />
             </Grid>
             <Grid size={{ xs: 12, sm: 6, md: 4 }}>
@@ -146,8 +152,10 @@ export default function AddressField({ attributes = {}, rules = {}, onChange }: 
                     label={fieldLabels.state}
                     value={address.state || ''}
                     onChange={handleField('state')}
-                    inputProps={{ 'aria-label': fieldLabels.state }}
                     sx={inputSx}
+                    slotProps={{
+                        htmlInput: { 'aria-label': fieldLabels.state }
+                    }}
                 />
             </Grid>
             <Grid size={{ xs: 12, sm: 6, md: 3 }}>
@@ -156,8 +164,10 @@ export default function AddressField({ attributes = {}, rules = {}, onChange }: 
                     label={fieldLabels.postalCode}
                     value={address.postalCode || ''}
                     onChange={handleField('postalCode')}
-                    inputProps={{ 'aria-label': fieldLabels.postalCode }}
                     sx={inputSx}
+                    slotProps={{
+                        htmlInput: { 'aria-label': fieldLabels.postalCode }
+                    }}
                 />
             </Grid>
             <Grid size={{ xs: 12, sm: 6 }}>
@@ -168,8 +178,10 @@ export default function AddressField({ attributes = {}, rules = {}, onChange }: 
                     required={isMandatory}
                     value={address.country || ''}
                     onChange={handleField('country')}
-                    SelectProps={{ inputProps: { 'aria-label': fieldLabels.country } }}
                     sx={inputSx}
+                    slotProps={{
+                        select: { inputProps: { 'aria-label': fieldLabels.country } }
+                    }}
                 >
                     {countryOptions.map((c) => (
                         <MenuItem key={c.value} value={c.value}>

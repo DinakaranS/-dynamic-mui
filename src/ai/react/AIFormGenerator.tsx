@@ -86,7 +86,9 @@ export default function AIFormGenerator({
                     minRows={3}
                     fullWidth
                     disabled={loading}
-                    InputProps={{ sx: { borderRadius: 2 } }}
+                    slotProps={{
+                        input: { sx: { borderRadius: 2 } }
+                    }}
                 />
 
                 {error && (

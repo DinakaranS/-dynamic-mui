@@ -248,7 +248,12 @@ export const Canvas = ({ fields, onSelectField, selectedId: _selectedId, onDelet
                     <Icon sx={{ color: 'primary.main' }}>smart_toy</Icon> &lt;AIForm&gt; — the drop-in consumer wrapper
                 </DialogTitle>
                 <DialogContent dividers>
-                    <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                    <Typography
+                        variant="body2"
+                        sx={{
+                            color: "text.secondary",
+                            mb: 2
+                        }}>
                         One component: renders your schema as a form plus a built-in AI toolbar
                         (Generate / AI&nbsp;Fill / Review). This is what a consumer app writes in one line.
                     </Typography>
@@ -298,7 +303,9 @@ export const Canvas = ({ fields, onSelectField, selectedId: _selectedId, onDelet
                 fullWidth
             >
                 <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Typography variant="h6" fontWeight={600}>Form Data</Typography>
+                    <Typography variant="h6" sx={{
+                        fontWeight: 600
+                    }}>Form Data</Typography>
                     <Icon
                         sx={{ cursor: 'pointer', color: 'text.secondary' }}
                         onClick={() => setOpenData(false)}

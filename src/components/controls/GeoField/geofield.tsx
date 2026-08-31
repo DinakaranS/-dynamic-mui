@@ -86,8 +86,10 @@ export default function GeoField({ attributes = {}, onChange }: ControlProps) {
                     label="Latitude"
                     value={coords.lat}
                     onChange={handleChange('lat')}
-                    inputProps={{ 'aria-label': 'Latitude', step: 'any' }}
                     sx={inputSx}
+                    slotProps={{
+                        htmlInput: { 'aria-label': 'Latitude', step: 'any' }
+                    }}
                 />
                 <MuiTextField
                     type="number"
@@ -95,8 +97,10 @@ export default function GeoField({ attributes = {}, onChange }: ControlProps) {
                     label="Longitude"
                     value={coords.lng}
                     onChange={handleChange('lng')}
-                    inputProps={{ 'aria-label': 'Longitude', step: 'any' }}
                     sx={inputSx}
+                    slotProps={{
+                        htmlInput: { 'aria-label': 'Longitude', step: 'any' }
+                    }}
                 />
             </Box>
 

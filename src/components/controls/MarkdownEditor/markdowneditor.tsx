@@ -93,10 +93,11 @@ export default function MarkdownEditor({ attributes = {}, rules = {}, onChange }
         <FormControl required={isMandatory} component="fieldset" fullWidth>
             <Stack
                 direction="row"
-                justifyContent="space-between"
-                alignItems="center"
-                sx={{ mb: 1 }}
-            >
+                sx={{
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    mb: 1
+                }}>
                 {label ? <FormLabel component="legend">{label}</FormLabel> : <span />}
                 <Button
                     size="small"
@@ -131,10 +132,11 @@ export default function MarkdownEditor({ attributes = {}, rules = {}, onChange }
                     minRows={rows}
                     fullWidth
                     placeholder="Write markdown…"
-                    inputProps={{ 'aria-label': label || 'markdown editor' }}
                     {...otherMuiAttributes}
                     sx={mergeSx(premiumInputSx as any, muiSx)}
-                />
+                    slotProps={{
+                        htmlInput: { 'aria-label': label || 'markdown editor' }
+                    }} />
             )}
         </FormControl>
     );

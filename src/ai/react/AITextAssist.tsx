@@ -15,7 +15,7 @@ import EditNoteIcon from '@mui/icons-material/EditNote';
 import ShortTextIcon from '@mui/icons-material/ShortText';
 import NotesIcon from '@mui/icons-material/Notes';
 import SpellcheckIcon from '@mui/icons-material/Spellcheck';
-import WorkOutlineIcon from '@mui/icons-material/WorkOutline';
+import WorkOutlineIcon from '@mui/icons-material/WorkOutlined';
 import TranslateIcon from '@mui/icons-material/Translate';
 import { AIClient, AssistAction } from '../types';
 
@@ -190,7 +190,9 @@ export default function AITextAssist({
                             </ListItemIcon>
                             <ListItemText
                                 primary={meta?.label ?? action}
-                                primaryTypographyProps={{ fontSize: 14, fontWeight: 500 }}
+                                slotProps={{
+                                    primary: { sx: { fontSize: 14, fontWeight: 500 } },
+                                }}
                             />
                         </MenuItem>
                     );
