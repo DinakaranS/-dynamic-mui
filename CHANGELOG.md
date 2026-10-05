@@ -2,6 +2,34 @@
 
 All notable changes to **dynamic-mui** are documented here.
 
+## [2.5.1] - 2026-10-04
+
+### Added
+
+- **`collection` control: nested, dialog-edited lists.** Add records through a
+  pop-up form; each record can own nested collections to any depth (for example
+  Customer Locations → Services + Backflow assemblies). The default look is
+  deliberately simple: top-level records are plain cards (title, status,
+  subtitle, facts as label → value), nested records are plain tables (one row
+  per item, Edit / Delete per row, stacked rows on phones), and each section
+  has one "+ Add …" button beside its title. Everything is set in the JSON:
+  `layout` (cards / table), card content and facts, table columns, the add
+  button's position and look, which actions exist (duplicate, move and collapse
+  are opt-in), every text (inherited by nested levels), accent colours (palette
+  names or any CSS colour), and an MUI `sx` override for each named part. The
+  dialog has "Save & add another" and ⌘/Ctrl+Enter; deleting confirms and names
+  the nested items it removes. Per-level `min`/`max` block submit with a
+  clear message, and the review/print/PDF summary lists every nested record.
+  The output is plain JSON with nested arrays. Types: `CollectionConfig`,
+  `CollectionDisplay`, `CollectionStyles`, `CollectionTexts`, and
+  `CollectionField` for `defineForm`. See
+  `examples/collection-customer-locations.json`. Lazy-loaded.
+
+### Fixed
+
+- The form's screen-reader live region was sized `width: 1` (100% in MUI `sx`)
+  instead of 1px, which gave every form 8px of horizontal scroll on phones.
+
 ## [2.4.1] - 2026-07-22
 
 ### Added

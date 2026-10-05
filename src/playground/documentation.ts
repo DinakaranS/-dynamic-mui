@@ -490,5 +490,32 @@ export const COMPONENT_DOCS: Record<string, { title: string; description: string
             subFields: 'Array of FormField definitions rendered inside each group',
             value: 'Array of patch objects, one per group, to pre-fill values'
         }
+    },
+    collection: {
+        title: 'Nested Collection',
+        description: 'A list of records added and edited through a pop-up form and shown as cards. Each record can own nested lists, to any depth (e.g. Customer Locations → Services + Backflow assemblies). Content, layout, wording and styling are all set in the JSON. Output is an array of objects with the nested lists as arrays inside each one.',
+        usage: 'Use for one-to-many data entry: customers with devices, sites with assets, orders with line items.',
+        props: {
+            id: 'Unique field identifier (the output key)',
+            itemLabel: 'Singular name, e.g. "Customer Location" → "Add Customer Location"',
+            title: 'Section heading (defaults to the plural of itemLabel)',
+            description: 'Helper text under the heading',
+            icon: 'Material icon name for the section, dialog and item avatars',
+            color: 'Palette name (primary, success…) or any CSS colour',
+            layout: 'cards (top-level default) | table (nested default) — how items are shown',
+            variant: 'outlined (default) | card | flat — the card look',
+            fields: 'FormField[] shown in the add/edit dialog',
+            display: '{ title, titleLabel, subtitle, subtitleIcon, badge, avatar, details, detailsLayout, columns, minColumnWidth, showIcons } — details are { field, label, icon, span } shown as label → value (and as table columns)',
+            addButton: '{ position: header (default) | footer | both | none, variant: contained | outlined | text | soft | dashed, icon, size, fullWidth }',
+            actions: '{ edit, delete } on by default; { duplicate, move, collapse } opt-in',
+            texts: 'Override any text (add, addMore, emptyTitle, edit, deleteMessage…); nested levels inherit',
+            styles: 'MUI sx override per part (root, header, item, itemTitle, detailLabel, detailValue, table, tableHeadCell, tableCell, addButton, dialog, dialogSave…)',
+            collections: 'Nested collection configs (same options) owned by every item',
+            sectionColumns: 'How many nested sections sit side by side (default 1)',
+            'min / max': 'Item count limits for this level, validated on submit',
+            dialog: '{ maxWidth, description, addAnother, fullScreen, spacing }',
+            confirmDelete: 'Ask before deleting (default true)',
+            defaultCollapsed: 'Start items collapsed'
+        }
     }
 };

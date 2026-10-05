@@ -63,6 +63,7 @@ const List = lazy(() => import('./List/list'));
 const MultiTextbox = lazy(() => import('./MultiTextbox/multitextbox'));
 const LineItemList = lazy(() => import('./LineItemList/lineitemlist'));
 const FormRepeater = lazy(() => import('./FormRepeater/formrepeater'));
+const Collection = lazy(() => import('./Collection/collection'));
 const Signature = lazy(() => import('./Signature/signature'));
 const Group = lazy(() => import('./Group/group'));
 const Accordion = lazy(() => import('./Accordion/accordion'));
@@ -124,6 +125,7 @@ const Controls = {
     MultiTextbox,
     LineItemList,
     FormRepeater,
+    Collection,
     Signature,
     Group,
     Accordion,

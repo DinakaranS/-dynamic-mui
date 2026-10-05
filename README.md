@@ -352,6 +352,67 @@ alert · divider · typography · charts (bar / line / pie / mixed), and more.
 Each control is configured through `props` (its `MuiAttributes` /
 `MuiBoxAttributes` map straight onto the underlying MUI component).
 
+### Nested collections (`collection`)
+
+One-to-many data entry: records are added and edited in a pop-up form, and each
+record can own nested lists, to any depth. For example **Customer Locations →
+Services + Backflow assemblies**. By default it stays simple: each customer is a
+plain card (name, status, address, its facts as label → value with a small icon),
+and its services and backflows are plain tables with an "+ Add Service" button,
+one row per item and Edit / Delete on each row. On phones, table rows stack.
+Everything — content, layout, wording and styling — is controlled from the JSON:
+
+```js
+{
+  type: 'collection',
+  props: {
+    id: 'customerLocations',
+    itemLabel: 'Customer Location',            // → "Add Customer Location"
+    icon: 'location_on',
+    fields: [/* the dialog's FormField[] */],
+    display: {
+      title: 'customerName',
+      subtitle: '{address}, {city}, {state} {zip}',
+      subtitleIcon: 'place',
+      badge: { field: 'status', colors: { active: 'success', pending: 'warning' } },
+      details: [                               // label → value, small icon in front
+        { field: 'accountNumber', label: 'Account #', icon: 'tag' },
+        { field: 'phone', label: 'Phone', icon: 'call' },
+      ],
+    },
+    collections: [                             // nested lists, same options
+      {
+        id: 'services', itemLabel: 'Service', icon: 'water_drop', min: 1,
+        fields: [/* … */],
+        display: { title: 'serviceType', titleLabel: 'Service type', details: ['meterNumber', 'meterSize'] },
+      },
+      { id: 'backflows', itemLabel: 'Backflow', icon: 'plumbing', fields: [/* … */] },
+    ],
+  },
+  rules: { validation: [{ rule: 'mandatory', message: 'Add at least one customer location' }] },
+}
+```
+
+| Option | What it controls |
+| --- | --- |
+| `layout` | `cards` (top-level default) or `table` (nested default: one row per item, one column per detail; stacked rows on phones). |
+| `display` | Title / subtitle (field id, `'{a}, {b}'` template or id list), `subtitleIcon`, status `badge` (`{ field, label, colors }`), `avatar` (`none` by default), `titleLabel` (table heading of the title column), and the `details` shown as label → value — table columns too (`{ field, label, icon, span }`, `detailsLayout` `grid` · `list` · `inline`, `columns`, `minColumnWidth`, `showIcons`). Without `details`, every other field is shown. |
+| `addButton` | `position` (`header` default · `footer` · `both` · `none`), `variant` (`contained` top-level default · `outlined` nested default · `text` · `soft` · `dashed`), `icon`, `size`, `fullWidth`. |
+| `actions` | `edit` and `delete` (on by default); `duplicate`, `move` and `collapse` (opt-in). |
+| `texts` | Every label, button, aria-label and message (placeholders `{label}`, `{labelLower}`, `{plural}`, `{title}`, `{parent}`…). Nested levels inherit them, except the empty-state copy. |
+| `styles` | An MUI `sx` override per part, merged over the built-in look: `root`, `header`, `headerIcon`, `headerTitle`, `headerCount`, `headerDescription`, `error`, `list`, `addButton`, `empty`, `emptyTitle`, `emptyText`, `item`, `itemHeader`, `avatar`, `itemTitle`, `badge`, `subtitle`, `actions`, `actionButton`, `counts`, `details`, `detail`, `detailIcon`, `detailLabel`, `detailValue`, `sections`, `section`, `table`, `tableHead`, `tableHeadCell`, `tableRow`, `tableCell`, `rowActions`, `mobileRow`, `dialog`, `dialogHeader`, `dialogTitle`, `dialogDescription`, `dialogContext`, `dialogContent`, `dialogActions`, `dialogCancel`, `dialogSaveAnother`, `dialogSave`, `menu`, `menuItem`, `confirm`, `confirmTitle`, `confirmText`, `confirmCancel`, `confirmDelete`. |
+| `variant`, `color`, `icon`, `sectionColumns` | Card look (`outlined` default · `card` · `flat`), accent colour for buttons (palette name or any CSS colour), icon, and how many nested sections sit side by side (default 1). |
+| `dialog` | `maxWidth`, `description`, `addAnother`, `fullScreen` (`'mobile'` · `true` · `false`), `spacing`. |
+| `min`, `max`, `minMessage`, `maxMessage`, `confirmDelete`, `defaultCollapsed` | Validation and behaviour. |
+
+The value is plain JSON:
+`[{ customerName, address, …, services: [{ … }], backflows: [{ … }] }]`.
+It can be passed back in with `patch`. `min` / `max` are checked on submit at
+every level. The delete confirmation lists the nested items it will remove, the
+add dialog has "Save & add another", and `reviewMode` / print / PDF list every
+nested record. A complete, ready-to-use schema plus sample data is in
+[`examples/collection-customer-locations.json`](examples/collection-customer-locations.json).
+
 ### Theming
 
 Controls render under **your** MUI theme. Date/time pickers automatically match

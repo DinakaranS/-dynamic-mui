@@ -1,4 +1,4 @@
-import type { FormField, RuleExpression } from './types';
+import type { CollectionConfig, FormField, RuleExpression } from './types';
 
 /**
  * TYPED SCHEMA LAYER (additive, authoring-only)
@@ -413,6 +413,15 @@ export interface DividerField extends TypedFieldBase {
     };
 }
 
+/** Nested, dialog-edited list (e.g. Customer Locations → Services + Backflows). */
+export interface CollectionField extends TypedFieldBase {
+    type: 'collection';
+    props: CollectionConfig & {
+        value?: Record<string, any>[];
+        [k: string]: any;
+    };
+}
+
 /**
  * Catch-all — any control key still type-checks (e.g. the less-common ones in
  * `config/mui.ts`). Kept permissive on purpose so authors are never blocked.
@@ -463,6 +472,7 @@ export type TypedField =
     | TypographyField
     | ButtonField
     | DividerField
+    | CollectionField
     | GenericField;
 
 /** A complete typed form. */

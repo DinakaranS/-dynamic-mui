@@ -1,4 +1,5 @@
 import { FormField } from '../util/helper';
+import customerLocations from '../../examples/collection-customer-locations.json';
 
 export const TEMPLATES: Record<string, FormField[]> = {
     'textfield': [
@@ -488,6 +489,8 @@ export const TEMPLATES: Record<string, FormField[]> = {
             layout: { xs: 12, sm: 12 }
         }
     ],
+    // Nested, dialog-edited list: Customer Locations → Services + Backflow assemblies.
+    'collection': customerLocations.schema as FormField[],
     'signature': [
         {
             type: 'signature',
@@ -677,6 +680,7 @@ export const TOOLBOX_ITEMS = [
     { type: 'multitextbox', label: 'Multi Textbox', icon: 'playlist_add' },
     { type: 'lineitemlist', label: 'Line Item List', icon: 'receipt_long' },
     { type: 'formrepeater', label: 'Form Repeater', icon: 'dynamic_form' },
+    { type: 'collection', label: 'Nested Collection', icon: 'account_tree' },
     { type: 'signature', label: 'Signature', icon: 'draw' },
     { type: 'button', label: 'Button', icon: 'smart_button' },
     { type: 'typography', label: 'Typography', icon: 'text_format' },

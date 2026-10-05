@@ -12,6 +12,7 @@ import useUpdateEffect from '../util/useUpdateEffect';
 import val from '../util/validation';
 import { evaluateRule, computeFormula, CROSS_FIELD_VALIDATORS } from '../util/rules';
 import { FormResolver, FieldError } from '../util/resolvers';
+import { collectionIssues, collectionReviewRows } from '../util/collection';
 
 const LIBMap = { MUI: { map: mui } };
 const response: Record<string, any> = {};
@@ -136,6 +137,11 @@ const buildReviewRows = (fields: FormField[], values: Record<string, any>): { la
             if (DISPLAY_ONLY_TYPES.has(f?.type)) return;
             if (f?.visibleWhen && !evalRule(f.visibleWhen, values)) return;
             const fid = f?.id || f?.props?.id;
+            // Nested collections → one row per item, prefixed with its parent.
+            if (f?.type === 'collection') {
+                if (fid) rows.push(...collectionReviewRows(values[fid], { ...(f.props || {}), id: fid }));
+                return;
+            }
             const display = fid ? reviewDisplay(f, values[fid], values) : '';
             if (display !== '') rows.push({ label: reviewLabel(f), value: display });
             if (Array.isArray(f?.subforms)) {
@@ -312,6 +318,17 @@ const getErrors = (fields: FormField[], guid: string, requiredMsg?: string, reso
         });
         return acc;
     }, []);
+
+    // Nested `collection` fields: enforce each level's min/max (e.g. "every
+    // customer location needs at least one service"). Skipped when the field
+    // already failed a rule above, so an empty required list reports once.
+    (fields || []).forEach((field) => {
+        if (field?.type !== 'collection' || !isFieldVisible(field, values)) return;
+        const fieldId = field?.id || field?.props?.id;
+        if (!fieldId || errors.some((e: any) => e.id === fieldId)) return;
+        const issues = collectionIssues(values[fieldId], { ...(field.props || {}), id: fieldId } as any);
+        if (issues.length) errors.push({ id: fieldId, rule: 'collection', message: issues[0].message, issues });
+    });
 
     // Merge schema-resolver (Zod/Yup) errors, skipping fields hidden by
     // `visibleWhen` so an unreachable field never blocks submit.
@@ -1057,7 +1074,7 @@ export function FormGenerator({
             <Box
                 aria-live="polite"
                 sx={{
-                    position: 'absolute', width: 1, height: 1, p: 0, m: -1,
+                    position: 'absolute', width: '1px', height: '1px', p: 0, m: '-1px',
                     overflow: 'hidden', clip: 'rect(0 0 0 0)', whiteSpace: 'nowrap', border: 0,
                 }}
             >

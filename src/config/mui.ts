@@ -215,6 +215,10 @@ const mui: MuiConfigMap = {
         type: 'FormRepeater',
         map: 'FormRepeater',
     },
+    collection: {
+        type: 'Collection',
+        map: 'Collection',
+    },
     signature: {
         type: 'Signature',
         map: 'Signature',

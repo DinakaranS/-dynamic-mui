@@ -1,4 +1,5 @@
 import { DemoRecipe } from './demoRecipes';
+import customerLocations from '../../examples/collection-customer-locations.json';
 
 const hdr = (text: string): any => ({ type: 'typography', props: { text, MuiAttributes: { variant: 'subtitle1', sx: { fontWeight: 700 } } }, layout: { row: 0, xs: 12 } });
 const req = [{ rule: 'mandatory', message: 'Required' }];
@@ -150,6 +151,21 @@ const RAW_FORMS: DemoRecipe[] = [
         ],
     },
 ];
+
+// The nested collection, pre-filled with the sample customers so the cards show immediately.
+const [locationsField] = customerLocations.schema as any[];
+RAW_FORMS.push({
+    id: 'backflow-program',
+    title: 'Backflow Program — Customer Locations',
+    description: 'A nested collection: add customer locations in a pop-up form, then add multiple services and backflow assemblies under each one. Edit, duplicate, reorder or delete any record.',
+    icon: 'account_tree',
+    data: [
+        hdr('Backflow Program Enrollment'),
+        { type: 'textfield', props: { id: 'programId', value: 'BF-2026-0412', MuiAttributes: { label: 'Program ID' } }, layout: { row: 1, xs: 6 } },
+        { type: 'textfield', props: { id: 'inspector', MuiAttributes: { label: 'Cross-connection inspector' } }, layout: { row: 1, xs: 6 } },
+        { ...locationsField, props: { ...locationsField.props, value: customerLocations.patch.customerLocations }, layout: { row: 2, xs: 12 } },
+    ],
+});
 
 /** Forms with every input normalized to a consistent "label on top" style. */
 export const DEMO_FORMS: DemoRecipe[] = RAW_FORMS.map((form) => ({

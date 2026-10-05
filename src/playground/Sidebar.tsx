@@ -27,7 +27,7 @@ const readRecent = (): string[] => {
 };
 
 export const CATEGORIES: Record<string, string[]> = {
-    'Inputs': ['textfield', 'numberfield', 'numberstepper', 'password', 'phone', 'intlphone', 'currency', 'otp', 'select', 'cascadeselect', 'asyncautocomplete', 'checkbox', 'switch', 'radio', 'chipselect', 'togglebuttons', 'rating', 'slider', 'nps', 'tagsinput', 'keyvalue', 'matrix', 'editabletable', 'colorpicker', 'markdown', 'richtext', 'address', 'consent', 'autocomplete', 'multitextbox', 'lineitemlist', 'formrepeater', 'signature', 'fileupload', 'locationfield', 'geo', 'datetime', 'datetimepicker', 'daterangepicker', 'timepicker'],
+    'Inputs': ['textfield', 'numberfield', 'numberstepper', 'password', 'phone', 'intlphone', 'currency', 'otp', 'select', 'cascadeselect', 'asyncautocomplete', 'checkbox', 'switch', 'radio', 'chipselect', 'togglebuttons', 'rating', 'slider', 'nps', 'tagsinput', 'keyvalue', 'matrix', 'editabletable', 'colorpicker', 'markdown', 'richtext', 'address', 'consent', 'autocomplete', 'multitextbox', 'lineitemlist', 'formrepeater', 'collection', 'signature', 'fileupload', 'locationfield', 'geo', 'datetime', 'datetimepicker', 'daterangepicker', 'timepicker'],
     'Layout': ['group', 'accordion', 'tabs', 'divider', 'formwizard'],
     'Display': ['typography', 'datatable', 'chip', 'list', 'imagelist', 'hyperlink', 'alert', 'computed', 'summary'],
     'Actions': ['button'],
