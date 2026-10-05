@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-cycle
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useRef } from 'react';
 import {
     Box,
     TextField,
@@ -38,23 +38,26 @@ export default function FormRepeater({ attributes = {}, rules = {}, onChange }: 
     const [count, setCount] = useState<number>(initialCount);
 
     /**
-     * Generate one stable guid per group index for the lifetime of this component.
-     * We allocate up to max (or a generous ceiling) so guids don't change when count grows.
+     * One stable guid per group index, allocated lazily and grown on demand so
+     * the count can exceed any pre-sized ceiling without collisions. Previously a
+     * fixed ceiling of 20 meant every group beyond it shared the guid
+     * `${id}-group-undefined`, colliding their FormData stores and React keys.
      */
-    const guids = useMemo(() => {
-        const ceiling = max ?? Math.max(count, 20);
-        return Array.from({ length: ceiling }, () => uuidv4());
-    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    const guidsRef = useRef<string[]>([]);
+    const guidFor = useCallback((i: number) => {
+        if (!guidsRef.current[i]) guidsRef.current[i] = uuidv4();
+        return guidsRef.current[i];
+    }, []);
 
     /** Notify parent with the current values from all groups */
     const emitChange = useCallback((currentCount: number) => {
         if (!onChange) return;
         const value = Array.from({ length: currentCount }, (_, i) => {
-            const groupGuid = `${id}-group-${guids[i]}`;
+            const groupGuid = `${id}-group-${guidFor(i)}`;
             return FormData(groupGuid) ?? {};
         });
         onChange({ id, value });
-    }, [id, guids, onChange]);
+    }, [id, guidFor, onChange]);
 
     const handleCountChange = (raw: string) => {
         let next = parseInt(raw, 10);
@@ -75,8 +78,8 @@ export default function FormRepeater({ attributes = {}, rules = {}, onChange }: 
                 value={count}
                 onChange={(e) => handleCountChange(e.target.value)}
                 required={isMandatory}
+                sx={{ mb: 2, minWidth: 200 }}
                 slotProps={{
-                    htmlInput: { min, ...(max !== undefined ? { max } : {}) },
                     input: {
                         startAdornment: (
                             <InputAdornment position="start">
@@ -84,19 +87,21 @@ export default function FormRepeater({ attributes = {}, rules = {}, onChange }: 
                             </InputAdornment>
                         ),
                     },
-                }}
-                sx={{ mb: 2, minWidth: 200 }}
-            />
+
+                    htmlInput: { min, ...(max !== undefined ? { max } : {}) }
+                }} />
 
             {/* ── Dynamic groups ──────────────────────────────── */}
             {Array.from({ length: count }, (_, i) => {
-                const groupGuid = `${id}-group-${guids[i]}`;
+                const groupGuid = `${id}-group-${guidFor(i)}`;
                 const groupPatch = Array.isArray(patchValue) ? patchValue[i] : undefined;
 
                 return (
                     <Accordion key={groupGuid} defaultExpanded={i === 0} sx={{ mb: 1 }}>
                         <AccordionSummary expandIcon={<Icon>expand_more</Icon>}>
-                            <Typography sx={{ fontWeight: 600 }}>
+                            <Typography sx={{
+                                fontWeight: 600
+                            }}>
                                 {label} {i + 1}
                             </Typography>
                         </AccordionSummary>

@@ -5,6 +5,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import { checkboxSX, getInputProps } from '../../../util/helper';
+import { premiumInputSx, mergeSx } from '../../../util/premiumStyles';
 import { ControlProps } from '../../../types';
 import useUpdateEffect from '../../../util/useUpdateEffect';
 
@@ -46,7 +47,7 @@ const getValue = (options: any[] = [], defaultValue: any = '', isMultiple = fals
     }
 };
 
-export default function Select({ attributes = {}, rules = {}, onChange }: ControlProps) {
+export default function Select({ attributes = {}, rules = {}, onChange, submitTick, messages }: ControlProps) {
     const {
         MuiAttributes = {},
         options = [],
@@ -54,17 +55,21 @@ export default function Select({ attributes = {}, rules = {}, onChange }: Contro
         id = '',
         InputProps = {},
     } = attributes;
+    const { sx: boxSx, ...restBox } = MuiBoxAttributes;
+    // Never resolve to `undefined` (e.g. a patched value not yet present in
+    // `options` while they load async) — that flips Autocomplete to uncontrolled.
+    const empty = MuiAttributes.multiple ? [] : null;
     const [value, setValue] = React.useState(() =>
         attributes?.value
-            ? getValue(options, attributes?.value, MuiAttributes.multiple, attributes?.separator)
-            : MuiAttributes.multiple ? [] : null,
+            ? (getValue(options, attributes?.value, MuiAttributes.multiple, attributes?.separator) ?? empty)
+            : empty,
     );
 
     useUpdateEffect(() => {
         setValue(
             attributes?.value
-                ? getValue(options, attributes?.value, MuiAttributes.multiple, attributes?.separator)
-                : MuiAttributes.multiple ? [] : null
+                ? (getValue(options, attributes?.value, MuiAttributes.multiple, attributes?.separator) ?? empty)
+                : empty
         );
     }, [attributes?.value, options]);
 
@@ -83,7 +88,7 @@ export default function Select({ attributes = {}, rules = {}, onChange }: Contro
                     const isEmpty = !val || (Array.isArray(val) && val.length === 0);
                     if (isEmpty) {
                         isValid = false;
-                        msg = rule.message || 'Required';
+                        msg = rule.message || messages?.required || 'Required';
                         break;
                     }
                 }
@@ -93,21 +98,33 @@ export default function Select({ attributes = {}, rules = {}, onChange }: Contro
         return { isValid, message: msg };
     };
 
+    useUpdateEffect(() => {
+        if (submitTick) {
+            const v = validate(value);
+            setError(!v.isValid);
+            setHelperText(v.message);
+        }
+    }, [submitTick]);
+
     const getMuiAttributes = () => {
-        // ... (existing logic)
+        // Return a NEW object for the multi-select case — never mutate the
+        // prop-derived `MuiAttributes` in place (impure render + lint error).
         if (MuiAttributes.multiple) {
-            MuiAttributes.renderOption = (props: React.HTMLAttributes<HTMLLIElement>, option: any = {}, { selected }: any) => (
-                <li {...props}>
-                    <Checkbox
-                        icon={icon}
-                        checkedIcon={checkedIcon}
-                        style={{ marginRight: 8 }}
-                        checked={selected}
-                        sx={checkboxSX(option.color || '')}
-                    />
-                    {option.title || option.label || option.value}
-                </li>
-            );
+            return {
+                ...MuiAttributes,
+                renderOption: (props: React.HTMLAttributes<HTMLLIElement>, option: any = {}, { selected }: any) => (
+                    <li {...props}>
+                        <Checkbox
+                            icon={icon}
+                            checkedIcon={checkedIcon}
+                            style={{ marginRight: 8 }}
+                            checked={selected}
+                            sx={checkboxSX(option.color || '')}
+                        />
+                        {option.title || option.label || option.value}
+                    </li>
+                ),
+            };
         }
         return MuiAttributes;
     };
@@ -183,40 +200,39 @@ export default function Select({ attributes = {}, rules = {}, onChange }: Contro
             renderInput={(params) => {
                 // Ensure custom adornments are incorporated without overriding other essential props
                 const customInputProps = getInputProps(InputProps);
-                // MUI v9: AutocompleteRenderInputParams exposes slotProps.input instead of InputProps
-                // Fall back to the older InputProps for compatibility with v5-v8
-                const paramsInput: any = (params as any).slotProps?.input || (params as any).InputProps || {};
                 const mergedInputProps = {
-                    ...paramsInput,
+                    ...params.slotProps.input,
                     ...customInputProps,
                     startAdornment: (
                         <>
                             {customInputProps?.startAdornment}
-                            {paramsInput.startAdornment}
+                            {params.slotProps.input.startAdornment}
                         </>
                     ),
                     endAdornment: (
                         <>
                             {customInputProps?.endAdornment}
-                            {paramsInput.endAdornment}
+                            {params.slotProps.input.endAdornment}
                         </>
                     ),
                 };
 
-                const paramsSlotProps: any = (params as any).slotProps || {};
                 return (
                     <TextField
                         {...params}
-                        {...MuiBoxAttributes}
+                        {...restBox}
+                        id={id}
+                        sx={mergeSx(premiumInputSx as any, boxSx)}
                         required={isMandatory}
                         error={error}
                         helperText={helperText}
                         slotProps={{
-                            ...paramsSlotProps,
+                            ...params.slotProps,
+
                             input: {
                                 ...mergedInputProps,
                                 autoComplete: 'new-password',
-                            },
+                            }
                         }}
                     />
                 );

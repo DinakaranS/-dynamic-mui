@@ -84,8 +84,15 @@ export default function LineItemList({ attributes = {}, rules = {}, onChange }: 
         keyPrefix: propKeyPrefix = 'item',
         /** Set to false to hide the row number badge. Defaults to true. */
         showRowBadge = true,
+        /** Set to true to render the Description/Fee fields as read-only and hide the Add/Remove buttons. */
+        readOnly = false,
+        /** Set to false to hide the Add/Remove buttons while keeping fields editable. Defaults to true. */
+        showActions = true,
         MuiAttributes = {} as LineItemMuiAttributes,
     } = attributes;
+
+    // Action buttons are hidden when read-only, or when explicitly turned off.
+    const showActionButtons = showActions && !readOnly;
 
     const {
         row: rowProps = {},
@@ -194,7 +201,9 @@ export default function LineItemList({ attributes = {}, rules = {}, onChange }: 
                         value={item.description}
                         onChange={(e) => handleDescriptionChange(index, e.target.value)}
                         {...descriptionProps}
-                    />
+                        slotProps={{
+                            input: { readOnly }
+                        }} />
 
                     {/* Fee amount textbox */}
                     <TextField
@@ -205,37 +214,41 @@ export default function LineItemList({ attributes = {}, rules = {}, onChange }: 
                         required={isMandatory}
                         value={item.fee}
                         onChange={(e) => handleFeeChange(index, e.target.value)}
+                        onWheel={(e) => (e.target as HTMLElement).blur()}
+                        {...feeProps}
                         slotProps={{
                             input: {
+                                readOnly,
                                 startAdornment: <InputAdornment position="start">$</InputAdornment>,
                             },
-                            htmlInput: { min: 0, step: 0.01 },
-                        }}
-                        {...feeProps}
-                    />
 
-                    {/* Add / Remove buttons */}
-                    {index === items.length - 1 ? (
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            onClick={handleAdd}
-                            sx={{ minWidth: 40, px: 1, height: 40, flexShrink: 0 }}
-                            title="Add row"
-                            {...addButtonProps}
-                        >
-                            <Icon>add</Icon>
-                        </Button>
-                    ) : (
-                        <IconButton
-                            color="error"
-                            onClick={() => handleRemove(index)}
-                            sx={{ height: 40, flexShrink: 0 }}
-                            title="Remove row"
-                            {...removeButtonProps}
-                        >
-                            <Icon>delete</Icon>
-                        </IconButton>
+                            htmlInput: { min: 0, step: 0.01 }
+                        }} />
+
+                    {/* Add / Remove buttons — hidden when read-only or showActions is false */}
+                    {showActionButtons && (
+                        index === items.length - 1 ? (
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={handleAdd}
+                                sx={{ minWidth: 40, px: 1, height: 40, flexShrink: 0 }}
+                                title="Add row"
+                                {...addButtonProps}
+                            >
+                                <Icon>add</Icon>
+                            </Button>
+                        ) : (
+                            <IconButton
+                                color="error"
+                                onClick={() => handleRemove(index)}
+                                sx={{ height: 40, flexShrink: 0 }}
+                                title="Remove row"
+                                {...removeButtonProps}
+                            >
+                                <Icon>delete</Icon>
+                            </IconButton>
+                        )
                     )}
                 </Box>
             ))}

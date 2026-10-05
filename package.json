@@ -1,6 +1,6 @@
 {
   "name": "dynamic-mui",
-  "version": "4.0.2",
+  "version": "2.5.1",
   "author": "Dinakaran S",
   "user": "dinakarans",
   "repository": {
@@ -11,41 +11,65 @@
   "bugs": {
     "url": "https://github.com/DinakaranS/-dynamic-mui/issues"
   },
-  "main": "./dist/dynamic-mui.cjs.js",
-  "module": "./dist/dynamic-mui.es.js",
+  "main": "./dist/dynamic-mui.cjs",
+  "module": "./dist/dynamic-mui.mjs",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/dynamic-mui.es.js",
-      "require": "./dist/dynamic-mui.cjs.js"
+      "import": "./dist/dynamic-mui.mjs",
+      "require": "./dist/dynamic-mui.cjs"
+    },
+    "./ai": {
+      "types": "./dist/ai/index.d.ts",
+      "import": "./dist/ai/index.mjs",
+      "require": "./dist/ai/index.cjs"
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "!dist/playground"
   ],
   "peerDependencies": {
+    "@aws-sdk/client-s3": "^3.0.0",
+    "@aws-sdk/credential-providers": "^3.0.0",
     "@emotion/react": "^11.0.0",
     "@emotion/styled": "^11.0.0",
-    "@mui/icons-material": "^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0 || ^9.0.0",
-    "@mui/material": "^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0 || ^9.0.0",
+    "@mui/icons-material": "^5.0.0 || ^6.0.0 || ^7.0.0 || ^9.0.0",
+    "@mui/material": "^5.0.0 || ^6.0.0 || ^7.0.0 || ^9.0.0",
     "@mui/x-charts": "^6.0.0 || ^7.0.0 || ^8.0.0 || ^9.0.0",
     "@mui/x-data-grid": "^6.0.0 || ^7.0.0 || ^8.0.0 || ^9.0.0",
     "@mui/x-date-pickers": "^6.0.0 || ^7.0.0 || ^8.0.0 || ^9.0.0",
+    "dayjs": "^1.11.0",
+    "pdfmake": "^0.2.0 || ^0.3.0",
     "react": "^18.0.0 || ^19.0.0",
     "react-dom": "^18.0.0 || ^19.0.0"
   },
+  "peerDependenciesMeta": {
+    "@aws-sdk/client-s3": {
+      "optional": true
+    },
+    "@aws-sdk/credential-providers": {
+      "optional": true
+    },
+    "@mui/x-charts": {
+      "optional": true
+    },
+    "@mui/x-data-grid": {
+      "optional": true
+    },
+    "pdfmake": {
+      "optional": true
+    }
+  },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.1034.0",
-    "@aws-sdk/credential-providers": "^3.1034.0",
     "@dnd-kit/core": "^6.3.1",
-    "dayjs": "^1.11.20",
-    "lodash": "^4.18.1",
+    "lodash": "^4.17.23",
     "numeral": "^2.0.6",
-    "react-number-format": "^5.4.5",
+    "react-number-format": "^5.4.4",
     "react-signature-canvas": "^1.1.0-alpha.2",
     "uuid": "^13.0.0",
-    "validator": "^13.15.35"
+    "validator": "^13.15.26"
   },
   "scripts": {
     "dev": "vite",
@@ -54,7 +78,7 @@
     "lint": "eslint . --max-warnings 0",
     "preview": "vite preview",
     "test": "vitest run",
-    "prepublishOnly": "yarn run build"
+    "prepublishOnly": "yarn run lint && yarn run test && yarn run build"
   },
   "browserslist": {
     "production": [
@@ -68,41 +92,44 @@
       "last 1 safari version"
     ]
   },
-  "resolutions": {
-    "vite": "^7.3.2"
-  },
   "devDependencies": {
+    "@aws-sdk/client-s3": "^3.996.0",
+    "@aws-sdk/credential-providers": "^3.996.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@eslint/js": "^10.0.1",
-    "@mui/icons-material": "^9.0.0",
-    "@mui/material": "^9.0.0",
-    "@mui/x-charts": "^9.0.2",
-    "@mui/x-data-grid": "^9.0.2",
-    "@mui/x-date-pickers": "^9.0.2",
+    "@mui/icons-material": "^9.3.1",
+    "@mui/material": "^9.3.1",
+    "@mui/x-charts": "^9.12.0",
+    "@mui/x-data-grid": "^9.12.0",
+    "@mui/x-date-pickers": "^9.12.0",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
+    "@types/jest-axe": "^3.5.9",
     "@types/lodash": "^4.17.24",
     "@types/numeral": "^2.0.5",
+    "@types/pdfmake": "^0.3.3",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@types/validator": "^13.15.10",
+    "dayjs": "^1.11.19",
     "@vitejs/plugin-react": "^5.1.4",
-    "ajv": "^8.18.0",
-    "eslint": "^10.2.1",
+    "eslint": "^10.0.2",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-react": "^7.37.5",
-    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.5.2",
-    "globals": "^17.5.0",
-    "jsdom": "^29.0.2",
-    "react": "^19.2.5",
-    "react-dom": "^19.2.5",
-    "typescript": "^6.0.3",
-    "typescript-eslint": "^8.59.0",
-    "vite": "^7.3.2",
+    "globals": "^17.3.0",
+    "jest-axe": "^10.0.0",
+    "jsdom": "^28.1.0",
+    "pdfmake": "^0.3.11",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.56.1",
+    "vite": "^7.3.1",
     "vite-plugin-dts": "^4.5.4",
-    "vitest": "^4.1.5"
+    "vitest": "^4.0.18"
   }
 }

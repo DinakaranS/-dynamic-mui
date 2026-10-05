@@ -7,7 +7,7 @@ interface ValidationUtils {
     [key: string]: ValidationFunction;
 }
 
-const Validation: ValidationUtils = {
+const RawValidation: ValidationUtils = {
     email(value: string, options?: validator.IsEmailOptions) {
         return validator.isEmail(value, options);
     },
@@ -15,10 +15,14 @@ const Validation: ValidationUtils = {
         return validator.equals(value, comparison);
     },
     mandatory(value: string) {
-        return !validator.isEmpty(value);
+        // Coerce non-strings (e.g. boolean false / numbers) so validator.isEmpty
+        // never throws, and treat whitespace-only as empty.
+        const str = value == null ? '' : String(value);
+        return !validator.isEmpty(str, { ignore_whitespace: true });
     },
     mandatoryselect(value: string) {
-        return value.length > 0;
+        // Guard null/undefined and non-array/string values instead of throwing.
+        return (value?.length ?? 0) > 0;
     },
     mobile(value: string, locale?: validator.MobilePhoneLocale) {
         return validator.isMobilePhone(value, locale);
@@ -96,8 +100,32 @@ const Validation: ValidationUtils = {
         return validator.isAlpha(value, locale);
     },
     negative(value: string) {
-        return (numeral(value).value() || 0) > -1;
+        // Non-numeric input is invalid (previously `null || 0` let junk pass as valid).
+        const n = numeral(value).value();
+        return n != null && n > -1;
     },
 };
+
+// validator.js internally `assertString(value)`s and THROWS on any non-string
+// input (a number, boolean, null, undefined). A control can validate a
+// schema-provided numeric/boolean value, so coerce the value to a string for
+// every validator.js-backed rule, and wrap each in a safety net so a validator
+// can never throw out into React's render/effect path. The rules below manage
+// their own (non-string) inputs, so they pass through untouched.
+const SELF_HANDLED = new Set(['mandatory', 'mandatoryselect', 'negative']);
+const toStr = (v: any): string => (v == null ? '' : typeof v === 'string' ? v : String(v));
+
+const Validation: ValidationUtils = Object.fromEntries(
+    Object.entries(RawValidation).map(([key, fn]) => {
+        if (SELF_HANDLED.has(key)) return [key, fn];
+        return [key, (value: any, ...args: any[]) => {
+            try {
+                return fn(toStr(value), ...args);
+            } catch {
+                return false; // never throw out of a validator
+            }
+        }];
+    }),
+);
 
 export default Validation;

@@ -5,6 +5,7 @@ import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
 import { alpha, styled } from '@mui/material/styles';
 import useUpdateEffect from '../../../util/useUpdateEffect';
+import { premiumControlLabelSx, premiumSwitchSx, mergeSx } from '../../../util/premiumStyles';
 import { ControlProps } from '../../../types';
 
 interface StyledSwitchProps extends Omit<SwitchProps, 'color'> {
@@ -25,7 +26,7 @@ const ColorSwitch = styled(({ color, ...other }: StyledSwitchProps) => <MuiSwitc
 }));
 
 /** Switch Component */
-export default function Switch({ attributes = {}, rules = {}, onChange }: ControlProps) {
+export default function Switch({ attributes = {}, rules = {}, onChange, submitTick, messages }: ControlProps) {
     const { MuiAttributes = {}, MuiFCLAttributes = {}, color = '', id = '' } = attributes;
 
     const [checked, setChecked] = React.useState<boolean>(
@@ -48,7 +49,7 @@ export default function Switch({ attributes = {}, rules = {}, onChange }: Contro
                 if (rule.rule === 'mandatory') {
                     if (!isChecked) {
                         isValid = false;
-                        msg = rule.message || 'Required';
+                        msg = rule.message || messages?.required || 'Required';
                         break;
                     }
                 }
@@ -56,6 +57,14 @@ export default function Switch({ attributes = {}, rules = {}, onChange }: Contro
         }
         return { isValid, message: msg };
     };
+
+    useUpdateEffect(() => {
+        if (submitTick) {
+            const v = validate(checked);
+            setError(!v.isValid);
+            setHelperText(v.message);
+        }
+    }, [submitTick]);
 
     const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
         const isChecked = event.target.checked;
@@ -71,9 +80,9 @@ export default function Switch({ attributes = {}, rules = {}, onChange }: Contro
     const MSwitch = color ? ColorSwitch : MuiSwitch;
 
     // Extract defaultChecked to avoid passing it to a controlled component
-    const { defaultChecked, ...otherMuiAttributes } = MuiAttributes;
+    const { defaultChecked, sx: muiSx, ...otherMuiAttributes } = MuiAttributes;
 
-    const { label, ...otherFCLAttributes } = MuiFCLAttributes;
+    const { label, sx: fclSx, ...otherFCLAttributes } = MuiFCLAttributes;
     const finalLabel = isMandatory ? (
         <span>
             {label}
@@ -93,15 +102,18 @@ export default function Switch({ attributes = {}, rules = {}, onChange }: Contro
             <FormControlLabel
                 {...otherFCLAttributes}
                 label={finalLabel}
+                sx={mergeSx(premiumControlLabelSx as any, fclSx)}
                 control={
                     <MSwitch
+                        id={id}
                         checked={checked}
                         onChange={handleChange}
                         required={isMandatory}
                         {...otherMuiAttributes}
                         // @ts-ignore
                         {...switchColorProp}
-                        slotProps={{ input: { 'aria-label': 'controlled' } }}
+                        sx={mergeSx(premiumSwitchSx as any, muiSx)}
+                        inputProps={{ 'aria-label': 'controlled' }}
                     />
                 }
             />

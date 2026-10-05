@@ -1,3 +1,4 @@
+// Per-method imports so bundlers pull in only these functions, not all of lodash.
 import remove from 'lodash/remove';
 import clone from 'lodash/clone';
 import map from 'lodash/map';
@@ -6,7 +7,9 @@ import sortBy from 'lodash/sortBy';
 import each from 'lodash/each';
 import cloneDeep from 'lodash/cloneDeep';
 import isEmpty from 'lodash/isEmpty';
+import { v4 as uuidv4 } from 'uuid';
 import { Icon, InputAdornment } from '@mui/material';
+import { getMuiX } from './muiX';
 import {
     DatePicker,
     MobileDatePicker,
@@ -22,40 +25,13 @@ import {
     MobileTimePicker,
 } from '@mui/x-date-pickers';
 import { CSSProperties } from 'react';
+// Single source of truth for the schema types (re-exported for back-compat:
+// existing code imports FormField/LayoutConfig from this module).
+import type { FormField } from '../types';
+
+export type { FormField, LayoutConfig } from '../types';
 
 // --- Types ---
-export interface LayoutConfig {
-    row?: number;
-    xs?: number;
-    sm?: number;
-    md?: number;
-    lg?: number;
-    xl?: number;
-    size?: any;
-    [key: string]: any;
-}
-
-export interface FormField {
-    id?: string;
-    type?: string;
-    layout?: LayoutConfig;
-    props?: {
-        id?: string;
-        value?: any;
-        MuiAttributes?: Record<string, any>;
-        [key: string]: any;
-    };
-    visible?: boolean;
-    style?: CSSProperties;
-    className?: string;
-    rules?: any;
-    subforms?: {
-        conditionValue: any;
-        data: FormField[];
-    }[];
-    [key: string]: any;
-}
-
 export interface LayoutResult {
     wrows: FormField[][];
     worows: FormField[];
@@ -137,12 +113,7 @@ export function getInputProps(InputProps: InputPropsConfig) {
     return {};
 }
 
-export const generateKey = (prefix = '', index = 0): string => {
-    const random = Math.random().toString(36).substr(2, 9);
-    const currentTime = new Date().toLocaleTimeString('en').trim();
-
-    return `${prefix}_${index}_${random}_${currentTime}`;
-};
+export const generateKey = (prefix = '', index = 0): string => `${prefix}_${index}_${uuidv4()}`;
 
 function isEmptyCustom(value: any): boolean {
     return (
@@ -170,21 +141,35 @@ export const updatePatchData = (
     enableDisableIds: EnableDisableConfig[] = [],
 ): FormField[] => {
     try {
-        // Update response with the patch for the provided GUID
-
-        response[guid] = patch;
+        // Update response with the patch for the provided GUID.
+        // Merge (don't replace) so values already in the response — earlier
+        // patches and user edits — survive when a later, partial patch arrives.
+        // Replacing wholesale wiped every field not present in the new patch.
+        response[guid] = { ...response[guid], ...patch };
 
         // Map and update fields with response data
         const updatedFields = map(fields, (field: any) => {
             const newField = cloneDeep(field);
             const id = newField?.id || newField?.props?.id;
 
-            if (id && response[guid] && !isEmptyCustom(response[guid][id])) {
-                const defaultValue = ['switch', 'checkbox'].includes(newField?.type || '') ? false : '';
-                newField.props = {
-                    ...newField.props,
-                    value: response[guid][id] === undefined ? defaultValue : response[guid][id],
-                };
+            if (id && response[guid]) {
+                // Seed the store from a value declared directly in the schema
+                // (props.value) when the store has nothing for this field yet.
+                // Without this, a schema-provided initial value is *displayed* by
+                // the control but never lands in the response, so submit/FormData
+                // report it as empty until the user edits the field. `patch` and
+                // prior user edits already in the store take precedence.
+                const schemaValue = newField?.props?.value;
+                if (isEmptyCustom(response[guid][id]) && !isEmptyCustom(schemaValue)) {
+                    response[guid][id] = schemaValue;
+                }
+
+                if (!isEmptyCustom(response[guid][id])) {
+                    newField.props = {
+                        ...newField.props,
+                        value: response[guid][id],
+                    };
+                }
             }
             return newField;
         });
@@ -239,6 +224,9 @@ export const updatePatchData = (
 };
 
 export const DateComponent = (name: string): any => {
+    // A Pro picker configured via configureMuiX({ [name]: … }) wins.
+    const override = getMuiX(name);
+    if (override) return override;
     if (name === 'MobileDatePicker') return MobileDatePicker;
     if (name === 'DesktopDatePicker') return DesktopDatePicker;
     // if (name === 'DateRangePicker') return DateRangePicker;
@@ -251,118 +239,6 @@ export const DateComponent = (name: string): any => {
     if (name === 'MobileTimePicker') return MobileTimePicker;
     if (name === 'DesktopTimePicker') return DesktopTimePicker;
     return DatePicker;
-};
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Legacy MUI prop migration (pre-v9 → v9+)
-// ─────────────────────────────────────────────────────────────────────────────
-// Forms authored against MUI v5-v8 use prop names that were renamed/moved in
-// v9 (InputProps → slotProps.input, primaryTypographyProps → slotProps.primary,
-// Typography fontWeight/paragraph → sx). This migrator is a no-op on already-
-// current JSON, so it's safe to run unconditionally on incoming form data.
-
-const TYPOGRAPHY_DIRECT_TO_SX_KEYS = ['fontWeight', 'fontSize', 'fontStyle', 'fontFamily'];
-
-const migrateMuiAttributes = (attrs: any): any => {
-    if (!attrs || typeof attrs !== 'object') return attrs;
-    const out: any = { ...attrs };
-
-    // TextField-style: InputProps / inputProps → slotProps.{input, htmlInput}
-    if (out.InputProps || out.inputProps) {
-        const existingSlot = out.slotProps || {};
-        const nextSlot: any = { ...existingSlot };
-        if (out.InputProps) {
-            nextSlot.input = { ...(existingSlot.input || {}), ...out.InputProps };
-            delete out.InputProps;
-        }
-        if (out.inputProps) {
-            nextSlot.htmlInput = { ...(existingSlot.htmlInput || {}), ...out.inputProps };
-            delete out.inputProps;
-        }
-        out.slotProps = nextSlot;
-    }
-
-    // ListItemText: primaryTypographyProps / secondaryTypographyProps → slotProps.{primary, secondary}
-    if (out.primaryTypographyProps || out.secondaryTypographyProps) {
-        const existingSlot = out.slotProps || {};
-        const nextSlot: any = { ...existingSlot };
-        if (out.primaryTypographyProps) {
-            // Typography props were flattened; move fontWeight/etc into sx inside the slot
-            const p = out.primaryTypographyProps;
-            const sx: any = { ...(p.sx || {}) };
-            const rest: any = {};
-            Object.keys(p).forEach((k) => {
-                if (TYPOGRAPHY_DIRECT_TO_SX_KEYS.includes(k)) sx[k] = p[k];
-                else if (k !== 'sx') rest[k] = p[k];
-            });
-            nextSlot.primary = { ...(existingSlot.primary || {}), ...rest, sx };
-            delete out.primaryTypographyProps;
-        }
-        if (out.secondaryTypographyProps) {
-            const p = out.secondaryTypographyProps;
-            const sx: any = { ...(p.sx || {}) };
-            const rest: any = {};
-            Object.keys(p).forEach((k) => {
-                if (TYPOGRAPHY_DIRECT_TO_SX_KEYS.includes(k)) sx[k] = p[k];
-                else if (k !== 'sx') rest[k] = p[k];
-            });
-            nextSlot.secondary = { ...(existingSlot.secondary || {}), ...rest, sx };
-            delete out.secondaryTypographyProps;
-        }
-        out.slotProps = nextSlot;
-    }
-
-    // Typography direct props → sx; `paragraph` → sx.mb fallback
-    if (TYPOGRAPHY_DIRECT_TO_SX_KEYS.some((k) => k in out) || 'paragraph' in out) {
-        const sx: any = { ...(out.sx || {}) };
-        TYPOGRAPHY_DIRECT_TO_SX_KEYS.forEach((k) => {
-            if (k in out) {
-                sx[k] = out[k];
-                delete out[k];
-            }
-        });
-        if ('paragraph' in out) {
-            if (out.paragraph) sx.mb = sx.mb ?? 2;
-            delete out.paragraph;
-        }
-        out.sx = sx;
-    }
-
-    return out;
-};
-
-export const migrateFormField = (field: any): any => {
-    if (!field || typeof field !== 'object') return field;
-    const migrated: any = { ...field };
-    const props = migrated.props || {};
-    migrated.props = {
-        ...props,
-        ...(props.MuiAttributes ? { MuiAttributes: migrateMuiAttributes(props.MuiAttributes) } : {}),
-    };
-    // Recurse into stepper steps
-    if (migrated.type === 'stepper' && Array.isArray(migrated.props?.MuiSteps)) {
-        migrated.props.MuiSteps = migrated.props.MuiSteps.map((step: any) => ({
-            ...step,
-            components: Array.isArray(step.components) ? step.components.map(migrateFormField) : step.components,
-        }));
-    }
-    // Recurse into subforms
-    if (Array.isArray(migrated.subforms)) {
-        migrated.subforms = migrated.subforms.map((sub: any) => ({
-            ...sub,
-            data: Array.isArray(sub.data) ? sub.data.map(migrateFormField) : sub.data,
-        }));
-    }
-    // Recurse into nested fields (Group, Accordion, Tabs, FormRepeater, etc.)
-    if (Array.isArray(migrated.props?.subFields)) {
-        migrated.props.subFields = migrated.props.subFields.map(migrateFormField);
-    }
-    return migrated;
-};
-
-export const migrateFormData = (data: any[]): any[] => {
-    if (!Array.isArray(data)) return data;
-    return data.map(migrateFormField);
 };
 
 export const checkboxSX = (color?: string): CSSProperties | any => {
@@ -383,6 +259,4 @@ export default {
     updatePatchData,
     DateComponent,
     checkboxSX,
-    migrateFormData,
-    migrateFormField,
 };

@@ -1,21 +1,15 @@
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
-import { fromCognitoIdentityPool } from '@aws-sdk/credential-providers';
-
 /**
  * Converts a base64 Data URL to a Blob
  * @param dataurl
  * @returns
  */
-function dataURLtoBlob(dataurl: string): Blob {
-    const arr = dataurl.split(',');
-    if (arr.length < 2) {
-        throw new Error('Invalid data URL: missing payload');
+function dataURLtoBlob(dataurl: string) {
+    const arr = (dataurl || '').split(',');
+    const m = arr[0]?.match(/:(.*?);/);
+    if (arr.length < 2 || !m) {
+        throw new Error('uploadToS3: expected a base64 data URL (e.g. "data:image/png;base64,…").');
     }
-    const mimeMatch = arr[0].match(/:(.*?);/);
-    if (!mimeMatch) {
-        throw new Error('Invalid data URL: missing MIME type');
-    }
-    const mime = mimeMatch[1];
+    const mime = m[1];
     const bstr = atob(arr[1]);
     let n = bstr.length;
     const u8arr = new Uint8Array(n);
@@ -40,37 +34,63 @@ function dataURLtoBlob(dataurl: string): Blob {
  */
 export async function uploadToS3(dataUrl: string, fileName: string, bucket: string, region: string, identityPoolId: string, path: string = ''): Promise<string> {
     if (!identityPoolId || !bucket || !region) {
+        console.warn("Missing AWS Config (Pool ID, Bucket, or Region). Returning data URL as fallback.");
         return dataUrl; // fallback to data URL if no S3 config
     }
 
-    const s3Client = new S3Client({
-        region,
-        credentials: fromCognitoIdentityPool({
-            clientConfig: { region },
-            identityPoolId,
-        }),
-        requestChecksumCalculation: 'WHEN_REQUIRED',
-        forcePathStyle: true,
-    });
+    try {
+        // Loaded on demand so the (heavy) AWS SDK is only pulled into the bundle
+        // when an app actually uploads — not for every consumer of this library.
+        // It's an OPTIONAL peer, so surface a clear install message if it's absent.
+        let clientS3: any; let credProviders: any;
+        try {
+            [clientS3, credProviders] = await Promise.all([
+                import('@aws-sdk/client-s3'),
+                import('@aws-sdk/credential-providers'),
+            ]);
+        } catch {
+            throw new Error('uploadToS3 needs the optional AWS SDK. Install it with: npm i @aws-sdk/client-s3 @aws-sdk/credential-providers');
+        }
+        const { S3Client, PutObjectCommand } = clientS3;
+        const { fromCognitoIdentityPool } = credProviders;
 
-    const blob = dataURLtoBlob(dataUrl);
+        const s3Client = new S3Client({
+            region: region,
+            credentials: fromCognitoIdentityPool({
+                clientConfig: { region: region },
+                identityPoolId: identityPoolId,
+            }),
+            requestChecksumCalculation: 'WHEN_REQUIRED',
+            forcePathStyle: true,
+        });
 
-    let basePath = path.trim();
-    if (basePath && !basePath.endsWith('/')) {
-        basePath += '/';
+        const blob = dataURLtoBlob(dataUrl);
+
+        let basePath = path.trim();
+        if (basePath && !basePath.endsWith('/')) {
+            basePath += '/';
+        }
+        const key = basePath ? `${basePath}${fileName}` : `signatures/${fileName}`;
+
+        const command = new PutObjectCommand({
+            Bucket: bucket,
+            Key: key,
+            Body: blob,
+            ContentType: blob.type,
+            // Depending on your bucket policy, you might need ACL: 'public-read'
+            // ACL: 'public-read',
+        });
+
+        await s3Client.send(command);
+
+        // IMPORTANT: `bucket` is a CloudFront / Route 53 custom domain (a CNAME to
+        // the S3 bucket), NOT a raw bucket name. The public URL must therefore be
+        // `https://{bucket}/{key}` so it resolves through CloudFront to the
+        // user-visible asset. Do NOT rewrite this to an s3.amazonaws.com URL.
+        const objectUrl = `https://${bucket}/${key}`;
+        return objectUrl;
+    } catch (error) {
+        console.error("Error uploading to S3:", error);
+        throw error;
     }
-    const key = basePath ? `${basePath}${fileName}` : `signatures/${fileName}`;
-
-    const command = new PutObjectCommand({
-        Bucket: bucket,
-        Key: key,
-        Body: blob,
-        ContentType: blob.type,
-    });
-
-    await s3Client.send(command);
-
-    // forcePathStyle: true → https://s3.<region>.amazonaws.com/<bucket>/<key>
-    const encodedKey = key.split('/').map(encodeURIComponent).join('/');
-    return `https://s3.${region}.amazonaws.com/${bucket}/${encodedKey}`;
 }

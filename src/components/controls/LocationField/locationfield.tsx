@@ -6,11 +6,12 @@ import Box from '@mui/material/Box';
 import { Icon } from '@mui/material';
 import { getInputProps } from '../../../util/helper';
 import Validation from '../../../util/validation';
+import useUpdateEffect from '../../../util/useUpdateEffect';
 import { ControlProps } from '../../../types';
 
 type ButtonDisplay = 'text' | 'icon' | 'both';
 
-export default function LocationField({ attributes = {}, rules = {}, onChange }: ControlProps) {
+export default function LocationField({ attributes = {}, rules = {}, onChange, submitTick, messages }: ControlProps) {
     const {
         id = '',
         MuiAttributes = {},
@@ -42,14 +43,25 @@ export default function LocationField({ attributes = {}, rules = {}, onChange }:
         if (validation) {
             for (let i = 0; i < validation.length; i += 1) {
                 const data = validation[i];
-                const isValid = Validation[data.rule](value, data.value);
+                const validatorFn = Validation[data.rule];
+                const isValid = typeof validatorFn === 'function' ? validatorFn(value, data.value) : true;
                 if (!isValid) {
-                    return { isValid: false, message: data.message };
+                    const fallback = data.rule === 'mandatory' ? (messages?.required || 'This field is required') : '';
+                    return { isValid: false, message: data.message || fallback };
                 }
             }
         }
         return { isValid: true, message: '' };
     };
+
+    // Re-run own validation against the current value on submit so an
+    // untouched invalid field surfaces its error.
+    useUpdateEffect(() => {
+        if (submitTick) {
+            const v = validate(textData.value);
+            setTextData(prev => ({ ...prev, helperText: v.message, error: !v.isValid }));
+        }
+    }, [submitTick]);
 
     const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { value } = e.target;
@@ -93,29 +105,28 @@ export default function LocationField({ attributes = {}, rules = {}, onChange }:
 
     const isMandatory = rules?.validation?.some((v: any) => v.rule === 'mandatory') || false;
 
-    // MUI v9 uses slotProps; legacy InputProps/inputProps on MuiAttributes
-    // are folded into slotProps for compatibility
-    const baseAttrs: any = { ...MuiAttributes };
-    const legacyInputProps = baseAttrs.InputProps;
-    const legacyHtmlInputProps = baseAttrs.inputProps;
-    delete baseAttrs.InputProps;
-    delete baseAttrs.inputProps;
+    // Input props across MUI majors. Same approach as TextField: emit both
+    // spellings and let the installed major take the one it understands.
+    // v5 reads InputProps/inputProps; v6 and v7 accept both and prefer
+    // slotProps; v9 removed the legacy props and reads slotProps only.
+    // The old `isV6` flag tested whether the CALLER passed slotProps, not the
+    // MUI version, so on v9 the adornments were silently dropped.
+    const baseAttrs = { ...MuiAttributes };
 
-    const existingSlot = baseAttrs.slotProps || {};
-    const mergedInputSlot = {
-        ...legacyInputProps,
-        ...(existingSlot.input || {}),
+    const finalHtmlInput = MuiAttributes.inputProps || MuiAttributes.slotProps?.htmlInput || {};
+    const finalInput = {
+        ...(MuiAttributes.InputProps || MuiAttributes.slotProps?.input || {}),
         ...getInputProps(InputProps),
     };
-    const mergedHtmlInputSlot = {
-        ...legacyHtmlInputProps,
-        ...(existingSlot.htmlInput || {}),
+    const finalSlotProps = {
+        ...(MuiAttributes.slotProps || {}),
+        input: finalInput,
+        htmlInput: finalHtmlInput,
     };
 
-    const finalSlotProps: any = { ...existingSlot };
-    if (Object.keys(mergedInputSlot).length) finalSlotProps.input = mergedInputSlot;
-    if (Object.keys(mergedHtmlInputSlot).length) finalSlotProps.htmlInput = mergedHtmlInputSlot;
     delete baseAttrs.slotProps;
+    delete baseAttrs.inputProps;
+    delete baseAttrs.InputProps;
 
     // Determine field height based on variant + size for button alignment
     const variant = MuiAttributes.variant || 'outlined';
@@ -129,8 +140,11 @@ export default function LocationField({ attributes = {}, rules = {}, onChange }:
                 <MuiTextField
                     fullWidth
                     {...baseAttrs}
+                    id={id}
                     required={isMandatory}
                     slotProps={finalSlotProps}
+                    inputProps={finalHtmlInput}
+                    InputProps={finalInput}
                     onChange={handleOnChange}
                     onBlur={handleOnBlur}
                     value={textData.value}

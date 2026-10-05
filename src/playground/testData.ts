@@ -63,7 +63,12 @@ export const ALL_CONTROLS_TEST_DATA: FormField[] = [
         props: {
             id: 'radio1',
             MuiFLabel: 'Radio Group',
-            MuiFCLabels: ['Option A', 'Option B'],
+            // Options accept plain strings (label === value) OR
+            // { label, value } objects for a separate display label vs. value.
+            MuiFCLabels: [
+                { label: 'Option A', value: 'a' },
+                { label: 'Option B', value: 'b' }
+            ],
             MuiRGAttributes: { row: true }
         },
         layout: { xs: 12, sm: 4 }
@@ -217,6 +222,136 @@ export const ALL_CONTROLS_TEST_DATA: FormField[] = [
         },
         layout: { xs: 12 }
     },
+    // ── Collection demo ────────────────────────────────────────────────────
+    {
+        type: 'collection',
+        props: {
+            id: 'customerLocations',
+            itemLabel: 'Customer Location',
+            title: 'Customer Locations',
+            description: 'Each service address, with its water services and backflow assemblies.',
+            icon: 'location_on',
+            color: 'primary',
+            layout: 'cards',
+            variant: 'outlined',
+            addButton: { position: 'header', variant: 'contained', icon: 'add' },
+            actions: { edit: true, delete: true },
+            display: {
+                title: 'customerName',
+                subtitle: '{address}, {city}, {state} {zip}',
+                subtitleIcon: 'place',
+                avatar: 'none',
+                badge: { field: 'status', colors: { active: 'success', pending: 'warning', inactive: 'default' } },
+                detailsLayout: 'grid',
+                details: [
+                    { field: 'accountNumber', label: 'Account #', icon: 'tag' },
+                    { field: 'locationType', label: 'Location type', icon: 'apartment' },
+                    { field: 'contactName', label: 'Site contact', icon: 'person' },
+                    { field: 'phone', label: 'Phone', icon: 'call' }
+                ]
+            },
+            fields: [
+                { type: 'textfield', props: { id: 'customerName', MuiAttributes: { label: 'Customer / business name', fullWidth: true } }, rules: { validation: [{ rule: 'mandatory', message: 'Customer name is required' }] }, layout: { row: 1, xs: 12, sm: 8 } },
+                { type: 'textfield', props: { id: 'accountNumber', MuiAttributes: { label: 'Account #', fullWidth: true } }, layout: { row: 1, xs: 12, sm: 4 } },
+                { type: 'select', props: { id: 'locationType', MuiBoxAttributes: { label: 'Location type' }, options: [{ value: 'residential', label: 'Residential' }, { value: 'commercial', label: 'Commercial' }, { value: 'industrial', label: 'Industrial' }] }, layout: { row: 2, xs: 12, sm: 6 } },
+                { type: 'select', props: { id: 'status', value: 'active', MuiBoxAttributes: { label: 'Status' }, options: [{ value: 'active', label: 'Active' }, { value: 'pending', label: 'Pending' }, { value: 'inactive', label: 'Inactive' }] }, layout: { row: 2, xs: 12, sm: 6 } },
+                { type: 'textfield', props: { id: 'address', MuiAttributes: { label: 'Service address', fullWidth: true } }, layout: { row: 3, xs: 12 } },
+                { type: 'textfield', props: { id: 'city', MuiAttributes: { label: 'City', fullWidth: true } }, layout: { row: 4, xs: 12, sm: 5 } },
+                { type: 'textfield', props: { id: 'state', MuiAttributes: { label: 'State', fullWidth: true } }, layout: { row: 4, xs: 6, sm: 3 } },
+                { type: 'textfield', props: { id: 'zip', MuiAttributes: { label: 'ZIP', fullWidth: true } }, layout: { row: 4, xs: 6, sm: 4 } },
+                { type: 'textfield', props: { id: 'contactName', MuiAttributes: { label: 'Site contact', fullWidth: true } }, layout: { row: 5, xs: 12, sm: 6 } },
+                { type: 'textfield', props: { id: 'phone', MuiAttributes: { label: 'Phone', fullWidth: true } }, layout: { row: 5, xs: 12, sm: 6 } }
+            ],
+            collections: [
+                {
+                    id: 'services',
+                    itemLabel: 'Service',
+                    icon: 'water_drop',
+                    layout: 'table',
+                    addButton: { position: 'header', variant: 'outlined', icon: 'add' },
+                    fields: [
+                        { type: 'select', props: { id: 'serviceType', MuiBoxAttributes: { label: 'Service type' }, options: [{ value: 'domestic', label: 'Domestic' }, { value: 'irrigation', label: 'Irrigation' }, { value: 'fire', label: 'Fire line' }] }, rules: { validation: [{ rule: 'mandatory', message: 'Service type is required' }] }, layout: { row: 1, xs: 12, sm: 6 } },
+                        { type: 'select', props: { id: 'meterSize', MuiBoxAttributes: { label: 'Meter size' }, options: [{ value: '5/8"', label: '5/8"' }, { value: '3/4"', label: '3/4"' }, { value: '1"', label: '1"' }, { value: '2"', label: '2"' }] }, layout: { row: 1, xs: 12, sm: 6 } },
+                        { type: 'textfield', props: { id: 'meterNumber', MuiAttributes: { label: 'Meter #', fullWidth: true } }, rules: { validation: [{ rule: 'mandatory', message: 'Meter # is required' }] }, layout: { row: 2, xs: 12, sm: 6 } },
+                        { type: 'datetime', props: { id: 'installDate', MuiAttributes: { label: 'Install date', fullWidth: true } }, layout: { row: 2, xs: 12, sm: 6 } }
+                    ],
+                    display: {
+                        title: 'serviceType',
+                        titleLabel: 'Service type',
+                        details: [
+                            { field: 'meterNumber', label: 'Meter #', icon: 'speed' },
+                            { field: 'meterSize', label: 'Meter size', icon: 'straighten' },
+                            { field: 'installDate', label: 'Installed', icon: 'event' }
+                        ]
+                    }
+                },
+                {
+                    id: 'backflows',
+                    itemLabel: 'Backflow',
+                    title: 'Backflow Assemblies',
+                    icon: 'plumbing',
+                    layout: 'table',
+                    addButton: { position: 'header', variant: 'outlined', icon: 'add' },
+                    fields: [
+                        { type: 'select', props: { id: 'assemblyType', MuiBoxAttributes: { label: 'Assembly type' }, options: [{ value: 'RP', label: 'RP (Reduced pressure)' }, { value: 'DC', label: 'DC (Double check)' }, { value: 'RPDA', label: 'RPDA (RP detector)' }] }, rules: { validation: [{ rule: 'mandatory', message: 'Assembly type is required' }] }, layout: { row: 1, xs: 12, sm: 6 } },
+                        { type: 'select', props: { id: 'size', MuiBoxAttributes: { label: 'Size' }, options: [{ value: '3/4"', label: '3/4"' }, { value: '1"', label: '1"' }, { value: '2"', label: '2"' }, { value: '4"', label: '4"' }] }, layout: { row: 1, xs: 12, sm: 6 } },
+                        { type: 'textfield', props: { id: 'manufacturer', MuiAttributes: { label: 'Manufacturer', fullWidth: true } }, layout: { row: 2, xs: 12, sm: 6 } },
+                        { type: 'textfield', props: { id: 'model', MuiAttributes: { label: 'Model', fullWidth: true } }, layout: { row: 2, xs: 12, sm: 6 } },
+                        { type: 'textfield', props: { id: 'serialNumber', MuiAttributes: { label: 'Serial #', fullWidth: true } }, rules: { validation: [{ rule: 'mandatory', message: 'Serial # is required' }] }, layout: { row: 3, xs: 12, sm: 6 } },
+                        { type: 'select', props: { id: 'testResult', MuiBoxAttributes: { label: 'Last test result' }, options: [{ value: 'pass', label: 'Passed' }, { value: 'fail', label: 'Failed' }, { value: 'due', label: 'Test due' }] }, layout: { row: 3, xs: 12, sm: 6 } }
+                    ],
+                    display: {
+                        title: '{manufacturer} {model}',
+                        titleLabel: 'Assembly',
+                        badge: { field: 'testResult', label: 'Result', colors: { pass: 'success', fail: 'error', due: 'warning' } },
+                        details: [
+                            { field: 'assemblyType', label: 'Type' },
+                            { field: 'serialNumber', label: 'Serial #' },
+                            { field: 'size', label: 'Size' }
+                        ]
+                    }
+                }
+            ],
+            value: [
+                {
+                    customerName: 'Riverside Medical Center',
+                    accountNumber: '100-48213',
+                    locationType: 'commercial',
+                    status: 'active',
+                    address: '1200 River Rd',
+                    city: 'Austin',
+                    state: 'TX',
+                    zip: '78701',
+                    contactName: 'Dana Ortiz',
+                    phone: '(512) 555-0142',
+                    services: [
+                        { serviceType: 'domestic', meterSize: '2"', meterNumber: 'M-20931', installDate: '2019-04-12' },
+                        { serviceType: 'fire', meterSize: '2"', meterNumber: 'M-20932' }
+                    ],
+                    backflows: [
+                        { assemblyType: 'RP', size: '2"', manufacturer: 'Watts', model: 'LF909', serialNumber: 'W909-55120', testResult: 'pass' }
+                    ]
+                },
+                {
+                    customerName: 'Maple Street Residence',
+                    accountNumber: '100-77310',
+                    locationType: 'residential',
+                    status: 'pending',
+                    address: '48 Maple St',
+                    city: 'Austin',
+                    state: 'TX',
+                    zip: '78704',
+                    services: [
+                        { serviceType: 'domestic', meterSize: '3/4"', meterNumber: 'M-88412' }
+                    ],
+                    backflows: []
+                }
+            ]
+        },
+        rules: { validation: [{ rule: 'mandatory', message: 'Add at least one customer location' }] },
+        layout: { xs: 12 }
+    },
+
     {
         type: 'locationfield',
         props: {

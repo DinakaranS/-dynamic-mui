@@ -59,4 +59,25 @@ describe('Radio Control', () => {
         const label = screen.getByText('Test Radio Group');
         expect(label.className).toContain('Mui-required');
     });
+
+    it('supports {label, value} options and a per-option color on the label', () => {
+        const coloredProps: ControlProps = {
+            ...defaultProps,
+            attributes: {
+                ...defaultProps.attributes,
+                MuiFCLabels: [
+                    { label: 'Approve', value: 'Completed', color: 'rgb(46, 125, 50)' },
+                    { label: 'Reject', value: 'Rejected', color: 'rgb(198, 40, 40)' },
+                ],
+            },
+        };
+        render(<Radio {...coloredProps} />);
+        const approve = screen.getByText('Approve');
+        const reject = screen.getByText('Reject');
+        expect(approve).toBeInTheDocument();
+        expect(reject).toBeInTheDocument();
+        // The per-option color is applied to that option's label text.
+        expect(approve).toHaveStyle({ color: 'rgb(46, 125, 50)' });
+        expect(reject).toHaveStyle({ color: 'rgb(198, 40, 40)' });
+    });
 });

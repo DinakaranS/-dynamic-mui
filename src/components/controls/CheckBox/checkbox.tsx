@@ -4,10 +4,11 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
 import useUpdateEffect from '../../../util/useUpdateEffect';
+import { premiumControlLabelSx, mergeSx } from '../../../util/premiumStyles';
 import { ControlProps } from '../../../types';
 
 /** Playground Component */
-export default function CheckBox({ attributes = {}, rules = {}, onChange }: ControlProps) {
+export default function CheckBox({ attributes = {}, rules = {}, onChange, submitTick, messages }: ControlProps) {
     const { MuiAttributes = {}, MuiFCLAttributes = {}, id = '' } = attributes;
 
     const [checked, setChecked] = React.useState<boolean>(
@@ -31,7 +32,7 @@ export default function CheckBox({ attributes = {}, rules = {}, onChange }: Cont
                     // Start unchecked?
                     if (!isChecked) {
                         isValid = false;
-                        msg = rule.message || 'Required';
+                        msg = rule.message || messages?.required || 'Required';
                         break;
                     }
                 }
@@ -39,6 +40,14 @@ export default function CheckBox({ attributes = {}, rules = {}, onChange }: Cont
         }
         return { isValid, message: msg };
     };
+
+    useUpdateEffect(() => {
+        if (submitTick) {
+            const v = validate(checked);
+            setError(!v.isValid);
+            setHelperText(v.message);
+        }
+    }, [submitTick]);
 
     const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
         const isChecked = event.target.checked;
@@ -51,7 +60,7 @@ export default function CheckBox({ attributes = {}, rules = {}, onChange }: Cont
         if (onChange) onChange({ id, value: isChecked });
     };
 
-    const { label, ...otherFCLAttributes } = MuiFCLAttributes;
+    const { label, sx: fclSx, ...otherFCLAttributes } = MuiFCLAttributes;
     const finalLabel = isMandatory ? (
         <span>
             {label}
@@ -68,13 +77,20 @@ export default function CheckBox({ attributes = {}, rules = {}, onChange }: Cont
             <FormControlLabel
                 {...otherFCLAttributes}
                 label={finalLabel}
+                sx={mergeSx(premiumControlLabelSx as any, fclSx)}
                 control={
                     <MuiCheckBox
+                        id={id}
+                        // Spread consumer attrs FIRST, then the managed controlled
+                        // props win. `checked`/`defaultChecked` are dropped so a
+                        // stray one can't fight our state (controlled+uncontrolled warning).
+                        {...(() => { const m = { ...MuiAttributes }; delete m.checked; delete m.defaultChecked; return m; })()}
                         checked={checked}
                         onChange={handleChange}
                         required={isMandatory}
-                        {...MuiAttributes}
-                        slotProps={{ input: { 'aria-label': 'controlled' } }}
+                        slotProps={{
+                            input: { 'aria-label': 'controlled' }
+                        }}
                     />
                 }
             />

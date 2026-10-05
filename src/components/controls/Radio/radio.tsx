@@ -8,10 +8,11 @@ import FormLabel from '@mui/material/FormLabel';
 import FormHelperText from '@mui/material/FormHelperText';
 import { Icon } from '@mui/material';
 import useUpdateEffect from '../../../util/useUpdateEffect';
+import { premiumControlLabelSx, mergeSx } from '../../../util/premiumStyles';
 import { ControlProps } from '../../../types';
 
 /** Radio Component */
-export default function Radio({ attributes = {}, rules = {}, onChange }: ControlProps) {
+export default function Radio({ attributes = {}, rules = {}, onChange, submitTick, messages }: ControlProps) {
     const {
         MuiAttributes = {},
         MuiFCLAttributes = {},
@@ -32,7 +33,8 @@ export default function Radio({ attributes = {}, rules = {}, onChange }: Control
     }, []);
 
     useUpdateEffect(() => {
-        setValue(attributes.value);
+        // `?? ''` keeps the RadioGroup controlled when the value is cleared.
+        setValue(attributes.value ?? '');
     }, [attributes.value]);
 
     const isMandatory = rules?.validation?.some((v: any) => v.rule === 'mandatory') || false;
@@ -45,7 +47,7 @@ export default function Radio({ attributes = {}, rules = {}, onChange }: Control
                 if (rule.rule === 'mandatory') {
                     if (!val) {
                         isValid = false;
-                        msg = rule.message || 'Required';
+                        msg = rule.message || messages?.required || 'Required';
                         break;
                     }
                 }
@@ -53,6 +55,14 @@ export default function Radio({ attributes = {}, rules = {}, onChange }: Control
         }
         return { isValid, message: msg };
     };
+
+    useUpdateEffect(() => {
+        if (submitTick) {
+            const v = validate(value);
+            setError(!v.isValid);
+            setHelperText(v.message);
+        }
+    }, [submitTick]);
 
     const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
         const val = event.target.value;
@@ -88,7 +98,7 @@ export default function Radio({ attributes = {}, rules = {}, onChange }: Control
     }, [isMandatory, error, MuiFLabel, MuiFLabelIcon, MuiFLAttributes]);
 
     return (
-        <FormControl required={isMandatory} error={error} component="fieldset">
+        <FormControl id={id} required={isMandatory} error={error} component="fieldset">
             {MuiFLabel && FLabel}
             <RadioGroup
                 aria-labelledby="radio-buttons-group-label"
@@ -97,15 +107,36 @@ export default function Radio({ attributes = {}, rules = {}, onChange }: Control
                 value={value}
                 onChange={handleChange}
             >
-                {MuiFCLabels.map((label: string) => (
-                    <FormControlLabel
-                        key={label}
-                        {...MuiFCLAttributes}
-                        value={label}
-                        control={<MuiRadio {...MuiAttributes} />}
-                        label={label}
-                    />
-                ))}
+                {MuiFCLabels.map((option: string | { label: string; value: string; color?: string; sx?: any }) => {
+                    const isObj = typeof option !== 'string';
+                    const optLabel = isObj ? option.label : option;
+                    const optValue = isObj ? option.value : option;
+                    // Per-option color: tints this option's radio dot and its label text,
+                    // leaving the other options untouched.
+                    const optColor = isObj ? option.color : undefined;
+                    const optSx = isObj ? option.sx : undefined;
+                    const { sx: fclSx, ...restFCL } = MuiFCLAttributes;
+                    const { sx: radioSx, ...restRadio } = MuiAttributes;
+                    return (
+                        <FormControlLabel
+                            key={optValue}
+                            {...restFCL}
+                            value={optValue}
+                            control={(
+                                <MuiRadio
+                                    {...restRadio}
+                                    sx={mergeSx(optColor ? { color: optColor, '&.Mui-checked': { color: optColor } } : undefined, radioSx) as any}
+                                />
+                            )}
+                            label={optLabel}
+                            sx={mergeSx(premiumControlLabelSx as any, [
+                                optColor ? { '& .MuiFormControlLabel-label': { color: optColor } } : null,
+                                optSx,
+                                fclSx,
+                            ].filter(Boolean) as any)}
+                        />
+                    );
+                })}
             </RadioGroup>
             {helperText && <FormHelperText>{helperText}</FormHelperText>}
         </FormControl>
