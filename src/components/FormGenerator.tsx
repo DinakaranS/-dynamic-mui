@@ -625,10 +625,43 @@ export function FormGenerator({
                 });
         }, 450);
     }, [asyncValidators, guid]);
-    const layout = useMemo(
-        () => generateLayout(updatePatchData(data, newPatch, guid, response)),
-        [newPatch, data, guid],
-    );
+    /*
+     * A patch is applied ONCE, when it actually changes.
+     *
+     * `updatePatchData` merges as `{ ...response[guid], ...patch }` — patch
+     * last, so it overwrites the store. That is right for a genuinely new
+     * patch (the parent loaded a record) and wrong on a re-run, because this
+     * memo also re-runs whenever `data` changes identity. A host that rebuilds
+     * its field array — am-app does, every time dependent options are
+     * recomputed — therefore re-applied the SAME patch over the user's current
+     * values.
+     *
+     * The visible symptom: clear a select and its value came straight back from
+     * the stale patch, taking its `subforms` branch with it. Switching to a
+     * different value looked fine only because the patch happened to be
+     * overwritten by a value, rather than by nothing.
+     *
+     * Passing `{}` on a re-run keeps the field mapping (which must happen every
+     * render) while making the merge a no-op.
+     */
+    const appliedPatchRef = useRef<string | null>(null);
+    const layout = useMemo(() => {
+        let key: string;
+        try {
+            key = JSON.stringify(newPatch);
+        } catch {
+            key = String(newPatch);
+        }
+        // Keyed on the guid too: a caller that swaps `guid` without a React
+        // `key` keeps this component instance, and its new store still has to
+        // be seeded. Without the guid here, that store would never receive the
+        // patch at all.
+        key = `${guid}::${key}`;
+        const isNewPatch = appliedPatchRef.current !== key;
+        appliedPatchRef.current = key;
+
+        return generateLayout(updatePatchData(data, isNewPatch ? newPatch : {}, guid, response));
+    }, [newPatch, data, guid]);
 
     useEffect(() => {
         if (isEmpty(response[guid])) response[guid] = { ...patch };

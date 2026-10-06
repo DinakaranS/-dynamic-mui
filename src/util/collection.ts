@@ -200,7 +200,7 @@ export const describeItem = (
     item: Record<string, any>,
     config: Partial<CollectionConfig>,
     index: number,
-): { title: string; subtitle: string; details: ItemDetail[] } => {
+): { title: string; rawTitle: string; subtitle: string; details: ItemDetail[] } => {
     const fields = config.fields || [];
     const display = config.display || {};
     const title = display.title
@@ -210,7 +210,17 @@ export const describeItem = (
     const details = detailSpecs(config)
         .map((spec) => ({ ...spec, value: formatValue(findField(fields, spec.id), item[spec.id]) }))
         .filter((d) => d.value);
-    return { title: title || `${itemLabelOf(config)} ${index + 1}`, subtitle, details };
+    /*
+     * `title` carries the "Service 1" fallback, which a CARD needs — a heading
+     * cannot be blank. `rawTitle` is what the item actually says, and is empty
+     * when the title field is.
+     *
+     * A table needs the raw one: its first column sits under a real field's
+     * label ("Type Of Service"), so substituting a row number there renders as
+     * a VALUE the user never entered. Every other column in that table shows a
+     * placeholder when empty; the title column has to behave the same.
+     */
+    return { title: title || `${itemLabelOf(config)} ${index + 1}`, rawTitle: title, subtitle, details };
 };
 
 /** The field ids the title shows: from `display.title`, else the first field. */

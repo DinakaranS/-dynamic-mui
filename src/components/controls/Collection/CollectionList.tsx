@@ -616,7 +616,7 @@ function TableItems({ ui, nodes, guid, readOnly, issues, showErrors, texts, isCo
                 </TableHead>
                 <TableBody>
                     {nodes.map((node, index) => {
-                        const { title } = describeItem(node.data, config, index);
+                        const { title, rawTitle } = describeItem(node.data, config, index);
                         const hasError = showErrors && itemIssues(index).length > 0;
                         const last = index === nodes.length - 1;
                         const noLine = last && !(hasChildren && !isCollapsed(node.key)) ? { '& > td': { borderBottom: 0 } } : {};
@@ -624,7 +624,30 @@ function TableItems({ ui, nodes, guid, readOnly, issues, showErrors, texts, isCo
                             <Fragment key={node.key}>
                                 <TableRow hover sx={ui.sx('tableRow', { ...noLine, ...(hasError ? { bgcolor: errorBg } : {}) })}>
                                     <TableCell sx={cell}>
-                                        <ItemTitle ui={ui} title={title} canEdit={canEdit} onOpen={() => onOpen(index)} size={14} />
+                                        {/* The raw title: this column is headed by a field's own
+                                            label, so a row number here reads as a value. Still
+                                            clickable when blank — the placeholder is the target,
+                                            exactly as in the columns beside it. */}
+                                        {rawTitle ? (
+                                            <ItemTitle ui={ui} title={rawTitle} canEdit={canEdit} onOpen={() => onOpen(index)} size={14} />
+                                        ) : (
+                                            <Box
+                                                component={canEdit ? 'button' : 'span'}
+                                                type={canEdit ? 'button' : undefined}
+                                                onClick={canEdit ? () => onOpen(index) : undefined}
+                                                aria-label={canEdit ? ui.t('editAria', { title }) : undefined}
+                                                sx={{
+                                                    background: 'none',
+                                                    border: 0,
+                                                    p: 0,
+                                                    font: 'inherit',
+                                                    color: 'text.disabled',
+                                                    cursor: canEdit ? 'pointer' : 'default',
+                                                }}
+                                            >
+                                                —
+                                            </Box>
+                                        )}
                                     </TableCell>
                                     {columns.map((c) => (
                                         <TableCell key={c.id} sx={cell}>

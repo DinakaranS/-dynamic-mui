@@ -95,6 +95,8 @@ describe('collection helpers', () => {
         const item = { model: 'Watts 009', kind: 'rp', active: true, status: 'ok' };
         expect(describeItem(item, cfg, 0)).toEqual({
             title: 'Watts 009',
+            // What the item actually says, before any fallback is applied.
+            rawTitle: 'Watts 009',
             subtitle: '',
             details: [
                 { id: 'kind', label: 'Type', value: 'Reduced pressure', icon: 'list_alt' },
@@ -110,6 +112,29 @@ describe('collection helpers', () => {
         expect(describeItem(item, { ...cfg, display: { details: [{ field: 'kind', label: 'Assembly', icon: 'category', span: 2 }] } }, 0).details)
             .toEqual([{ id: 'kind', label: 'Assembly', value: 'Reduced pressure', icon: 'category', span: 2 }]);
         expect(describeItem({}, cfg, 2).title).toBe('Device 3');
+    });
+
+    it('separates the card fallback from what the item actually says', () => {
+        /*
+         * A card heading cannot be blank, so `title` falls back to "Device 1".
+         * A TABLE's first column sits under a real field's label — "Model #",
+         * "Type Of Service" — so putting a row number there renders as a value
+         * the user never entered, while every other column in the same row
+         * shows a placeholder. `rawTitle` is what the table uses.
+         */
+        const fields: any[] = [{ type: 'textfield', props: { id: 'model', MuiAttributes: { label: 'Model' } } }];
+        const cfg: any = { itemLabel: 'Device', fields, display: { title: 'model' } };
+
+        const filled = describeItem({ model: 'Watts 009' }, cfg, 0);
+        expect(filled.title).toBe('Watts 009');
+        expect(filled.rawTitle).toBe('Watts 009');
+
+        const blank = describeItem({ model: '' }, cfg, 0);
+        expect(blank.title).toBe('Device 1');
+        expect(blank.rawTitle).toBe('');
+
+        // The number follows the row, so the fallback stays useful on a card.
+        expect(describeItem({ model: '' }, cfg, 4).title).toBe('Device 5');
     });
 
     it('formats dates by picker type, reading a bare YYYY-MM-DD as a local date', () => {
